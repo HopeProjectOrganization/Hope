@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/theme/app_colors.dart';
 
-class AwarenessScreen extends StatefulWidget {
-  static const routeName = '/awareness';
+class Hereditary extends StatefulWidget {
+  static const routeName = '/hereditary';
 
-  const AwarenessScreen({super.key});
+  const Hereditary({super.key});
 
   @override
-  State<AwarenessScreen> createState() => _AwarenessScreenState();
+  State<Hereditary> createState() => _HereditaryState();
 }
 
-class _AwarenessScreenState extends State<AwarenessScreen> {
+class _HereditaryState extends State<Hereditary> {
   Decoration boxDecoration() {
     return BoxDecoration(
       border: Border.all(color: AppColors.white),
@@ -28,18 +28,18 @@ class _AwarenessScreenState extends State<AwarenessScreen> {
               FloatingActionButtonLocation.centerDocked,
           floatingActionButton: FloatingActionButton(
             backgroundColor: AppColors.purple,
-            child: ImageIcon(
-              AssetImage(AppIcons.scanIcon),
-              color: AppColors.white,
-            ),
             shape: const CircleBorder(
               side: BorderSide(color: AppColors.white, width: 5),
             ),
             onPressed: () {},
+            child: const ImageIcon(
+              AssetImage(AppIcons.scanIcon),
+              color: AppColors.white,
+            ),
           ),
           appBar: AppBar(
             leading: IconButton(
-              icon: Icon(Icons.arrow_back_outlined),
+              icon: const Icon(Icons.arrow_back_outlined),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -51,7 +51,7 @@ class _AwarenessScreenState extends State<AwarenessScreen> {
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20))),
             centerTitle: true,
-            title: Text(
+            title: const Text(
               "Hereditary",
               style: TextStyle(color: AppColors.white),
             ),
@@ -67,18 +67,18 @@ class _AwarenessScreenState extends State<AwarenessScreen> {
               ),
               isScrollable: true,
               dividerColor: Colors.transparent,
-              unselectedLabelStyle: TextStyle(color: AppColors.white),
-              labelStyle: TextStyle(color: AppColors.purple),
+              unselectedLabelStyle: const TextStyle(color: AppColors.white),
+              labelStyle: const TextStyle(color: AppColors.purple),
               tabs: [
                 Tab(
                   child: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: boxDecoration(),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ImageIcon(AssetImage(AppIcons.allIcon)),
-                        const SizedBox(
+                        SizedBox(
                           width: 8,
                         ),
                         Text("all"),
@@ -88,13 +88,13 @@ class _AwarenessScreenState extends State<AwarenessScreen> {
                 ),
                 Tab(
                   child: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: boxDecoration(),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ImageIcon(AssetImage(AppIcons.awareFilled)),
-                        const SizedBox(
+                        SizedBox(
                           width: 8,
                         ),
                         Text("Breast"),
@@ -104,13 +104,13 @@ class _AwarenessScreenState extends State<AwarenessScreen> {
                 ),
                 Tab(
                   child: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: boxDecoration(),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ImageIcon(AssetImage(AppIcons.awareFilled)),
-                        const SizedBox(
+                        SizedBox(
                           width: 8,
                         ),
                         Text("Prostate"),
@@ -120,13 +120,13 @@ class _AwarenessScreenState extends State<AwarenessScreen> {
                 ),
                 Tab(
                     child: Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: boxDecoration(),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ImageIcon(AssetImage(AppIcons.awareFilled)),
-                      const SizedBox(
+                      SizedBox(
                         width: 8,
                       ),
                       Text("Ovarian"),
@@ -137,9 +137,9 @@ class _AwarenessScreenState extends State<AwarenessScreen> {
             ),
           ),
           //    buildEventsListView()
-          body: SafeArea(
+          body: const SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [],

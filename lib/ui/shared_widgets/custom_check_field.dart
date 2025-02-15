@@ -9,7 +9,7 @@ class CustomCheckField extends StatefulWidget {
   final String labelText;
   final ValueChanged<bool>? onChanged; // Callback to notify parent
 
-  CustomCheckField({
+  const CustomCheckField({
     super.key,
     required this.width,
     required this.isChecked,

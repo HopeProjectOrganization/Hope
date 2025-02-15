@@ -6,7 +6,7 @@ class CustomLabel extends StatelessWidget {
   final Widget prefixIcon;
   final Widget? suffixIcon;
 
-  CustomLabel({
+  const CustomLabel({
     super.key,
     required this.controller,
     required this.hint,

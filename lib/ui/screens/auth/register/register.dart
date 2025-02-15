@@ -106,11 +106,6 @@ class _RegisterScreen extends State<RegisterScreen> {
                       ],
                     )),
                 onTap: () async {
-                  var selectedTime = (await showDatePicker(
-                          context: context,
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime(2026))) ??
-                      selectedDate;
                   setState(() {});
                 }),
             const SizedBox(height: 16),
@@ -167,7 +162,7 @@ class _RegisterScreen extends State<RegisterScreen> {
                   });
                 }),
             const SizedBox(height: 16),
-            if (hadCancer) CustomDropDown(),
+            if (hadCancer) const CustomDropDown(),
             const SizedBox(height: 16),
             CustomCheckField(
                 width: 300,
@@ -179,7 +174,7 @@ class _RegisterScreen extends State<RegisterScreen> {
                   });
                 }),
             const SizedBox(height: 16),
-            if (familyCancer) CustomDropDown(),
+            if (familyCancer) const CustomDropDown(),
             const SizedBox(height: 32),
             buildRegisterButton(context),
             buildSignInTextRow(context)

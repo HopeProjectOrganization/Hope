@@ -7,7 +7,7 @@ import 'package:hope/ui/screens/auth/register/register.dart';
 class VerficationScreen extends StatefulWidget {
   static const String routeName = "/verficationScreen";
 
-  VerficationScreen({super.key});
+  const VerficationScreen({super.key});
 
   @override
   State<VerficationScreen> createState() => _VerficationScreenState();
@@ -39,7 +39,7 @@ class _VerficationScreenState extends State<VerficationScreen> {
             ),
             Text(
               appLocalizations.enterEmailOrPhone,
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 24,
               ),
@@ -110,10 +110,10 @@ class CircleInput extends StatefulWidget {
   });
 
   @override
-  _CircleInputState createState() => _CircleInputState();
+  CircleInputState createState() => CircleInputState();
 }
 
-class _CircleInputState extends State<CircleInput> {
+class CircleInputState extends State<CircleInput> {
   bool isFilled = false;
 
   @override
@@ -133,7 +133,7 @@ class _CircleInputState extends State<CircleInput> {
       width: 60,
       height: 60,
       decoration: BoxDecoration(
-        color: isFilled ? Color(0xff8E56FF) : Color(0xffC9C9C9),
+        color: isFilled ? const Color(0xff8E56FF) : const Color(0xffC9C9C9),
         // Color changes based on input
         shape: BoxShape.circle,
       ),

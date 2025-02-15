@@ -16,6 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 4), () {
+      // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, SetupScreen.routeName);
     });
   }

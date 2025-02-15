@@ -13,7 +13,7 @@ class AppTheme {
       centerTitle: true,
       elevation: 0,
     ),
-    primaryTextTheme: TextTheme(
+    primaryTextTheme: const TextTheme(
       titleMedium: TextStyle(
           color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
     ),
@@ -107,7 +107,7 @@ class AppTheme {
         labelSmall: TextStyle(
             color: AppColors.purple, fontSize: 16, fontWeight: FontWeight.bold),
       ),
-      primaryTextTheme: TextTheme(
+      primaryTextTheme: const TextTheme(
         titleMedium: TextStyle(
             color: AppColors.white, fontSize: 16, fontWeight: FontWeight.w500),
       ),

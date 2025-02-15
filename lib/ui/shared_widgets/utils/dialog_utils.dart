@@ -42,7 +42,7 @@ showMessage(
           actions: [
             if (posButtonTitle != null)
               FilledButton(
-                  style: ButtonStyle(),
+                  style: const ButtonStyle(),
                   onPressed: () {
                     hideLoading(context);
                     if (posButtonClick != null) posButtonClick();

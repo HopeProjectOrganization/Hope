@@ -9,11 +9,13 @@ import 'package:provider/provider.dart';
 class OnBoardingScreen extends StatefulWidget {
   static const String routeName = "/onBoarding";
 
+  const OnBoardingScreen({super.key});
+
   @override
-  _OnBoardingScreenState createState() => _OnBoardingScreenState();
+  OnBoardingScreenState createState() => OnBoardingScreenState();
 }
 
-class _OnBoardingScreenState extends State<OnBoardingScreen> {
+class OnBoardingScreenState extends State<OnBoardingScreen> {
   late ThemeProvider themeProvider;
 
   late AppLocalizations appLocalizations;

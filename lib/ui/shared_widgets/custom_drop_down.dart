@@ -13,7 +13,7 @@ class CustomDropDown extends StatefulWidget {
     'Lymphoma'
   ];
 
-  CustomDropDown({
+  const CustomDropDown({
     super.key,
   });
 
@@ -55,7 +55,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
       decoration: InputDecoration(
         labelText: appLocalizations.typeOfCancer,
         labelStyle: Theme.of(context).primaryTextTheme.titleMedium,
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {

@@ -7,13 +7,13 @@ import 'package:hope/ui/screens/auth/forgetpassword/verification.dart';
 class ForgetpasswordScreen extends StatefulWidget {
   static const String routeName = "/forgetpasswordScreen";
 
-  ForgetpasswordScreen({super.key});
+  const ForgetpasswordScreen({super.key});
 
   @override
-  _ForgetpasswordScreenState createState() => _ForgetpasswordScreenState();
+  ForgetpasswordScreenState createState() => ForgetpasswordScreenState();
 }
 
-class _ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
+class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
   late AppLocalizations appLocalizations;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _inputController = TextEditingController();
@@ -55,11 +55,11 @@ class _ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
                 hintText: appLocalizations.enterYourEmailOrMobile,
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(color: Colors.red, width: 2),
+                  borderSide: const BorderSide(color: Colors.red, width: 2),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(color: Colors.red, width: 2),
+                  borderSide: const BorderSide(color: Colors.red, width: 2),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),

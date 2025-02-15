@@ -8,14 +8,12 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: FilledButton(
-          onPressed: () async {
-            onClick();
-          },
-          style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 12)),
-          child: Text(title)),
-    );
+    return FilledButton(
+        onPressed: () async {
+          onClick();
+        },
+        style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 12)),
+        child: Text(title));
   }
 }

@@ -4,6 +4,7 @@ import 'package:hope/core/providers/locale_provider.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class LanguageSwitch extends StatelessWidget {
   LanguageSwitch({super.key});
 

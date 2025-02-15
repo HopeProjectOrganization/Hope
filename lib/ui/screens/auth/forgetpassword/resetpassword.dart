@@ -5,13 +5,13 @@ import 'package:hope/core/assets/app_assets.dart';
 class ResetpasswordScreen extends StatefulWidget {
   static const String routeName = "/resetpasswordScreen";
 
-  ResetpasswordScreen({super.key});
+  const ResetpasswordScreen({super.key});
 
   @override
-  _ResetpasswordScreenState createState() => _ResetpasswordScreenState();
+  ResetpasswordScreenState createState() => ResetpasswordScreenState();
 }
 
-class _ResetpasswordScreenState extends State<ResetpasswordScreen> {
+class ResetpasswordScreenState extends State<ResetpasswordScreen> {
   late AppLocalizations appLocalizations;
   final _formKey = GlobalKey<FormState>();
 

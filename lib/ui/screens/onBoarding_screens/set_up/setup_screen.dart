@@ -7,6 +7,7 @@ import 'package:hope/ui/shared_widgets/language_switch.dart';
 import 'package:hope/ui/shared_widgets/theme_switch.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class SetupScreen extends StatelessWidget {
   static const String routeName = "/SetupScreen";
 
@@ -61,7 +62,7 @@ class SetupScreen extends StatelessWidget {
                     appLocalizations.theme,
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
-                  ThemeSwitch(),
+                  const ThemeSwitch(),
                 ],
               ),
               const SizedBox(height: 16),

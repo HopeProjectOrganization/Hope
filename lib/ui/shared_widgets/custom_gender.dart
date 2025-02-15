@@ -50,7 +50,7 @@ class _CustomGenderState extends State<CustomGender> {
           children: [
             Text(
               widget.labelText,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16, // Change text color when selected
               ),
             ),

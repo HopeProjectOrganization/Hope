@@ -1,57 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:hope/model/category_dm.dart';
+import 'package:hope/core/assets/app_assets.dart';
+import 'package:hope/model/category_model.dart';
+import 'package:hope/ui/shared_widgets/category_item_widget.dart';
+import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 
-class AwareTab extends StatefulWidget {
-  static const String routeName = '/awareness';
+class AwareTab extends StatelessWidget {
+  static const String routeName = '/aware_tab';
 
-  const AwareTab({super.key});
+  AwareTab({super.key});
 
-  @override
-  State<AwareTab> createState() => _AwareTabState();
-}
-
-class _AwareTabState extends State<AwareTab> {
-  CategoryDM selectedCategory = CategoryDM.allCategory;
+  final List<CategoryModel> categories = [
+    CategoryModel(image: AppAssets.places, id: "Places", route: '/hereditary'),
+    CategoryModel(
+        image: AppAssets.awareness, id: "Awareness", route: '/hereditary'),
+    CategoryModel(
+        image: AppAssets.hereditary, id: "Hereditary", route: '/hereditary'),
+    CategoryModel(
+        image: AppAssets.alternative, id: "Alternative", route: '/hereditary'),
+    CategoryModel(
+        image: AppAssets.highRiskPeople,
+        id: "High risk people",
+        route: '/hereditary'),
+    CategoryModel(
+        image: AppAssets.healthyDiet, id: "Healthy diet", route: '/hereditary'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return CustomScaffold(
+      title: 'News',
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            Expanded(
+              child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
+                    return CategoryItemWidget(
+                        title: category.id,
+                        onTap: () {
+                          Navigator.pushNamed(context, category.route);
+                        },
+                        index: index,
+                        image: category.image);
+                  },
+                  separatorBuilder: (context, index) => const SizedBox(
+                        height: 10,
+                      ),
+                  itemCount: categories.length),
+            )
+          ],
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.search_outlined),
+          onPressed: () {
+            // Add search functionality here
+          },
+        ),
+      ],
+    );
   }
-
-// Expanded buildEventsListView() {
-//   return Expanded(
-//     child: StreamBuilder<List<EventDM>>(
-//       stream: getEventsByCategory(selectedCategory.name),
-//       builder: (context, snapshot) {
-//         if (snapshot.hasError) {
-//           print(
-//               "Error While LOADING EVENTS: ${snapshot.error}: ${snapshot.stackTrace}");
-//           return const Text("Error");
-//         } else if (snapshot.hasData) {
-//           var eventsList = snapshot.data ?? [];
-//           return eventsList.isEmpty
-//               ? const Center(
-//               child: Text(
-//                 "Currently There is no available events",
-//                 textAlign: TextAlign.center,
-//                 style: TextStyle(
-//                     fontWeight: FontWeight.bold,
-//                     fontSize: 22,
-//                     color: AppColors.purple),
-//               ))
-//               : ListView.builder(
-//             itemBuilder: (context, index) => EventWidget(
-//               eventDM: eventsList[index],
-//             ),
-//             itemCount: eventsList.length,
-//           );
-//         } else {
-//           return const Center(
-//             child: CircularProgressIndicator(),
-//           );
-//         }
-//       },
-//     ),
-//   );
-// }
 }

@@ -12,7 +12,7 @@ class ThemeSwitch extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return AnimatedToggleSwitch<ThemeMode>.rolling(
-      current: themeProvider.themeMode,
+        current: themeProvider.getCurrentTheme,
         values: const [ThemeMode.dark, ThemeMode.light, ThemeMode.system],
         style: ToggleStyle(
         backgroundColor: Colors.transparent,
@@ -20,7 +20,8 @@ class ThemeSwitch extends StatelessWidget {
         borderColor: Theme.of(context).primaryColor,
       ),
         onChanged: (ThemeMode newTheme) {
-          themeProvider.changeTheme(newTheme);
+          themeProvider.setThemeModeProvider(
+              themeProvider.isDarkTheme ? ThemeMode.light : ThemeMode.dark);
         },
       iconBuilder: (value, foreground) {
           if (value == ThemeMode.dark) {

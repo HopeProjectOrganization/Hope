@@ -11,7 +11,7 @@ import 'package:icons_plus/icons_plus.dart';
 class LoginScreen extends StatefulWidget {
   static const String routeName = "/loginScreen";
 
-  LoginScreen({super.key});
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -106,15 +106,15 @@ class _LoginScreenState extends State<LoginScreen> {
           },
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey),
+          borderSide: const BorderSide(color: Colors.grey),
           borderRadius: BorderRadius.circular(16),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey),
+          borderSide: const BorderSide(color: Colors.grey),
           borderRadius: BorderRadius.circular(16),
         ),
         errorText: _emptyFieldError,
-        errorStyle: TextStyle(color: Colors.red),
+        errorStyle: const TextStyle(color: Colors.red),
       ),
     );
   }
@@ -148,21 +148,21 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget buildSignUpRow(BuildContext context) {
-    return  Container(
-        child:Row(
-          children: [
-            Text(
-              appLocalizations.dontHaveAccount,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, RegisterScreen.routeName);
-              },
-              child: Text(appLocalizations.createAccount ,),
-            )
-          ],
+    return Row(
+      children: [
+        Text(
+          appLocalizations.dontHaveAccount,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pushNamed(context, RegisterScreen.routeName);
+          },
+          child: Text(
+            appLocalizations.createAccount,
+          ),
         )
+      ],
     );
   }
 
@@ -196,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
           side: BorderSide(color: Theme.of(context).primaryColor),
         ),
       ),
-      child: Container(
+      child: SizedBox(
           width: double.infinity,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
