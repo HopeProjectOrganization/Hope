@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab/menu_tab.dart';
+import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
@@ -34,7 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
           shape: const CircleBorder(
             side: BorderSide(color: AppColors.white, width: 5),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, ScanTab.routeName);
+          },
           child: const ImageIcon(
             AssetImage(AppIcons.scanIcon),
             color: AppColors.white,
@@ -82,19 +84,19 @@ class _HomeScreenState extends State<HomeScreen> {
         body: tabs[currentIndex]);
   }
 
-  FloatingActionButton buildFab() {
-    return FloatingActionButton(
-      onPressed: () {
-        Navigator.pushNamed(context, LoginScreen.routeName);
-      },
-      backgroundColor: AppColors.purple,
-      shape: const CircleBorder(
-          side: BorderSide(width: 5, color: AppColors.white)),
-      child: const Icon(
-        Icons.add,
-        color: AppColors.white,
-        size: 30,
-      ),
-    );
-  }
+// FloatingActionButton buildFab() {
+//   return FloatingActionButton(
+//     onPressed: () {
+//       Navigator.pushNamed(context, LoginScreen.routeName);
+//     },
+//     backgroundColor: AppColors.purple,
+//     shape: const CircleBorder(
+//         side: BorderSide(width: 5, color: AppColors.white)),
+//     child: const Icon(
+//       Icons.add,
+//       color: AppColors.white,
+//       size: 30,
+//     ),
+//   );
+// }
 }
