@@ -32,21 +32,14 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   Future<void> scanBarcode() async {
     try {
       String barcode = await FlutterBarcodeScanner.scanBarcode(
-          "#ff8E56FF",
-          // Line color
-          "Cancel",
-          // Cancel button text
-          true,
-          // Show flash icon
-          ScanMode.BARCODE,
-          // Scan mode
-          500,
-          // Delay between scans (in milliseconds)
-          "back",
-          // Use back camera
-          ScanFormat.ONLY_BARCODE // All supported scan formats
-          );
-
+        "#ff8E56FF",
+        "Cancel",
+        true,
+        ScanMode.BARCODE,
+        500,
+        "back",
+        ScanFormat.ONLY_BARCODE,
+      );
       if (!mounted) return;
 
       setState(() {

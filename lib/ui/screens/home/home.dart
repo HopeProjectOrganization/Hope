@@ -5,7 +5,9 @@ import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab/menu_tab.dart';
-import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
+import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
+import 'package:simple_barcode_scanner/enum.dart';
+import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
@@ -24,6 +26,42 @@ class _HomeScreenState extends State<HomeScreen> {
     const MenuTab(),
   ];
   int currentIndex = 0;
+  String scannedBarcode = "Not scanned yet";
+
+  Future<void> scanBarcode() async {
+    try {
+      String barcode = await FlutterBarcodeScanner.scanBarcode(
+          "#ff8E56FF",
+          "Cancel",
+          true,
+          ScanMode.BARCODE,
+          500,
+          "back",
+          ScanFormat.ONLY_BARCODE);
+
+      if (!mounted) return;
+
+      setState(() {
+        scannedBarcode = barcode != "-1" ? barcode : "Scan canceled";
+      });
+
+      // Navigate to another page and pass the scanned barcode as an argument
+      if (scannedBarcode != "-1" && scannedBarcode.isNotEmpty) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Result(
+              barcode: scannedBarcode,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        scannedBarcode = "Error occurred during scanning!";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
           shape: const CircleBorder(
             side: BorderSide(color: AppColors.white, width: 5),
           ),
-          onPressed: () {
-            Navigator.pushNamed(context, ScanTab.routeName);
-          },
+          onPressed: scanBarcode,
           child: const ImageIcon(
             AssetImage(AppIcons.scanIcon),
             color: AppColors.white,

@@ -25,4 +25,7 @@ class AppIcons {
   static const String menuFilled = "assets/icons/menuFilled.png";
 
   static const String allIcon = "assets/icons/allIcon.png";
+
+  static const String barCodeIcon = "assets/icons/BarcodeIcon.png";
+  static const String camera = "assets/icons/camera.png";
 }
