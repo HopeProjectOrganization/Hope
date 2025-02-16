@@ -48,6 +48,9 @@ dependencies:
   qr_code_dart_scan: ^0.7.7
   simple_barcode_scanner: ^0.3.0
   barcode_widget: ^2.0.1
+  barcode_scan2:
+  google_mlkit_text_recognition: ^0.14.0
+  image_picker: ^1.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,9 +1,9 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
+
 
 android {
     namespace = "com.example.hope"
@@ -37,6 +37,9 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+}
+dependencies {
+    implementation 'com.google.mlkit:text-recognition:16.0.0-beta3'
 }
 
 flutter {

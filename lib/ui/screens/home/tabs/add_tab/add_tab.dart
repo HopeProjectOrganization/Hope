@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AddTab extends StatefulWidget {
-  const AddTab({super.key});
-
   @override
   State<AddTab> createState() => _AwareTabState();
 }

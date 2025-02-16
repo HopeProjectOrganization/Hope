@@ -5,8 +5,6 @@ import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab/menu_tab.dart';
-import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
-
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
 
@@ -17,9 +15,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String scannedBarcode = "Not scanned yet";
+
   List<Widget> tabs = [
     const HomeTab(),
-    const AddTab(),
+    // AddTab(),
     AwareTab(),
     const MenuTab(),
   ];
@@ -35,7 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
             side: BorderSide(color: AppColors.white, width: 5),
           ),
           onPressed: () {
-            Navigator.pushNamed(context, ScanTab.routeName);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddTab()),
+            );
           },
           child: const ImageIcon(
             AssetImage(AppIcons.scanIcon),
