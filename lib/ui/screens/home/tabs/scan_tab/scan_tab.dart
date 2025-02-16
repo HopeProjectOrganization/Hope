@@ -14,7 +14,7 @@ class ScanTab extends StatefulWidget {
 class ScanTabState extends State<ScanTab> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: BarcodeScannerScreen(),
     );
@@ -22,26 +22,24 @@ class ScanTabState extends State<ScanTab> {
 }
 
 class BarcodeScannerScreen extends StatefulWidget {
-  const BarcodeScannerScreen({super.key});
-
   @override
-  BarcodeScannerScreenState createState() => BarcodeScannerScreenState();
+  _BarcodeScannerScreenState createState() => _BarcodeScannerScreenState();
 }
 
-class BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
+class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   String scannedBarcode = "Not scanned yet";
 
   Future<void> scanBarcode() async {
     try {
       String barcode = await FlutterBarcodeScanner.scanBarcode(
-          "#ff8E56FF",
-          "Cancel",
-          true,
-          ScanMode.BARCODE,
-          500,
-          "back",
-          ScanFormat.ALL_FORMATS);
-
+        "#ff8E56FF",
+        "Cancel",
+        true,
+        ScanMode.BARCODE,
+        500,
+        "back",
+        ScanFormat.ONLY_BARCODE,
+      );
       if (!mounted) return;
 
       setState(() {
@@ -57,19 +55,19 @@ class BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Barcode Scanner")),
+      appBar: AppBar(title: Text("Barcode Scanner")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               "Result: $scannedBarcode",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: scanBarcode,
-              child: const Text("Start Scanning"),
+              child: Text("Start Scanning"),
             ),
           ],
         ),

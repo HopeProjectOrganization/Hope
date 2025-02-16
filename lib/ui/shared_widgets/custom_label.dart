@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class CustomLabel extends StatelessWidget {
   final TextEditingController controller;
-  final String hint;
-  final Widget prefixIcon;
+  final String? hint;
+  final Widget? prefixIcon;
   final Widget? suffixIcon;
 
   const CustomLabel({
@@ -17,9 +17,18 @@ class CustomLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-        controller: controller,
-        style: Theme.of(context).textTheme.bodyLarge,
-        cursorColor: Theme.of(context).primaryColor,
-        decoration: InputDecoration(prefixIcon: prefixIcon, hintText: hint));
+      controller: controller,
+      style: Theme.of(context).textTheme.bodyLarge,
+      cursorColor: Theme.of(context).primaryColor,
+      decoration: InputDecoration(
+        prefixIcon: prefixIcon,
+        suffixIcon: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15),
+          child: suffixIcon,
+        ),
+        hintText: hint,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      ),
+    );
   }
 }
