@@ -14,7 +14,7 @@ class ScanTab extends StatefulWidget {
 class ScanTabState extends State<ScanTab> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: BarcodeScannerScreen(),
     );
@@ -22,6 +22,8 @@ class ScanTabState extends State<ScanTab> {
 }
 
 class BarcodeScannerScreen extends StatefulWidget {
+  const BarcodeScannerScreen({super.key});
+
   @override
   _BarcodeScannerScreenState createState() => _BarcodeScannerScreenState();
 }
@@ -55,19 +57,19 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Barcode Scanner")),
+      appBar: AppBar(title: const Text("Barcode Scanner")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               "Result: $scannedBarcode",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: scanBarcode,
-              child: Text("Start Scanning"),
+              child: const Text("Start Scanning"),
             ),
           ],
         ),

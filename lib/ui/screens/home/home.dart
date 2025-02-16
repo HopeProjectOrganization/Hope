@@ -4,7 +4,6 @@ import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
-import 'package:hope/ui/screens/home/tabs/menu_tab/menu_tab.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:simple_barcode_scanner/enum.dart';
 import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
@@ -23,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const HomeTab(),
     const AddTab(),
     AwareTab(),
-    const MenuTab(),
+    const AddTab(),
   ];
   int currentIndex = 0;
   String scannedBarcode = "Not scanned yet";

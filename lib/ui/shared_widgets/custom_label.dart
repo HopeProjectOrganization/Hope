@@ -23,6 +23,7 @@ class CustomLabel extends StatelessWidget {
       decoration: InputDecoration(
         prefixIcon: prefixIcon,
         suffixIcon: Padding(
+          // ignore: prefer_const_constructors
           padding: EdgeInsets.symmetric(horizontal: 15),
           child: suffixIcon,
         ),
