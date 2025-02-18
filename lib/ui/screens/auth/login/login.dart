@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
@@ -7,6 +9,7 @@ import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/language_switch.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = "/loginScreen";
@@ -20,15 +23,49 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late AppLocalizations appLocalizations;
 
+  var emailController = TextEditingController();
   var passwordController = TextEditingController();
 
   bool _obscurePassword = true;
 
   String? _emptyFieldError;
 
-  var emailController = TextEditingController();
 
   var formKey = GlobalKey<FormState>();
+
+  Future<void> loginUser(String email, String password) async {
+    final String url =
+        'http://localhost:8090/api/v1/auth/authenticate'; // Localhost for Android emulator
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // If server returns OK response, parse the JSON data
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        // You can now handle the token or user data as needed
+        print('Login successful: ${data['token']}');
+
+        // Navigate to the next screen if needed
+      } else {
+        // If the server returns an error response, display the error message
+        print('Failed to login: ${response.body}');
+      }
+    } catch (e) {
+      // Handle error
+      print('Error during login:$e');
+    }
+  }
 
   // late UserProvider userProvider;
   @override
@@ -144,7 +181,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
   Widget buildLoginButton(BuildContext context) {
-    return CustomButton(onClick: () {}, title: appLocalizations.login);
+    return CustomButton(
+        onClick: () {
+          if (formKey.currentState!.validate()) {
+            loginUser(emailController.text, passwordController.text);
+          }
+        },
+        title: appLocalizations.login);
   }
 
   Widget buildSignUpRow(BuildContext context) {

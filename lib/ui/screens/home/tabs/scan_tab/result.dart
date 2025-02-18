@@ -8,11 +8,11 @@ class Result extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Scanned Barcode')),
+      appBar: AppBar(title: const Text('Scanned Barcode')),
       body: Center(
         child: Text(
           'Scanned Barcode: $barcode',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
@@ -8,6 +10,7 @@ import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/shared_widgets/custom_check_field.dart';
 import 'package:hope/ui/shared_widgets/custom_drop_down.dart';
 import 'package:hope/ui/shared_widgets/custom_label.dart';
+import 'package:http/http.dart' as http;
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +28,7 @@ class _RegisterScreen extends State<RegisterScreen> {
   late AppLocalizations appLocalizations;
 
   DateTime selectedDate = DateTime.now();
-  var nameController = TextEditingController();
+  var usernameController = TextEditingController();
   var emailController = TextEditingController();
   var phoneController = TextEditingController();
   var passwordController = TextEditingController();
@@ -39,6 +42,54 @@ class _RegisterScreen extends State<RegisterScreen> {
   bool familyCancer = false;
   bool obscurePassword = true;
   bool obscureReassword = true;
+
+  Future<void> registerUser() async {
+    final String apiUrl = 'http://localhost:8080/api/auth/register';
+
+    // بناء البيانات التي سيتم إرسالها
+    final Map<String, dynamic> userData = {
+      'username': usernameController.text,
+      'email': emailController.text,
+      'password': passwordController.text,
+      'phone': phoneController.text,
+      'isMale': true, // استبدلها بالقيمة التي تحتاجها
+      'smoker': false, // استبدلها بالقيمة التي تحتاجها
+      'haveCancer': false, // استبدلها بالقيمة التي تحتاجها
+      'type': 'None', // استبدلها بالقيمة التي تحتاجها
+      'haveAFamilyCancer': false, // استبدلها بالقيمة التي تحتاجها
+      'familyType': 'None', // استبدلها بالقيمة التي تحتاجها
+      'dateOfBirth': '1990-01-01', // استبدلها بالقيمة التي تحتاجها
+    };
+
+    try {
+      // إرسال الطلب
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(userData), // تحويل البيانات إلى JSON
+      );
+
+      if (response.statusCode == 201) {
+        // إذا كانت الاستجابة ناجحة (201 Created)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم التسجيل بنجاح!')),
+        );
+      } else {
+        // إذا كانت الاستجابة تحتوي على خطأ
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('حدث خطأ في التسجيل!')),
+        );
+      }
+    } catch (e) {
+      // في حالة حدوث استثناء
+      print('حدث خطأ: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('فشل في الاتصال بالخادم!')),
+      );
+    }
+  }
   //late UserProvider userProvider;
 
   @override
@@ -59,7 +110,7 @@ class _RegisterScreen extends State<RegisterScreen> {
               height: MediaQuery.of(context).size.height * 0.3,
             ),
             CustomLabel(
-                controller: nameController,
+                controller: usernameController,
                 hint: appLocalizations.username,
                 prefixIcon: const ImageIcon(
                   AssetImage(AppIcons.emailIcon),
@@ -185,42 +236,11 @@ class _RegisterScreen extends State<RegisterScreen> {
   }
 
   FilledButton buildRegisterButton(BuildContext context) => FilledButton(
-      onPressed: () {}
-      //async {
-      //   try {
-      //     showLoading(context);
-      //     final userCredentials =
-      //     await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      //       email: emailController.text,
-      //       password: passwordController.text,
-      //     );
-      //     UserDM newUser = UserDM(
-      //         id: userCredentials.user!.uid,
-      //         name: nameController.text,
-      //         email: emailController.text);
-      //     await createUserInFirestore(newUser);
-      //     userProvider
-      //         .updateCurrentUser(await getUserFromFirestore(newUser.id));
-      //     hideLoading(context);
-      //   } on FirebaseAuthException catch (e) {
-      //     hideLoading(context);
-      //     String message = "Something went wrong please try again later";
-      //     if (e.code == 'weak-password') {
-      //       message = "The password provided is too weak.";
-      //     } else if (e.code == 'email-already-in-use') {
-      //       message = "The account already exists for that email.";
-      //     } else {
-      //       message = e.message ?? message;
-      //     }
-      //     showMessage(context, message, posButtonTitle: "ok", title: "Error");
-      //   }
-      //   // catch (e) {
-      //   //   print(e);
-      //   //   hideLoading(context);
-      //   //   showMessage(context, e.toString(), posButtonTitle: "ok", title: "Error");
-      //   // }
-      // }
-      ,
+      onPressed: () {
+        registerUser;
+        Navigator.pushNamed(context, LoginScreen.routeName);
+        print("success");
+      },
       child: Text(appLocalizations.createAccount));
 
   Row buildSignInTextRow(BuildContext context) {
