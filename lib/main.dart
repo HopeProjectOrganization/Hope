@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
         ScanTab.routeName: (_) => const ScanTab(),
         AddScanner.routeName: (_) => AddScanner(),
       },
-      initialRoute: HomeScreen.routeName,
+      initialRoute: RegisterScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.getCurrentTheme,
