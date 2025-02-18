@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
+import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
+import 'package:http/http.dart' as http;
 
 class ResetpasswordScreen extends StatefulWidget {
   static const String routeName = "/resetpasswordScreen";
@@ -14,7 +18,7 @@ class ResetpasswordScreen extends StatefulWidget {
 class ResetpasswordScreenState extends State<ResetpasswordScreen> {
   late AppLocalizations appLocalizations;
   final _formKey = GlobalKey<FormState>();
-
+  var emailController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -24,6 +28,29 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
 
   String? _passwordMatchError;
   String? _emptyFieldError;
+
+  Future<void> resetPassword(String email) async {
+    final url = Uri.parse('http://localhost:8080/api/v1/auth/reset-password');
+    final body = jsonEncode({
+      'email': email,
+    });
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        print('Password reset email sent successfully');
+      } else {
+        print('Failed to send reset password request: ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   String? _validatePasswords() {
     String newPassword = _newPasswordController.text;
@@ -160,20 +187,45 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
               ),
             ),
             const SizedBox(height: 32),
+            // FilledButton(
+            //   onPressed: () {
+            //     _validateEmptyFields(); // Validate if fields are filled
+            //     _validatePasswords(); // Validate password match
+            //     if (_emptyFieldError == null && _passwordMatchError == null) {
+            //       showLoading(context);
+            //       showMessage(context,
+            //       appLocalizations.yourPasswordHasBeenReset,
+            //       posButtonTitle: appLocalizations.done
+            //       );
+            //     }
+            //   },
+            //   child: Text(appLocalizations.reset),
+            // ),
             FilledButton(
-              onPressed: () {
-    _validateEmptyFields(); // Validate if fields are filled
-    _validatePasswords(); // Validate password match
-    if (_emptyFieldError == null && _passwordMatchError == null) {
-    // showLoading(context);
-    // showMessage(context,
-    // appLocalizations.yourPasswordHasBeenReset,
-    // posButtonTitle: appLocalizations.done
-    // );
-    }
+              onPressed: () async {
+                _validateEmptyFields();
+                _validatePasswords();
+                if (_emptyFieldError == null && _passwordMatchError == null) {
+                  showLoading(context);
+                  try {
+                    await resetPassword(emailController.text);
+                    showMessage(
+                      context,
+                      appLocalizations.yourPasswordHasBeenReset,
+                      posButtonTitle: appLocalizations.done,
+                    );
+                  } catch (e) {
+                    showMessage(
+                      context,
+                      'Error resetting password: $e',
+                    );
+                  } finally {
+                    Navigator.of(context).pop();
+                  }
+                }
               },
               child: Text(appLocalizations.reset),
-            ),
+            )
           ],
         ),
       ),

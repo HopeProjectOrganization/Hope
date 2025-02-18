@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/verification.dart';
+import 'package:http/http.dart' as http;
 
 class ForgetpasswordScreen extends StatefulWidget {
   static const String routeName = "/forgetpasswordScreen";
@@ -18,6 +21,32 @@ class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _inputController = TextEditingController();
 
+  // API call for forget-password
+  Future<void> forgetPassword(String input) async {
+    final url = Uri.parse('http://localhost:8080/api/v1/auth/forget-password');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'emailOrPhone': input, // Assuming your backend accepts this field
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // API success: Navigate to the verification screen
+        Navigator.pushNamed(context, VerficationScreen.routeName);
+      } else {
+        // API failed: Show error message
+        showMessage(context, "error");
+      }
+    } catch (e) {
+      // Handle network errors
+      showMessage(context, 'Error: $e');
+    }
+  }
+
   String? _validateInput(String value) {
     final emailRegEx =
         RegExp(r"^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$");
@@ -29,6 +58,12 @@ class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
       return appLocalizations.invalidEmailOrPhoneNumber;
     }
     return null;
+  }
+
+  void showMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
@@ -78,7 +113,7 @@ class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
             FilledButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  Navigator.pushNamed(context, VerficationScreen.routeName);
+                  forgetPassword(_inputController.text);
                 }
               },
               child: Text(appLocalizations.send),

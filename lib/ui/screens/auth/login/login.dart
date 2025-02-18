@@ -8,8 +8,8 @@ import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/language_switch.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:http/http.dart' as http;
+import 'package:icons_plus/icons_plus.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = "/loginScreen";
@@ -34,8 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var formKey = GlobalKey<FormState>();
 
   Future<void> loginUser(String email, String password) async {
-    final String url =
-        'http://localhost:8090/api/v1/auth/authenticate'; // Localhost for Android emulator
+    final String url = 'http://10.0.2.16:8080/api/v1/auth/authenticate';
 
     try {
       final response = await http.post(
