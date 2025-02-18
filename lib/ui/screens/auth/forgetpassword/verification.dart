@@ -54,7 +54,6 @@ class _VerficationScreenState extends State<VerficationScreen> {
                       controller: controllers[index],
                       focusNode: focusNodes[index],
                       onFieldSubmitted: (value) {
-                        // Automatically move focus to the next field if not the last
                         if (index < 3 && value.isNotEmpty) {
                           FocusScope.of(context)
                               .requestFocus(focusNodes[index + 1]);
@@ -70,16 +69,19 @@ class _VerficationScreenState extends State<VerficationScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  appLocalizations.receiveCode,
-                  style: Theme.of(context).textTheme.bodyLarge,
+                Expanded(
+                  child: Text(
+                    appLocalizations.receiveCode,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                 ),
-                TextButton(
+                Expanded(
+                    child: TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, RegisterScreen.routeName);
                   },
                   child: Text(appLocalizations.sendAgain),
-                )
+                ))
               ],
             ),
             const SizedBox(height: 32),

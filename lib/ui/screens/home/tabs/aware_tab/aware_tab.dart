@@ -34,9 +34,6 @@ class AwareTab extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 10,
-            ),
             Expanded(
               child: ListView.separated(
                   itemBuilder: (context, index) {

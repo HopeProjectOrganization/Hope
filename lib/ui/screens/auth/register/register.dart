@@ -34,55 +34,48 @@ class _RegisterScreen extends State<RegisterScreen> {
   var passwordController = TextEditingController();
   var repasswordController = TextEditingController();
 
-  bool male = false;
-  bool female = false;
+  bool isMale = false;
 
   bool smoke = false;
-  bool hadCancer = false;
+  bool haveCancer = false;
   bool familyCancer = false;
   bool obscurePassword = true;
   bool obscureReassword = true;
 
   Future<void> registerUser() async {
-    final String apiUrl = 'http://10.0.2.16:8080/api/auth/register';
-
+    const String apiUrl = 'http://localhost:8080/api/auth/register';
     final Map<String, dynamic> userData = {
       'username': usernameController.text,
       'email': emailController.text,
       'password': passwordController.text,
       'phone': phoneController.text,
-      'isMale': true, // استبدلها بالقيمة التي تحتاجها
-      'smoker': false, // استبدلها بالقيمة التي تحتاجها
-      'haveCancer': false, // استبدلها بالقيمة التي تحتاجها
-      'type': 'None', // استبدلها بالقيمة التي تحتاجها
-      'haveAFamilyCancer': false, // استبدلها بالقيمة التي تحتاجها
-      'familyType': 'None', // استبدلها بالقيمة التي تحتاجها
-      'dateOfBirth': '1990-01-01', // استبدلها بالقيمة التي تحتاجها
+      'isMale': (isMale ? true : false),
+      'smoker': smoke,
+      'haveCancer': haveCancer,
+      'type': 'None',
+      'haveAFamilyCancer': familyCancer,
+      'familyType': 'None',
+      'dateOfBirth': '1990-01-01',
     };
 
     try {
-      // إرسال الطلب
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
         },
-        body: json.encode(userData), // تحويل البيانات إلى JSON
+        body: json.encode(userData),
       );
-
-      if (response.statusCode == 200) {
-        // إذا كانت الاستجابة ناجحة (201 Created)
+      if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('تم التسجيل بنجاح!')),
         );
       } else {
-        // إذا كانت الاستجابة تحتوي على خطأ
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('حدث خطأ في التسجيل!')),
         );
       }
     } catch (e) {
-      // في حالة حدوث استثناء
       print('حدث خطأ: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('فشل في الاتصال بالخادم!')),
@@ -188,12 +181,12 @@ class _RegisterScreen extends State<RegisterScreen> {
                 CustomCheckField(
                     width: 150,
                     labelText: appLocalizations.female,
-                    isChecked: female),
+                    isChecked: isMale),
                 const Spacer(),
                 CustomCheckField(
                     width: 150,
                     labelText: appLocalizations.male,
-                    isChecked: male),
+                    isChecked: isMale),
               ],
             ),
             const SizedBox(height: 16),
@@ -204,15 +197,15 @@ class _RegisterScreen extends State<RegisterScreen> {
             const SizedBox(height: 16),
             CustomCheckField(
                 width: 300,
-                isChecked: hadCancer,
+                isChecked: haveCancer,
                 labelText: appLocalizations.hadCancer,
                 onChanged: (value) {
                   setState(() {
-                    hadCancer = value;
+                    haveCancer = value;
                   });
                 }),
             const SizedBox(height: 16),
-            if (hadCancer) const CustomDropDown(),
+            if (haveCancer) const CustomDropDown(),
             const SizedBox(height: 16),
             CustomCheckField(
                 width: 300,
