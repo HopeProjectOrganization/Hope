@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddScanner extends StatefulWidget {
@@ -22,7 +21,8 @@ class _AddScannerState extends State<AddScanner> {
 
   Future<void> pickImage(ImageSource source) async {
     final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: source);
+    final pickedImage = await picker.pickImage(
+        source: source, preferredCameraDevice: CameraDevice.rear);
     if (pickedImage != null) {
       setState(() {
         _image = File(pickedImage.path);
@@ -44,11 +44,11 @@ class _AddScannerState extends State<AddScanner> {
         scannedText = recognizedText.text.isNotEmpty
             ? recognizedText.text
             : "No text recognized!";
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddTab(),
-            ));
+        // Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => const AddTab(),
+        //     ));
         isScanning = false;
       });
       textRecognizer.close();

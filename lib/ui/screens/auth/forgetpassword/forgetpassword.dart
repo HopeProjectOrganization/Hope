@@ -22,8 +22,7 @@ class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
   final TextEditingController _inputController = TextEditingController();
 
   Future<void> forgetPassword(String input) async {
-    final url =
-        Uri.parse('http://192.168.78.153:8080/api/v1/auth/forget-password');
+    final url = Uri.parse('http://localhost:8080/api/v1/auth/forgot-password');
 
     try {
       final response = await http.post(
@@ -112,9 +111,10 @@ class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
             const SizedBox(height: 32),
             FilledButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  forgetPassword(_inputController.text);
-                }
+                // if (_formKey.currentState!.validate()) {
+                //   forgetPassword(_inputController.text);
+                // }
+                Navigator.pushNamed(context, VerficationScreen.routeName);
               },
               child: Text(appLocalizations.send),
             ),
