@@ -64,12 +64,12 @@ class MyApp extends StatelessWidget {
         AwareTab.routeName: (_) => AwareTab(),
         HomeScreen.routeName: (_) => const HomeScreen(),
         ScanTab.routeName: (_) => const ScanTab(),
-        AddScanner.routeName: (_) => AddScanner(),
+        AddScanner.routeName: (_) => const AddScanner(),
       },
-      initialRoute: RegisterScreen.routeName,
+      initialRoute: SetupScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: themeProvider.getCurrentTheme,
+      themeMode: themeProvider.themeMode,
     );
   }
 }

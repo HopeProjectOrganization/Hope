@@ -9,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 class AddScanner extends StatefulWidget {
   static const routeName = '/addScanner';
 
+  const AddScanner({super.key});
+
   @override
   _AddScannerState createState() => _AddScannerState();
 }

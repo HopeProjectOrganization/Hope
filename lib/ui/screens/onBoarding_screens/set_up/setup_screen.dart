@@ -62,7 +62,7 @@ class SetupScreen extends StatelessWidget {
                     appLocalizations.theme,
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
-                  const ThemeSwitch(),
+                  ThemeSwitch(),
                 ],
               ),
               const SizedBox(height: 16),

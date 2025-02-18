@@ -43,8 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         scannedBarcode = barcode != "-1" ? barcode : "Scan canceled";
       });
-
-      // Navigate to another page and pass the scanned barcode as an argument
       if (scannedBarcode != "-1" && scannedBarcode.isNotEmpty) {
         Navigator.push(
           context,
@@ -119,19 +117,4 @@ class _HomeScreenState extends State<HomeScreen> {
         body: tabs[currentIndex]);
   }
 
-// FloatingActionButton buildFab() {
-//   return FloatingActionButton(
-//     onPressed: () {
-//       Navigator.pushNamed(context, LoginScreen.routeName);
-//     },
-//     backgroundColor: AppColors.purple,
-//     shape: const CircleBorder(
-//         side: BorderSide(width: 5, color: AppColors.white)),
-//     child: const Icon(
-//       Icons.add,
-//       color: AppColors.white,
-//       size: 30,
-//     ),
-//   );
-// }
 }

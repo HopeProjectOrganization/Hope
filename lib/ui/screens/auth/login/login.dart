@@ -8,8 +8,8 @@ import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/language_switch.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:http/http.dart' as http;
+import 'package:icons_plus/icons_plus.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = "/loginScreen";
@@ -34,8 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var formKey = GlobalKey<FormState>();
 
   Future<void> loginUser(String email, String password) async {
-    final String url =
-        'http://localhost:8090/api/v1/auth/authenticate'; // Localhost for Android emulator
+    const String url = 'http://localhost:8080/api/v1/auth/authenticate';
 
     try {
       final response = await http.post(
@@ -50,19 +49,14 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (response.statusCode == 200) {
-        // If server returns OK response, parse the JSON data
         final Map<String, dynamic> data = jsonDecode(response.body);
 
-        // You can now handle the token or user data as needed
         print('Login successful: ${data['token']}');
 
-        // Navigate to the next screen if needed
       } else {
-        // If the server returns an error response, display the error message
         print('Failed to login: ${response.body}');
       }
     } catch (e) {
-      // Handle error
       print('Error during login:$e');
     }
   }
@@ -193,18 +187,23 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget buildSignUpRow(BuildContext context) {
     return Row(
       children: [
-        Text(
-          appLocalizations.dontHaveAccount,
+        Expanded(
+          flex: 1,
+          child: Text(
+            appLocalizations.dontHaveAccount,
           style: Theme.of(context).textTheme.bodyLarge,
+          ),
         ),
-        TextButton(
-          onPressed: () {
+        Expanded(
+            flex: 1,
+            child: TextButton(
+              onPressed: () {
             Navigator.pushNamed(context, RegisterScreen.routeName);
           },
           child: Text(
             appLocalizations.createAccount,
           ),
-        )
+            ))
       ],
     );
   }
@@ -244,10 +243,16 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Brand(Brands.google),
+              Expanded(
+                flex: 1,
+                child: Brand(Brands.google),
+              ),
               const SizedBox(width: 8),
-              Text(
-                appLocalizations.googleLogin,
+              Expanded(
+                flex: 3,
+                child: Text(
+                  appLocalizations.googleLogin,
+                ),
               ),
             ],
           )),

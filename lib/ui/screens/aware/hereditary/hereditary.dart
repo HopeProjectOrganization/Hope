@@ -39,7 +39,10 @@ class _HereditaryState extends State<Hereditary> {
           ),
           appBar: AppBar(
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_outlined),
+              icon: const Icon(
+                Icons.arrow_back_outlined,
+                color: AppColors.white,
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
