@@ -21,9 +21,9 @@ class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _inputController = TextEditingController();
 
-  // API call for forget-password
   Future<void> forgetPassword(String input) async {
-    final url = Uri.parse('http://localhost:8080/api/v1/auth/forget-password');
+    final url =
+        Uri.parse('http://192.168.78.153:8080/api/v1/auth/forget-password');
 
     try {
       final response = await http.post(

@@ -43,7 +43,7 @@ class _RegisterScreen extends State<RegisterScreen> {
   bool obscureReassword = true;
 
   Future<void> registerUser() async {
-    const String apiUrl = 'http://localhost:8080/api/auth/register';
+    const String apiUrl = 'http://192.168.78.153:8080/api/v1/auth/register';
     final Map<String, dynamic> userData = {
       'username': usernameController.text,
       'email': emailController.text,
@@ -66,7 +66,7 @@ class _RegisterScreen extends State<RegisterScreen> {
         },
         body: json.encode(userData),
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('تم التسجيل بنجاح!')),
         );
