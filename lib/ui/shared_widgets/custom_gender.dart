@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:hope/core/theme/app_colors.dart';
 
 class CustomGender extends StatefulWidget {
-  final bool isChecked;
+  final bool isSelected; // Determines if this option is selected
   final String labelText;
-  final ValueChanged<bool>? onChanged; // Callback to notify parent
+  final ValueChanged<bool> onChanged; // Callback to notify parent about change
 
   const CustomGender({
     super.key,
-    required this.isChecked,
+    required this.isSelected,
     required this.labelText,
-    this.onChanged,
+    required this.onChanged,
   });
 
   @override
@@ -18,54 +18,59 @@ class CustomGender extends StatefulWidget {
 }
 
 class _CustomGenderState extends State<CustomGender> {
-  late bool isChecked;
-
-  @override
-  void initState() {
-    super.initState();
-    isChecked = widget.isChecked; // Initialize state from widget property
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          isChecked = !isChecked; // Toggle checked state
-        });
-        widget.onChanged?.call(isChecked); // Notify parent about change
+        widget.onChanged(true);
       },
       child: Container(
         width: 200,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey), // Border color
+          border: Border.all(color: AppColors.gray), // Border color
           borderRadius: BorderRadius.circular(20), // Rounded border
-          color: isChecked
-              ? AppColors.purple.withOpacity(0.2)
+          color: widget.isSelected
+              ? AppColors.purple.withOpacity(0.1)
               : Colors.transparent, // Change color when selected
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Theme(
+              data: Theme.of(context).copyWith(
+                radioTheme: RadioThemeData(
+                  fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                    if (states.contains(MaterialState.selected)) {
+                      return AppColors.purple;
+                    }
+                    return AppColors
+                        .gray; // The border circle color when not selected
+                  }),
+                  overlayColor:
+                      MaterialStateProperty.resolveWith<Color>((states) {
+                    if (states.contains(MaterialState.hovered)) {
+                      return AppColors.gray; // Optional hover color
+                    }
+                    return Colors.transparent; // No overlay otherwise
+                  }),
+                ),
+              ),
+              child: Radio<bool>(
+                value: widget.isSelected,
+                groupValue: true, // Always selected in this widget
+                onChanged: (_) {
+                  widget.onChanged(true); // Notify parent when selected
+                },
+              ),
+            ),
+            const SizedBox(width: 8),
             Text(
               widget.labelText,
               style: const TextStyle(
-                fontSize: 16, // Change text color when selected
+                fontSize: 16,
+                color: AppColors.gray,
               ),
-            ),
-            const SizedBox(width: 8), // Space between text and checkbox
-            Checkbox(
-              value: isChecked,
-              onChanged: (bool? value) {
-                setState(() {
-                  isChecked = value ?? false;
-                });
-                widget.onChanged?.call(isChecked);
-              },
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5)), // Rounded checkbox
-              activeColor: AppColors.purple, // Color when checked
             ),
           ],
         ),

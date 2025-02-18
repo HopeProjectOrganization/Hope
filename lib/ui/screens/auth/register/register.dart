@@ -9,9 +9,10 @@ import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/shared_widgets/custom_check_field.dart';
 import 'package:hope/ui/shared_widgets/custom_drop_down.dart';
-import 'package:hope/ui/shared_widgets/custom_label.dart';
+import 'package:hope/ui/shared_widgets/custom_gender.dart';
+import 'package:hope/ui/shared_widgets/custom_text_field.dart';
 import 'package:http/http.dart' as http;
-import 'package:icons_plus/icons_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -34,13 +35,19 @@ class _RegisterScreen extends State<RegisterScreen> {
   var passwordController = TextEditingController();
   var repasswordController = TextEditingController();
 
-  bool isMale = false;
+  bool _obscureNewPassword = true;
+  bool _obscureConfirmPassword = true;
 
+  String? _passwordMatchError;
+  String? _emptyFieldError;
+
+  bool? isMale;
   bool smoke = false;
   bool haveCancer = false;
   bool familyCancer = false;
-  bool obscurePassword = true;
-  bool obscureReassword = true;
+
+  String cancerType = 'None';
+  String familyCancerType = 'None';
 
   Future<void> registerUser() async {
     const String apiUrl = 'http://192.168.78.153:8080/api/v1/auth/register';
@@ -49,13 +56,14 @@ class _RegisterScreen extends State<RegisterScreen> {
       'email': emailController.text,
       'password': passwordController.text,
       'phone': phoneController.text,
-      'isMale': (isMale ? true : false),
+      'isMale': isMale,
       'smoker': smoke,
       'haveCancer': haveCancer,
-      'type': 'None',
+      'type': cancerType,
       'haveAFamilyCancer': familyCancer,
-      'familyType': 'None',
-      'dateOfBirth': '1990-01-01',
+      'familyType': familyCancerType,
+      'dateOfBirth':
+          "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}",
     };
 
     try {
@@ -70,6 +78,7 @@ class _RegisterScreen extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('تم التسجيل بنجاح!')),
         );
+        Navigator.pushNamed(context, LoginScreen.routeName);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('حدث خطأ في التسجيل!')),
@@ -82,13 +91,12 @@ class _RegisterScreen extends State<RegisterScreen> {
       );
     }
   }
-  //late UserProvider userProvider;
 
   @override
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
-    // userProvider = context.userProvider;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(appLocalizations.register),
@@ -101,92 +109,107 @@ class _RegisterScreen extends State<RegisterScreen> {
               AppAssets.register,
               height: MediaQuery.of(context).size.height * 0.3,
             ),
-            CustomLabel(
+            CustomTextField(
                 controller: usernameController,
                 hint: appLocalizations.username,
-                prefixIcon: const ImageIcon(
-                  AssetImage(AppIcons.emailIcon),
-                )),
+                prefixIcon: const ImageIcon(AssetImage(AppIcons.emailIcon))),
             const SizedBox(height: 16),
-            CustomLabel(
+            CustomTextField(
               controller: emailController,
               hint: appLocalizations.email,
-              prefixIcon: const ImageIcon(AssetImage(AppIcons.emailIcon) ,),
+              prefixIcon: const ImageIcon(AssetImage(AppIcons.emailIcon)),
             ),
             const SizedBox(height: 16),
-            CustomLabel(
+            CustomTextField(
               controller: phoneController,
               hint: appLocalizations.phone,
               prefixIcon: const ImageIcon(AssetImage(AppIcons.phoneIcon)),
             ),
             const SizedBox(height: 16),
             InkWell(
-                child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    height: 56,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: themeProvider.isDark()
-                              ? AppColors.purple
-                              : AppColors.gray),
-                      borderRadius: const BorderRadius.all(Radius.circular(16)),
-                    ),
-                    child: Row(
-                      children: [
-                        ImageIcon(
-                          const AssetImage(AppIcons.calenderIcon),
-                          color: themeProvider.isDark()
-                              ? AppColors.white
-                              : AppColors.gray,
-                        ),
-                        const SizedBox(
-                          width: 16,
-                        ),
-                        Text(
-                          "${selectedDate.year} / ${selectedDate.month} / ${selectedDate.day}",
-                          style: Theme.of(context).primaryTextTheme.titleMedium,
-                        )
-                      ],
-                    )),
-                onTap: () async {
-                  setState(() {});
-                }),
-            const SizedBox(height: 16),
-            CustomLabel(
-              controller: passwordController,
-              hint: appLocalizations.password,
-              prefixIcon: const ImageIcon(AssetImage(AppIcons.passwordIcon)),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.grey,
-                ),
-                onPressed: () {
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: selectedDate,
+                  firstDate: DateTime(1900), // Adjust as needed
+                  lastDate: DateTime.now(),
+                );
+                if (pickedDate != null && pickedDate != selectedDate) {
                   setState(() {
-                    obscurePassword = !obscurePassword;
+                    selectedDate = pickedDate;
                   });
-                },
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                height: 56,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: themeProvider.isDark()
+                        ? AppColors.purple
+                        : AppColors.gray,
+                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                ),
+                child: Row(
+                  children: [
+                    ImageIcon(
+                      const AssetImage(AppIcons.calenderIcon),
+                      color: themeProvider.isDark()
+                          ? AppColors.white
+                          : AppColors.gray,
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      DateFormat('yyyy-MM-dd').format(selectedDate),
+                      style: Theme.of(context).primaryTextTheme.titleMedium,
+                    ),
+                  ],
+                ),
               ),
             ),
+            // InkWell(
+            //     onTap: () async {
+            //       var selectedTime = (await showTimePicker(
+            //           context: context,
+            //           initialTime: TimeOfDay.fromDateTime(selectedDate))) ??
+            //           TimeOfDay.fromDateTime(selectedDate);
+            //       selectedDate = Date(selectedDate.year, selectedDate.month,
+            //           selectedDate.day);
+            //       setState(() {});
+            //     },
+            //     child: const Text("Select Time")),
             const SizedBox(height: 16),
-            CustomLabel(
-              controller: repasswordController,
-              hint: appLocalizations.confirmPassword,
-              suffixIcon: const Icon(EvaIcons.eye),
-              prefixIcon: const ImageIcon(AssetImage(AppIcons.passwordIcon)),
-            ),
+            passwordTextField(context),
+            const SizedBox(height: 16),
+            confirmPasswordTextField(context),
             const SizedBox(height: 16),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                CustomCheckField(
-                    width: 150,
-                    labelText: appLocalizations.female,
-                    isChecked: isMale),
-                const Spacer(),
-                CustomCheckField(
-                    width: 150,
+                Flexible(
+                  child: CustomGender(
+                    isSelected: isMale == true,
                     labelText: appLocalizations.male,
-                    isChecked: isMale),
+                    onChanged: (value) {
+                      setState(() {
+                        isMale = true;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Flexible(
+                  child: CustomGender(
+                    isSelected: isMale == false,
+                    labelText: appLocalizations.female,
+                    onChanged: (value) {
+                      setState(() {
+                        isMale = false;
+                      });
+                    },
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -204,8 +227,8 @@ class _RegisterScreen extends State<RegisterScreen> {
                     haveCancer = value;
                   });
                 }),
-            const SizedBox(height: 16),
-            if (haveCancer) const CustomDropDown(),
+            if (haveCancer) const SizedBox(height: 16),
+            if (haveCancer) CustomDropDown(),
             const SizedBox(height: 16),
             CustomCheckField(
                 width: 300,
@@ -216,13 +239,61 @@ class _RegisterScreen extends State<RegisterScreen> {
                     familyCancer = value;
                   });
                 }),
-            const SizedBox(height: 16),
-            if (familyCancer) const CustomDropDown(),
+            if (familyCancer) const SizedBox(height: 16),
+            if (familyCancer) CustomDropDown(),
             const SizedBox(height: 32),
             buildRegisterButton(context),
-            buildSignInTextRow(context)
+            buildSignInTextRow(context),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget passwordTextField(BuildContext context) {
+    return TextFormField(
+      controller: passwordController,
+      style: Theme.of(context).textTheme.bodyLarge,
+      cursorColor: Theme.of(context).primaryColor,
+      obscureText: _obscureNewPassword,
+      decoration: InputDecoration(
+        hintText: appLocalizations.password,
+        prefixIcon: const ImageIcon(AssetImage(AppIcons.passwordIcon)),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureNewPassword = !_obscureNewPassword;
+            });
+          },
+        ),
+        errorText: _emptyFieldError,
+      ),
+    );
+  }
+
+  Widget confirmPasswordTextField(BuildContext context) {
+    return TextFormField(
+      controller: repasswordController,
+      style: Theme.of(context).textTheme.bodyLarge,
+      cursorColor: Theme.of(context).primaryColor,
+      obscureText: _obscureConfirmPassword,
+      decoration: InputDecoration(
+        hintText: appLocalizations.confirmNewPass,
+        prefixIcon: const ImageIcon(AssetImage(AppIcons.passwordIcon)),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureConfirmPassword = !_obscureConfirmPassword;
+            });
+          },
+        ),
+        errorText: _passwordMatchError ?? _emptyFieldError,
       ),
     );
   }
@@ -230,8 +301,6 @@ class _RegisterScreen extends State<RegisterScreen> {
   FilledButton buildRegisterButton(BuildContext context) => FilledButton(
       onPressed: () {
         registerUser();
-        Navigator.pushNamed(context, LoginScreen.routeName);
-        print("success");
       },
       child: Text(appLocalizations.createAccount));
 

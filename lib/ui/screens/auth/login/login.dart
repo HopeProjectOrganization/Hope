@@ -28,9 +28,10 @@ class _LoginScreenState extends State<LoginScreen> {
   var passwordController = TextEditingController();
 
   bool _obscurePassword = true;
-
   String? _emptyFieldError;
 
+  String? emailError;
+  String? passwordError;
 
   var formKey = GlobalKey<FormState>();
 
@@ -48,25 +49,30 @@ class _LoginScreenState extends State<LoginScreen> {
           'password': password,
         }),
       );
-
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         Navigator.pushNamed(context, HomeScreen.routeName);
         print('Login successful: ${data['token']}');
 
+        setState(() {
+          emailError = null;
+          passwordError = null;
+        });
       } else {
-        print('Failed to login: ${response.body}');
+        setState(() {
+          emailError = 'Email or password may be incorrect';
+          passwordError = 'Email or password may be incorrect';
+        });
       }
     } catch (e) {
-      print('Error during login:$e');
+      print('Error during login: $e');
     }
   }
 
-  // late UserProvider userProvider;
   @override
   Widget build(BuildContext context) {
     appLocalizations = AppLocalizations.of(context)!;
-    // userProvider = context.userProvider;
+
     return Scaffold(
       body: SafeArea(
         child: Form(
@@ -117,7 +123,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget buildPasswordTextField(BuildContext context) {
-    appLocalizations = AppLocalizations.of(context)!;
     return TextFormField(
       controller: passwordController,
       style: Theme.of(context).textTheme.bodyLarge,
@@ -138,26 +143,41 @@ class _LoginScreenState extends State<LoginScreen> {
           },
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.grey),
+          borderSide: BorderSide(
+              color: passwordError != null ? Colors.red : Colors.grey),
           borderRadius: BorderRadius.circular(16),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.grey),
+          borderSide: BorderSide(
+              color: passwordError != null ? Colors.red : Colors.grey),
           borderRadius: BorderRadius.circular(16),
         ),
-        errorText: _emptyFieldError,
+        errorText: passwordError,
         errorStyle: const TextStyle(color: Colors.red),
       ),
     );
   }
 
-  TextFormField buildEmailTextField(BuildContext context) {
+  Widget buildEmailTextField(BuildContext context) {
     return TextFormField(
       style: Theme.of(context).textTheme.bodyLarge,
       cursorColor: Theme.of(context).primaryColor,
       decoration: InputDecoration(
-          prefixIcon: const ImageIcon(AssetImage(AppIcons.emailIcon)),
-          hintText: appLocalizations.email),
+        prefixIcon: const ImageIcon(AssetImage(AppIcons.emailIcon)),
+        hintText: appLocalizations.email,
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: emailError != null ? Colors.red : Colors.grey),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: emailError != null ? Colors.red : Colors.grey),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        errorText: emailError,
+        errorStyle: const TextStyle(color: Colors.red),
+      ),
       controller: emailController,
       validator: (email) {
         if (email == null || email.isEmpty) {
@@ -173,7 +193,6 @@ class _LoginScreenState extends State<LoginScreen> {
       },
     );
   }
-
 
   Widget buildLoginButton(BuildContext context) {
     return CustomButton(

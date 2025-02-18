@@ -6,6 +6,7 @@ class CustomTextField extends StatelessWidget {
   final IconData? iconData;
   final int minLines;
   final Widget? suffixIcon;
+  final Widget? prefixIcon;
 
   const CustomTextField({
     super.key,
@@ -13,6 +14,7 @@ class CustomTextField extends StatelessWidget {
     required this.hint,
     this.iconData,
     this.suffixIcon,
+    this.prefixIcon,
     this.minLines = 1,
   });
 
@@ -27,7 +29,12 @@ class CustomTextField extends StatelessWidget {
           minLines: minLines,
           maxLines: 6,
           decoration: InputDecoration(
-            prefixIcon: iconData == null ? null : Icon(iconData),
+            prefixIcon: prefixIcon != null
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: prefixIcon, // Display the provided prefixIcon
+                  )
+                : (iconData != null ? Icon(iconData) : null),
             hintMaxLines: minLines,
             hintText: hint,
             contentPadding:
@@ -37,7 +44,7 @@ class CustomTextField extends StatelessWidget {
         Positioned(
           right: 8, // Padding from the right
           top: 8, // Padding from the top
-          child: suffixIcon ?? Container(), // Show the suffixIcon if provided
+          child: suffixIcon ?? Container(),
         ),
       ],
     );
