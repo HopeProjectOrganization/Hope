@@ -51,6 +51,8 @@ class _RegisterScreen extends State<RegisterScreen> {
 
   Future<void> registerUser() async {
     const String apiUrl = 'http://192.168.78.153:8080/api/v1/auth/register';
+    DateTime formatDay =
+        DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
     final Map<String, dynamic> userData = {
       'username': usernameController.text,
       'email': emailController.text,
@@ -62,8 +64,7 @@ class _RegisterScreen extends State<RegisterScreen> {
       'type': cancerType,
       'haveAFamilyCancer': familyCancer,
       'familyType': familyCancerType,
-      'dateOfBirth':
-          "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}",
+      'dateOfBirth': "${DateFormat('yyyy-MM-dd').format(selectedDate)}",
     };
 
     try {
