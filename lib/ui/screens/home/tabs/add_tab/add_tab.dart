@@ -14,6 +14,7 @@ import 'package:simple_barcode_scanner/enum.dart';
 import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
 
 class AddTab extends StatefulWidget {
+  static const routeName = '/addTab';
   const AddTab({super.key});
 
   @override
