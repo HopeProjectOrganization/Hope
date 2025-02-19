@@ -94,7 +94,14 @@ class AppTheme {
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.red, width: 1),
         )),
-  );
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: AppColors.purple,
+        selectedItemColor: AppColors.white,
+        selectedLabelStyle: TextStyle(
+          color: AppColors.white,
+        ),
+        unselectedItemColor: AppColors.white,
+      ));
 
   static ThemeData darkTheme = ThemeData(
       scaffoldBackgroundColor: AppColors.dark,
@@ -142,6 +149,8 @@ class AppTheme {
       primaryTextTheme: const TextTheme(
         titleMedium: TextStyle(
             color: AppColors.white, fontSize: 16, fontWeight: FontWeight.w500),
+        titleSmall: TextStyle(
+            color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
@@ -198,5 +207,10 @@ class AppTheme {
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.purple,
+        selectedItemColor: AppColors.dark,
+        selectedLabelStyle: TextStyle(
+          color: AppColors.dark,
+        ),
+        unselectedItemColor: AppColors.dark,
       ));
 }

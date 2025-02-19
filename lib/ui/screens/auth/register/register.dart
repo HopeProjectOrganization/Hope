@@ -50,7 +50,7 @@ class _RegisterScreen extends State<RegisterScreen> {
   String familyCancerType = 'None';
 
   Future<void> registerUser() async {
-    const String apiUrl = 'http://172.25.36.169:8080/api/v1/auth/register';
+    const String apiUrl = 'http://172.25.37.9:9090/api/v1/auth/register';
     DateTime formatDay =
         DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
     final Map<String, dynamic> userData = {
@@ -113,7 +113,7 @@ class _RegisterScreen extends State<RegisterScreen> {
             CustomTextField(
                 controller: usernameController,
                 hint: appLocalizations.username,
-                prefixIcon: const ImageIcon(AssetImage(AppIcons.emailIcon))),
+                prefixIcon: const ImageIcon(AssetImage(AppIcons.userIcon))),
             const SizedBox(height: 16),
             CustomTextField(
               controller: emailController,

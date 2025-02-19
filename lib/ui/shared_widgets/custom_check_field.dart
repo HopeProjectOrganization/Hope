@@ -61,7 +61,7 @@ class _CustomCheckFieldState extends State<CustomCheckField> {
             Expanded(
               child: Text(
                 widget.labelText,
-                style: Theme.of(context).primaryTextTheme.labelLarge,
+                style: Theme.of(context).primaryTextTheme.titleMedium,
                 softWrap: true, // Allows text to wrap
                 overflow: TextOverflow.visible, // Prevents clipping
               ),

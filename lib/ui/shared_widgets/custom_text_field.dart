@@ -39,7 +39,7 @@ class CustomTextField extends StatelessWidget {
           cursorColor: Theme.of(context).primaryColor,
           controller: controller,
           minLines: minLines,
-          maxLines: 6,
+          maxLines: minLines > 1 ? minLines : 1,
           decoration: InputDecoration(
             prefixIcon: prefixIcon,
             hintMaxLines: minLines,
@@ -49,19 +49,19 @@ class CustomTextField extends StatelessWidget {
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
                   color: error != null
-                      ? Colors.red
+                      ? AppColors.red
                       : themeProvider.isDark()
                           ? AppColors.purple
                           : AppColors.gray),
               borderRadius: BorderRadius.circular(16),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: error != null ? Colors.red : Colors.grey),
+              borderSide: BorderSide(
+                  color: error != null ? AppColors.red : AppColors.gray),
               borderRadius: BorderRadius.circular(16),
             ),
             errorText: error,
-            errorStyle: const TextStyle(color: Colors.red),
+            errorStyle: const TextStyle(color: AppColors.red),
           ),
         ),
         Positioned(

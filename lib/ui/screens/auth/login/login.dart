@@ -38,8 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var formKey = GlobalKey<FormState>();
 
   Future<void> loginUser(String email, String password) async {
-    const String apiUrl = 'http://172.25.36.169:8080/api/v1/auth/authenticate';
-
+    const String apiUrl = 'http://172.25.37.9:8080/api/v1/auth/authenticate';
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -153,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return CustomTextField(
       controller: emailController,
       hint: appLocalizations.email,
-      prefixIcon: const ImageIcon(AssetImage(AppIcons.phoneIcon)),
+      prefixIcon: const ImageIcon(AssetImage(AppIcons.emailIcon)),
       error: emailError,
       validator: (email) {
         if (email == null || email.isEmpty) {

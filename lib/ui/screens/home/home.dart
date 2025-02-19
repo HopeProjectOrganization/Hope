@@ -113,29 +113,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 BottomNavigationBarItem(
                   icon: ImageIcon(
                     AssetImage(AppIcons.homeIcon),
-                    color: color,
                   ),
                   label: appLocalizations.home,
-                  activeIcon:
-                      ImageIcon(AssetImage(AppIcons.homeFilled), color: color),
+                  activeIcon: ImageIcon(
+                    AssetImage(AppIcons.homeFilled),
+                  ),
                 ),
                 BottomNavigationBarItem(
-                  icon: ImageIcon(AssetImage(AppIcons.addIcon), color: color),
+                  icon: ImageIcon(
+                    AssetImage(AppIcons.addIcon),
+                  ),
                   label: appLocalizations.add,
-                  activeIcon:
-                      ImageIcon(AssetImage(AppIcons.addFilled), color: color),
+                  activeIcon: ImageIcon(
+                    AssetImage(AppIcons.addFilled),
+                  ),
                 ),
                 BottomNavigationBarItem(
-                  icon: ImageIcon(AssetImage(AppIcons.awareIcon), color: color),
+                  icon: ImageIcon(
+                    AssetImage(AppIcons.awareIcon),
+                  ),
                   label: appLocalizations.aware,
-                  activeIcon:
-                      ImageIcon(AssetImage(AppIcons.awareFilled), color: color),
+                  activeIcon: ImageIcon(
+                    AssetImage(AppIcons.awareFilled),
+                  ),
                 ),
                 BottomNavigationBarItem(
-                  icon: ImageIcon(AssetImage(AppIcons.menuIcon), color: color),
+                  icon: ImageIcon(
+                    AssetImage(AppIcons.menuIcon),
+                  ),
                   label: appLocalizations.menu,
-                  activeIcon:
-                      ImageIcon(AssetImage(AppIcons.menuFilled), color: color),
+                  activeIcon: ImageIcon(
+                    AssetImage(AppIcons.menuFilled),
+                  ),
                 ),
           ],
         ),
