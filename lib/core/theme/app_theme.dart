@@ -7,16 +7,32 @@ class AppTheme {
     scaffoldBackgroundColor: AppColors.white,
     dividerColor: AppColors.purple,
     primaryColor: AppColors.purple,
+    primaryColorDark: AppColors.dark,
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.white,
       foregroundColor: AppColors.purple,
       centerTitle: true,
       elevation: 0,
     ),
+    radioTheme: RadioThemeData(
+      fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(MaterialState.selected)) {
+          return AppColors.purple;
+        }
+        return AppColors.gray;
+      }),
+      overlayColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(MaterialState.hovered)) {
+          return AppColors.gray;
+        }
+        return Colors.transparent;
+      }),
+    ),
     primaryTextTheme: const TextTheme(
       titleMedium: TextStyle(
           color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
     ),
+    bottomAppBarTheme: BottomAppBarTheme(color: AppColors.purple, elevation: 5),
     textTheme: const TextTheme(
       bodyLarge: TextStyle(
           color: AppColors.dark, fontSize: 16, fontWeight: FontWeight.w500),
@@ -85,6 +101,22 @@ class AppTheme {
       dividerColor: AppColors.purple,
       dividerTheme: const DividerThemeData(
         color: AppColors.purple,
+      ),
+      bottomAppBarTheme:
+          BottomAppBarTheme(color: AppColors.purple, elevation: 5),
+      radioTheme: RadioThemeData(
+        fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(MaterialState.selected)) {
+            return AppColors.purple;
+          }
+          return AppColors.white;
+        }),
+        overlayColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(MaterialState.hovered)) {
+            return AppColors.white;
+          }
+          return Colors.transparent;
+        }),
       ),
       primaryColor: AppColors.purple,
       textTheme: const TextTheme(

@@ -8,6 +8,7 @@ import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
+import 'package:hope/ui/shared_widgets/custom_text_field.dart';
 import 'package:hope/ui/shared_widgets/language_switch.dart';
 import 'package:http/http.dart' as http;
 import 'package:icons_plus/icons_plus.dart';
@@ -36,11 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
   var formKey = GlobalKey<FormState>();
 
   Future<void> loginUser(String email, String password) async {
-    const String url = 'http://192.168.78.153:8080/api/v1/auth/authenticate';
+    const String apiUrl = 'http://192.168.1.17:9090/api/v1/auth/authenticate';
 
     try {
       final response = await http.post(
-        Uri.parse(url),
+        Uri.parse(apiUrl),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -123,18 +124,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget buildPasswordTextField(BuildContext context) {
-    return TextFormField(
+    return CustomTextField(
       controller: passwordController,
-      style: Theme.of(context).textTheme.bodyLarge,
-      cursorColor: Theme.of(context).primaryColor,
-      obscureText: _obscurePassword,
-      decoration: InputDecoration(
         prefixIcon: const ImageIcon(AssetImage(AppIcons.passwordIcon)),
-        hintText: appLocalizations.password,
-        suffixIcon: IconButton(
+      hint: appLocalizations.password,
+      suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility_off : Icons.visibility,
-            color: Colors.grey,
           ),
           onPressed: () {
             setState(() {
@@ -142,43 +138,16 @@ class _LoginScreenState extends State<LoginScreen> {
             });
           },
         ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-              color: passwordError != null ? Colors.red : Colors.grey),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-              color: passwordError != null ? Colors.red : Colors.grey),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        errorText: passwordError,
-        errorStyle: const TextStyle(color: Colors.red),
-      ),
+      error: passwordError,
     );
   }
 
   Widget buildEmailTextField(BuildContext context) {
-    return TextFormField(
-      style: Theme.of(context).textTheme.bodyLarge,
-      cursorColor: Theme.of(context).primaryColor,
-      decoration: InputDecoration(
-        prefixIcon: const ImageIcon(AssetImage(AppIcons.emailIcon)),
-        hintText: appLocalizations.email,
-        enabledBorder: OutlineInputBorder(
-          borderSide:
-              BorderSide(color: emailError != null ? Colors.red : Colors.grey),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide:
-              BorderSide(color: emailError != null ? Colors.red : Colors.grey),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        errorText: emailError,
-        errorStyle: const TextStyle(color: Colors.red),
-      ),
+    return CustomTextField(
       controller: emailController,
+      hint: appLocalizations.email,
+      prefixIcon: const ImageIcon(AssetImage(AppIcons.phoneIcon)),
+      error: emailError,
       validator: (email) {
         if (email == null || email.isEmpty) {
           return "Please enter email";

@@ -59,10 +59,9 @@ class _CustomCheckFieldState extends State<CustomCheckField> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              // ✅ Ensures text wraps instead of overflowing
               child: Text(
                 widget.labelText,
-                style: Theme.of(context).primaryTextTheme.titleMedium,
+                style: Theme.of(context).primaryTextTheme.labelLarge,
                 softWrap: true, // Allows text to wrap
                 overflow: TextOverflow.visible, // Prevents clipping
               ),

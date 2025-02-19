@@ -44,7 +44,10 @@ class _CustomDropDownState extends State<CustomDropDown> {
       items: CustomDropDown.cancerTypes.map((String type) {
         return DropdownMenuItem<String>(
           value: type,
-          child: Text(type),
+          child: Text(
+            type,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
         );
       }).toList(),
       onChanged: (value) {

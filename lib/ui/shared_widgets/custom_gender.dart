@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:provider/provider.dart';
 
 class CustomGender extends StatefulWidget {
   final bool isSelected; // Determines if this option is selected
@@ -18,8 +20,12 @@ class CustomGender extends StatefulWidget {
 }
 
 class _CustomGenderState extends State<CustomGender> {
+  late ThemeProvider themeProvider;
+
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+
     return GestureDetector(
       onTap: () {
         widget.onChanged(true);
@@ -28,7 +34,10 @@ class _CustomGenderState extends State<CustomGender> {
         width: 200,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.gray), // Border color
+          border: Border.all(
+              color: themeProvider.isDark()
+                  ? AppColors.purple
+                  : AppColors.gray), // Border color
           borderRadius: BorderRadius.circular(20), // Rounded border
           color: widget.isSelected
               ? AppColors.purple.withOpacity(0.1)
@@ -39,38 +48,20 @@ class _CustomGenderState extends State<CustomGender> {
           children: [
             Theme(
               data: Theme.of(context).copyWith(
-                radioTheme: RadioThemeData(
-                  fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-                    if (states.contains(MaterialState.selected)) {
-                      return AppColors.purple;
-                    }
-                    return AppColors
-                        .gray; // The border circle color when not selected
-                  }),
-                  overlayColor:
-                      MaterialStateProperty.resolveWith<Color>((states) {
-                    if (states.contains(MaterialState.hovered)) {
-                      return AppColors.gray; // Optional hover color
-                    }
-                    return Colors.transparent; // No overlay otherwise
-                  }),
-                ),
+                radioTheme: Theme.of(context).radioTheme,
               ),
               child: Radio<bool>(
                 value: widget.isSelected,
-                groupValue: true, // Always selected in this widget
+                groupValue: true,
                 onChanged: (_) {
-                  widget.onChanged(true); // Notify parent when selected
+                  widget.onChanged(true);
                 },
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Text(
               widget.labelText,
-              style: const TextStyle(
-                fontSize: 16,
-                color: AppColors.gray,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
@@ -17,11 +18,13 @@ class AddTab extends StatefulWidget {
   const AddTab({super.key});
 
   @override
-  State<AddTab> createState() => _AwareTabState();
+  State<AddTab> createState() => _AddTab();
 }
 
-class _AwareTabState extends State<AddTab> {
+class _AddTab extends State<AddTab> {
   late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
+
   String scannedBarcode = "Not scanned yet";
   String scannedText = "No text detected!";
   bool isScanning = false;
@@ -128,15 +131,17 @@ class _AwareTabState extends State<AddTab> {
   @override
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     return CustomScaffold(
-      title: 'Add Product',
+      title: appLocalizations.addProduct,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Barcode",
+              appLocalizations.barcode,
               style: Theme.of(context).textTheme.labelSmall,
             ),
             const SizedBox(
@@ -157,7 +162,7 @@ class _AwareTabState extends State<AddTab> {
               height: 16,
             ),
             Text(
-              "Product Name",
+              appLocalizations.productName,
               style: Theme.of(context).textTheme.labelSmall,
             ),
             const SizedBox(
@@ -168,7 +173,7 @@ class _AwareTabState extends State<AddTab> {
               height: 16,
             ),
             Text(
-              "Ingredients",
+              appLocalizations.ingredients,
               style: Theme.of(context).textTheme.labelSmall,
             ),
             const SizedBox(

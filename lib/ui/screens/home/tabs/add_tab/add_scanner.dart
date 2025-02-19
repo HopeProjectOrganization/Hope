@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class AddScanner extends StatefulWidget {
   static const routeName = '/addScanner';
@@ -15,6 +18,9 @@ class AddScanner extends StatefulWidget {
 }
 
 class _AddScannerState extends State<AddScanner> {
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
+
   String scannedText = "No text detected!";
   bool isScanning = false;
   File? _image;
@@ -62,8 +68,10 @@ class _AddScannerState extends State<AddScanner> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text("Text Scanner")),
+      appBar: AppBar(title: Text(appLocalizations.textScanner)),
       body: Center(
         child: SingleChildScrollView(
           child: Column(

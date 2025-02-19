@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_icons.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
+import 'package:hope/ui/screens/home/tabs/menu_tab//menu_tab.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_barcode_scanner/enum.dart';
 import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
 
@@ -18,14 +22,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
+
   List<Widget> tabs = [
     const HomeTab(),
     const AddTab(),
     AwareTab(),
-    const AddTab(),
+    const MenuTab(),
   ];
   int currentIndex = 0;
-  String scannedBarcode = "Not scanned yet";
+  String scannedBarcode = "Not Scanned yet";
 
   Future<void> scanBarcode() async {
     try {
@@ -62,21 +69,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: AppColors.purple,
-          shape: const CircleBorder(
-            side: BorderSide(color: AppColors.white, width: 5),
-          ),
-          onPressed: scanBarcode,
-          child: const ImageIcon(
-            AssetImage(AppIcons.scanIcon),
-            color: AppColors.white,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        bottomNavigationBar: BottomNavigationBar(
+    themeProvider = Provider.of<ThemeProvider>(context);
+
+    Color color = themeProvider.isDark() ? AppColors.dark : AppColors.white;
+
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
+    final keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
+
+    return GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: keyboardIsOpen
+                ? null
+                : FloatingActionButton(
+                    backgroundColor: AppColors.purple,
+                    shape: CircleBorder(
+                      side: BorderSide(color: color, width: 5),
+                    ),
+                    onPressed: scanBarcode,
+                    child: ImageIcon(
+                      AssetImage(AppIcons.scanIcon),
+                      color: color,
+                    ),
+                  ),
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            bottomNavigationBar: BottomNavigationBar(
           onTap: (index) {
             setState(() {
               currentIndex = index;
@@ -87,34 +109,37 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: AppColors.purple,
           selectedItemColor: AppColors.white,
           unselectedItemColor: AppColors.white,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage(AppIcons.homeIcon)),
-              label: 'Home',
-              backgroundColor: AppColors.purple,
-              activeIcon: ImageIcon(AssetImage(AppIcons.homeFilled)),
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage(AppIcons.addIcon)),
-              label: 'Add',
-              backgroundColor: AppColors.purple,
-              activeIcon: ImageIcon(AssetImage(AppIcons.addFilled)),
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage(AppIcons.awareIcon)),
-              label: 'Aware',
-              backgroundColor: AppColors.purple,
-              activeIcon: ImageIcon(AssetImage(AppIcons.awareFilled)),
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage(AppIcons.menuIcon)),
-              label: 'Menu',
-              backgroundColor: AppColors.purple,
-              activeIcon: ImageIcon(AssetImage(AppIcons.menuFilled)),
-            ),
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: ImageIcon(
+                    AssetImage(AppIcons.homeIcon),
+                    color: color,
+                  ),
+                  label: appLocalizations.home,
+                  activeIcon:
+                      ImageIcon(AssetImage(AppIcons.homeFilled), color: color),
+                ),
+                BottomNavigationBarItem(
+                  icon: ImageIcon(AssetImage(AppIcons.addIcon), color: color),
+                  label: appLocalizations.add,
+                  activeIcon:
+                      ImageIcon(AssetImage(AppIcons.addFilled), color: color),
+                ),
+                BottomNavigationBarItem(
+                  icon: ImageIcon(AssetImage(AppIcons.awareIcon), color: color),
+                  label: appLocalizations.aware,
+                  activeIcon:
+                      ImageIcon(AssetImage(AppIcons.awareFilled), color: color),
+                ),
+                BottomNavigationBarItem(
+                  icon: ImageIcon(AssetImage(AppIcons.menuIcon), color: color),
+                  label: appLocalizations.menu,
+                  activeIcon:
+                      ImageIcon(AssetImage(AppIcons.menuFilled), color: color),
+                ),
           ],
         ),
-        body: tabs[currentIndex]);
+            body: tabs[currentIndex]));
   }
 
 }

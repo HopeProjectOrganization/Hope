@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_icons.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:provider/provider.dart';
 
 class Hereditary extends StatefulWidget {
   static const routeName = '/hereditary';
@@ -12,6 +15,9 @@ class Hereditary extends StatefulWidget {
 }
 
 class _HereditaryState extends State<Hereditary> {
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
+
   Decoration boxDecoration() {
     return BoxDecoration(
       border: Border.all(color: AppColors.white),
@@ -21,6 +27,9 @@ class _HereditaryState extends State<Hereditary> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     return DefaultTabController(
         length: 4,
         child: Scaffold(
@@ -54,13 +63,11 @@ class _HereditaryState extends State<Hereditary> {
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20))),
             centerTitle: true,
-            title: const Text(
-              "Hereditary",
+            title: Text(
+              appLocalizations.hereditary,
               style: TextStyle(color: AppColors.white),
             ),
             bottom: TabBar(
-              unselectedLabelColor: AppColors.white,
-              labelColor: AppColors.purple,
               indicatorSize: TabBarIndicatorSize.label,
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
               indicator: BoxDecoration(
@@ -77,14 +84,14 @@ class _HereditaryState extends State<Hereditary> {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: boxDecoration(),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ImageIcon(AssetImage(AppIcons.allIcon)),
                         SizedBox(
                           width: 8,
                         ),
-                        Text("all"),
+                        Text(appLocalizations.all),
                       ],
                     ),
                   ),
@@ -93,14 +100,14 @@ class _HereditaryState extends State<Hereditary> {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: boxDecoration(),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ImageIcon(AssetImage(AppIcons.awareFilled)),
                         SizedBox(
                           width: 8,
                         ),
-                        Text("Breast"),
+                        Text(appLocalizations.breast),
                       ],
                     ),
                   ),
@@ -109,14 +116,14 @@ class _HereditaryState extends State<Hereditary> {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: boxDecoration(),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ImageIcon(AssetImage(AppIcons.awareFilled)),
                         SizedBox(
                           width: 8,
                         ),
-                        Text("Prostate"),
+                        Text(appLocalizations.prostate),
                       ],
                     ),
                   ),
@@ -125,14 +132,14 @@ class _HereditaryState extends State<Hereditary> {
                     child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: boxDecoration(),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ImageIcon(AssetImage(AppIcons.awareFilled)),
                       SizedBox(
                         width: 8,
                       ),
-                      Text("Ovarian"),
+                      Text(appLocalizations.ovarian),
                     ],
                   ),
                 ))
@@ -154,26 +161,30 @@ class _HereditaryState extends State<Hereditary> {
             backgroundColor: AppColors.purple,
             selectedItemColor: AppColors.white,
             unselectedItemColor: AppColors.white,
-            items: const <BottomNavigationBarItem>[
+            items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: ImageIcon(AssetImage(AppIcons.homeIcon)),
-                label: 'Home',
+                icon: const ImageIcon(AssetImage(AppIcons.homeIcon)),
+                label: appLocalizations.home,
                 backgroundColor: AppColors.purple,
+                activeIcon: const ImageIcon(AssetImage(AppIcons.homeFilled)),
               ),
               BottomNavigationBarItem(
-                icon: ImageIcon(AssetImage(AppIcons.addIcon)),
-                label: 'Add',
+                icon: const ImageIcon(AssetImage(AppIcons.addIcon)),
+                label: appLocalizations.add,
                 backgroundColor: AppColors.purple,
+                activeIcon: const ImageIcon(AssetImage(AppIcons.addFilled)),
               ),
               BottomNavigationBarItem(
-                icon: ImageIcon(AssetImage(AppIcons.awareIcon)),
-                label: 'Aware',
+                icon: const ImageIcon(AssetImage(AppIcons.awareIcon)),
+                label: appLocalizations.aware,
                 backgroundColor: AppColors.purple,
+                activeIcon: const ImageIcon(AssetImage(AppIcons.awareFilled)),
               ),
               BottomNavigationBarItem(
-                icon: ImageIcon(AssetImage(AppIcons.menuIcon)),
-                label: 'Menu',
+                icon: const ImageIcon(AssetImage(AppIcons.menuIcon)),
+                label: appLocalizations.menu,
                 backgroundColor: AppColors.purple,
+                activeIcon: const ImageIcon(AssetImage(AppIcons.menuFilled)),
               ),
             ],
           ),
