@@ -50,7 +50,7 @@ class _RegisterScreen extends State<RegisterScreen> {
   String familyCancerType = 'None';
 
   Future<void> registerUser() async {
-    const String apiUrl = 'http://192.168.78.153:8080/api/v1/auth/register';
+    const String apiUrl = 'http://172.25.36.169:8080/api/v1/auth/register';
     DateTime formatDay =
         DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
     final Map<String, dynamic> userData = {
@@ -169,17 +169,6 @@ class _RegisterScreen extends State<RegisterScreen> {
                 ),
               ),
             ),
-            // InkWell(
-            //     onTap: () async {
-            //       var selectedTime = (await showTimePicker(
-            //           context: context,
-            //           initialTime: TimeOfDay.fromDateTime(selectedDate))) ??
-            //           TimeOfDay.fromDateTime(selectedDate);
-            //       selectedDate = Date(selectedDate.year, selectedDate.month,
-            //           selectedDate.day);
-            //       setState(() {});
-            //     },
-            //     child: const Text("Select Time")),
             const SizedBox(height: 16),
             passwordTextField(context),
             const SizedBox(height: 16),

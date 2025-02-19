@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/assets/app_icons.dart';
+import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/screens/home/home.dart';
@@ -37,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var formKey = GlobalKey<FormState>();
 
   Future<void> loginUser(String email, String password) async {
-    const String apiUrl = 'http://192.168.1.17:9090/api/v1/auth/authenticate';
+    const String apiUrl = 'http://172.25.36.169:8080/api/v1/auth/authenticate';
 
     try {
       final response = await http.post(
@@ -124,11 +125,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget buildPasswordTextField(BuildContext context) {
-    return CustomTextField(
+    return TextFormField(
       controller: passwordController,
+      style: Theme.of(context).textTheme.bodyLarge,
+      cursorColor: Theme.of(context).primaryColor,
+      obscureText: _obscurePassword,
+      decoration: InputDecoration(
+        hintText: appLocalizations.password,
         prefixIcon: const ImageIcon(AssetImage(AppIcons.passwordIcon)),
-      hint: appLocalizations.password,
-      suffixIcon: IconButton(
+        suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility_off : Icons.visibility,
           ),
@@ -138,7 +143,9 @@ class _LoginScreenState extends State<LoginScreen> {
             });
           },
         ),
-      error: passwordError,
+        errorText: passwordError,
+        errorStyle: const TextStyle(color: AppColors.red),
+      ),
     );
   }
 
