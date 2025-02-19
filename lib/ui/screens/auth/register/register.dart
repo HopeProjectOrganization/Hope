@@ -50,8 +50,9 @@ class _RegisterScreen extends State<RegisterScreen> {
   String familyCancerType = 'None';
 
   Future<void> registerUser() async {
-    const String apiUrl = 'http://192.168.1.17:9090/api/v1/auth/register';
-
+    const String apiUrl = 'http://192.168.78.153:8080/api/v1/auth/register';
+    DateTime formatDay =
+        DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
     final Map<String, dynamic> userData = {
       'username': usernameController.text,
       'email': emailController.text,
@@ -63,8 +64,7 @@ class _RegisterScreen extends State<RegisterScreen> {
       'type': cancerType,
       'haveAFamilyCancer': familyCancer,
       'familyType': familyCancerType,
-      'dateOfBirth':
-          "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}",
+      'dateOfBirth': "${DateFormat('yyyy-MM-dd').format(selectedDate)}",
     };
 
     try {
@@ -132,7 +132,7 @@ class _RegisterScreen extends State<RegisterScreen> {
                 DateTime? pickedDate = await showDatePicker(
                   context: context,
                   initialDate: selectedDate,
-                  firstDate: DateTime(1900),
+                  firstDate: DateTime(1900), // Adjust as needed
                   lastDate: DateTime.now(),
                 );
                 if (pickedDate != null && pickedDate != selectedDate) {
@@ -169,6 +169,17 @@ class _RegisterScreen extends State<RegisterScreen> {
                 ),
               ),
             ),
+            // InkWell(
+            //     onTap: () async {
+            //       var selectedTime = (await showTimePicker(
+            //           context: context,
+            //           initialTime: TimeOfDay.fromDateTime(selectedDate))) ??
+            //           TimeOfDay.fromDateTime(selectedDate);
+            //       selectedDate = Date(selectedDate.year, selectedDate.month,
+            //           selectedDate.day);
+            //       setState(() {});
+            //     },
+            //     child: const Text("Select Time")),
             const SizedBox(height: 16),
             passwordTextField(context),
             const SizedBox(height: 16),
