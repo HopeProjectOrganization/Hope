@@ -5,6 +5,8 @@ import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
 import 'package:hope/ui/shared_widgets/custom_home_button.dart';
+import 'package:hope/ui/shared_widgets/utils/language_button.dart';
+import 'package:hope/ui/shared_widgets/utils/theme_button.dart';
 
 class HomeTab extends StatelessWidget {
   const HomeTab({super.key});
@@ -51,26 +53,9 @@ class HomeTab extends StatelessWidget {
                           ],
                         ),
                         const Spacer(),
-                        const Icon(
-                          Icons.sunny,
-                          color: AppColors.white,
-                          size: 30,
-                        ),
+                        ThemeButton(),
                         const SizedBox(width: 10),
-                        Container(
-                          alignment: Alignment.center,
-                          width: 35,
-                          height: 35,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: AppColors.white),
-                          child: const Text(
-                            'EN',
-                            style: TextStyle(
-                                color: AppColors.purple,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                        LanguageButton(),
                       ],
                     ),
                     const SizedBox(height: 5),

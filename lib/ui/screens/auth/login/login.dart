@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var formKey = GlobalKey<FormState>();
 
   Future<void> loginUser(String email, String password) async {
-    const String apiUrl = 'http://172.25.37.9:8080/api/v1/auth/authenticate';
+    const String apiUrl = 'http://172.25..35.134:9090/api/v1/auth/authenticate';
     try {
       final response = await http.post(
         Uri.parse(apiUrl),

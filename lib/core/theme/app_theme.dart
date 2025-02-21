@@ -33,7 +33,8 @@ class AppTheme {
           color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
     ),
     bottomAppBarTheme: BottomAppBarTheme(color: AppColors.purple, elevation: 5),
-    textTheme: const TextTheme(
+      iconTheme: IconThemeData(color: AppColors.white),
+      textTheme: const TextTheme(
       bodyLarge: TextStyle(
           color: AppColors.dark, fontSize: 16, fontWeight: FontWeight.w500),
       bodyMedium: TextStyle(
@@ -101,8 +102,13 @@ class AppTheme {
           color: AppColors.white,
         ),
         unselectedItemColor: AppColors.white,
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: AppColors.purple,
+        shape: CircleBorder(
+          side: BorderSide(color: AppColors.white, width: 5),
+        ),
       ));
-
   static ThemeData darkTheme = ThemeData(
       scaffoldBackgroundColor: AppColors.dark,
       dividerColor: AppColors.purple,
@@ -111,6 +117,7 @@ class AppTheme {
       ),
       bottomAppBarTheme:
           BottomAppBarTheme(color: AppColors.purple, elevation: 5),
+      iconTheme: IconThemeData(color: AppColors.dark),
       radioTheme: RadioThemeData(
         fillColor: WidgetStateProperty.resolveWith<Color>((states) {
           if (states.contains(MaterialState.selected)) {
@@ -212,5 +219,11 @@ class AppTheme {
           color: AppColors.dark,
         ),
         unselectedItemColor: AppColors.dark,
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: AppColors.purple,
+        shape: CircleBorder(
+          side: BorderSide(color: AppColors.dark, width: 5),
+        ),
       ));
 }

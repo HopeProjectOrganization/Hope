@@ -87,10 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
             floatingActionButton: keyboardIsOpen
                 ? null
                 : FloatingActionButton(
-                    backgroundColor: AppColors.purple,
-                    shape: CircleBorder(
-                      side: BorderSide(color: color, width: 5),
-                    ),
                     onPressed: scanBarcode,
                     child: ImageIcon(
                       AssetImage(AppIcons.scanIcon),
@@ -99,16 +95,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             bottomNavigationBar: BottomNavigationBar(
-          onTap: (index) {
-            setState(() {
+              onTap: (index) {
+                setState(() {
               currentIndex = index;
             });
           },
           currentIndex: currentIndex,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: AppColors.purple,
-          selectedItemColor: AppColors.white,
-          unselectedItemColor: AppColors.white,
               items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                   icon: ImageIcon(
