@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
-import 'package:hope/ui/screens/auth/register/register.dart';
+import 'package:http/http.dart' as http;
 
 class VerficationScreen extends StatefulWidget {
   static const String routeName = "/verficationScreen";
@@ -16,10 +18,65 @@ class VerficationScreen extends StatefulWidget {
 class _VerficationScreenState extends State<VerficationScreen> {
   late AppLocalizations appLocalizations;
 
-  // Text controllers and focus nodes for each TextField
   final List<TextEditingController> controllers =
       List.generate(4, (_) => TextEditingController());
   final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
+
+  // Function to resend the code
+  Future<void> resendCode() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.10:8080/api/v1/auth/Resend'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        // Code sent successfully
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Code sent again successfully")),
+        );
+      } else {
+        // Handle API errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to resend code")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Network error")),
+      );
+    }
+  }
+
+  Future<void> verifyCode() async {
+    String code = controllers.map((controller) => controller.text).join();
+    if (code.length != 4) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Invalid code")),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.10:8080/api/v1/auth/Verify'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'code': code}),
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.pushNamed(context, ResetpasswordScreen.routeName);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Verification failed")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Network error")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +110,20 @@ class _VerficationScreenState extends State<VerficationScreen> {
                     CircleInput(
                       controller: controllers[index],
                       focusNode: focusNodes[index],
-                      onFieldSubmitted: (value) {
-                        if (index < 3 && value.isNotEmpty) {
+                      onChanged: (value) {
+                        if (value.isNotEmpty && index < 3) {
                           FocusScope.of(context)
                               .requestFocus(focusNodes[index + 1]);
+                        } else if (value.isEmpty && index > 0) {
+                          FocusScope.of(context)
+                              .requestFocus(focusNodes[index - 1]);
+                        }
+                      },
+                      onDeleted: () {
+                        if (controllers[index].text.isEmpty && index > 0) {
+                          controllers[index - 1].clear();
+                          FocusScope.of(context)
+                              .requestFocus(focusNodes[index - 1]);
                         }
                       },
                     ),
@@ -76,18 +143,19 @@ class _VerficationScreenState extends State<VerficationScreen> {
                   ),
                 ),
                 Expanded(
-                    child: TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, RegisterScreen.routeName);
-                  },
-                  child: Text(appLocalizations.sendAgain),
-                ))
+                  child: TextButton(
+                    onPressed: () {
+                      resendCode(); // Call the resend code API when pressed
+                    },
+                    child: Text(appLocalizations.sendAgain),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 32),
             FilledButton(
               onPressed: () {
-                Navigator.pushNamed(context, ResetpasswordScreen.routeName);
+                verifyCode(); // Call the API when the button is pressed
               },
               child: Text(appLocalizations.verify),
             ),
@@ -98,17 +166,17 @@ class _VerficationScreenState extends State<VerficationScreen> {
   }
 }
 
-// CircleInput widget with dynamic color change and focus auto-move
 class CircleInput extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
-  final ValueChanged<String> onFieldSubmitted;
+  final ValueChanged<String> onChanged;
 
   const CircleInput({
     required this.controller,
     required this.focusNode,
-    required this.onFieldSubmitted,
+    required this.onChanged,
     super.key,
+    required Null Function() onDeleted,
   });
 
   @override
@@ -121,7 +189,6 @@ class CircleInputState extends State<CircleInput> {
   @override
   void initState() {
     super.initState();
-    // Listen for changes in the text field to update the UI accordingly
     widget.controller.addListener(() {
       setState(() {
         isFilled = widget.controller.text.isNotEmpty;
@@ -155,7 +222,7 @@ class CircleInputState extends State<CircleInput> {
             enabledBorder: InputBorder.none,
             counterText: '',
           ),
-          onChanged: widget.onFieldSubmitted,
+          onChanged: widget.onChanged, // Updated to onChanged
         ),
       ),
     );

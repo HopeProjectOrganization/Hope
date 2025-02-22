@@ -18,7 +18,6 @@ class ResetpasswordScreen extends StatefulWidget {
 class ResetpasswordScreenState extends State<ResetpasswordScreen> {
   late AppLocalizations appLocalizations;
   final _formKey = GlobalKey<FormState>();
-  var emailController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -29,10 +28,12 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
   String? _passwordMatchError;
   String? _emptyFieldError;
 
-  Future<void> resetPassword(String email) async {
-    final url = Uri.parse('http://localhost:8080/api/v1/auth/reset-password');
+  Future<void> resetPassword(String newPassword, String confirmPassword) async {
+    final url =
+        Uri.parse('http://192.168.1.10:8080/api/v1/auth/reset-password');
     final body = jsonEncode({
-      'email': email,
+      'newPassword': newPassword,
+      'newPasswordConfirm': confirmPassword,
     });
     try {
       final response = await http.post(
@@ -43,9 +44,9 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
         body: body,
       );
       if (response.statusCode == 200) {
-        print('Password reset email sent successfully');
+        print('Password reset successfully');
       } else {
-        print('Failed to send reset password request: ${response.body}');
+        print('Failed to reset password: ${response.body}');
       }
     } catch (e) {
       print('Error: $e');
@@ -114,7 +115,6 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
               style: Theme.of(context).textTheme.bodyLarge,
               cursorColor: Theme.of(context).primaryColor,
               obscureText: _obscureNewPassword,
-              // Toggle password visibility
               decoration: InputDecoration(
                 hintText: appLocalizations.newPass,
                 suffixIcon: IconButton(
@@ -139,11 +139,11 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 errorText: _emptyFieldError,
-                // Error message if empty
                 errorStyle: const TextStyle(color: Colors.red),
               ),
             ),
             const SizedBox(height: 16),
+            // Confirm Password Field
             TextFormField(
               controller: _confirmPasswordController,
               style: Theme.of(context).textTheme.bodyLarge,
@@ -187,28 +187,16 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            // FilledButton(
-            //   onPressed: () {
-            //     _validateEmptyFields(); // Validate if fields are filled
-            //     _validatePasswords(); // Validate password match
-            //     if (_emptyFieldError == null && _passwordMatchError == null) {
-            //       showLoading(context);
-            //       showMessage(context,
-            //       appLocalizations.yourPasswordHasBeenReset,
-            //       posButtonTitle: appLocalizations.done
-            //       );
-            //     }
-            //   },
-            //   child: Text(appLocalizations.reset),
-            // ),
+            // Reset Button
             FilledButton(
               onPressed: () async {
                 _validateEmptyFields();
                 _validatePasswords();
                 if (_emptyFieldError == null && _passwordMatchError == null) {
-                  showLoading(context);
+                  // showLoading(context);
                   try {
-                    await resetPassword(emailController.text);
+                    await resetPassword(_newPasswordController.text,
+                        _confirmPasswordController.text);
                     showMessage(
                       context,
                       appLocalizations.yourPasswordHasBeenReset,
@@ -225,11 +213,10 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
                 }
               },
               child: Text(appLocalizations.reset),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 }
-
