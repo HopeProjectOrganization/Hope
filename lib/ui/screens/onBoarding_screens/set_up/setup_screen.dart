@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: must_be_immutable
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/providers/theme_provider.dart';
@@ -7,7 +8,7 @@ import 'package:hope/ui/shared_widgets/language_switch.dart';
 import 'package:hope/ui/shared_widgets/theme_switch.dart';
 import 'package:provider/provider.dart';
 
-// ignore: must_be_immutable
+//newBranch
 class SetupScreen extends StatelessWidget {
   static const String routeName = "/SetupScreen";
 
@@ -20,8 +21,7 @@ class SetupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
-    appLocalizations =
-        AppLocalizations.of(context) ?? AppLocalizations.of(context)!;
+    appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -65,7 +65,7 @@ class SetupScreen extends StatelessWidget {
                   ThemeSwitch(),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               FilledButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(

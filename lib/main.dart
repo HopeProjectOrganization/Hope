@@ -69,6 +69,7 @@ class MyApp extends StatelessWidget {
         AddTab.routeName: (_) => const AddTab(),
       },
       initialRoute: VerficationScreen.routeName,
+      initialRoute: SetupScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
