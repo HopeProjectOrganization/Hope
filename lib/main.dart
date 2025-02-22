@@ -68,7 +68,6 @@ class MyApp extends StatelessWidget {
         AddScanner.routeName: (_) => const AddScanner(),
         AddTab.routeName: (_) => const AddTab(),
       },
-      initialRoute: VerficationScreen.routeName,
       initialRoute: SetupScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
