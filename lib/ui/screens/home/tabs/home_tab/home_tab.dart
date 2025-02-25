@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
-import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
+import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
 import 'package:hope/ui/shared_widgets/custom_home_button.dart';
 import 'package:hope/ui/shared_widgets/utils/language_button.dart';
@@ -75,10 +74,8 @@ class HomeTab extends StatelessWidget {
                   CustomHomeButton(
                     image: AppAssets.awareButton,
                     onClick: () {
-                      Navigator.pushNamed(
-                        context,
-                        AwareTab.routeName,
-                      );
+                      Navigator.pushNamed(context, HomeScreen.routeName,
+                          arguments: 2);
                     },
                   ),
                   CustomHomeButton(
@@ -93,19 +90,16 @@ class HomeTab extends StatelessWidget {
                   CustomHomeButton(
                     image: AppAssets.chatbotButton,
                     onClick: () {
-                      Navigator.pushNamed(
-                        context,
-                        AwareTab.routeName,
-                      );
+                      Navigator.pushNamed(context, HomeScreen.routeName,
+                          arguments: 3);
                     },
                   ),
                   CustomHomeButton(
                     image: AppAssets.addButton,
                     onClick: () {
                       Navigator.pushNamed(
-                        context,
-                        AddTab.routeName,
-                      );
+                          context, HomeScreen.routeName,
+                          arguments: 1);
                     },
                   ),
                 ],

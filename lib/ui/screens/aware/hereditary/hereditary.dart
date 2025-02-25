@@ -33,24 +33,22 @@ class _HereditaryState extends State<Hereditary> {
     return DefaultTabController(
         length: 4,
         child: Scaffold(
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: AppColors.purple,
-            shape: const CircleBorder(
-              side: BorderSide(color: AppColors.white, width: 5),
-            ),
-            onPressed: () {},
-            child: const ImageIcon(
-              AssetImage(AppIcons.scanIcon),
-              color: AppColors.white,
-            ),
-          ),
+          // floatingActionButtonLocation:
+          //     FloatingActionButtonLocation.centerDocked,
+          // floatingActionButton: FloatingActionButton(
+          //   backgroundColor: AppColors.purple,
+          //   shape: const CircleBorder(
+          //     side: BorderSide(color: AppColors.white, width: 5),
+          //   ),
+          //   onPressed: () {},
+          //   child: const ImageIcon(
+          //     AssetImage(AppIcons.scanIcon),
+          //   ),
+          // ),
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(
                 Icons.arrow_back_outlined,
-                color: AppColors.white,
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -156,38 +154,38 @@ class _HereditaryState extends State<Hereditary> {
               ),
             ),
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: AppColors.purple,
-            selectedItemColor: AppColors.white,
-            unselectedItemColor: AppColors.white,
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: const ImageIcon(AssetImage(AppIcons.homeIcon)),
-                label: appLocalizations.home,
-                backgroundColor: AppColors.purple,
-                activeIcon: const ImageIcon(AssetImage(AppIcons.homeFilled)),
-              ),
-              BottomNavigationBarItem(
-                icon: const ImageIcon(AssetImage(AppIcons.addIcon)),
-                label: appLocalizations.add,
-                backgroundColor: AppColors.purple,
-                activeIcon: const ImageIcon(AssetImage(AppIcons.addFilled)),
-              ),
-              BottomNavigationBarItem(
-                icon: const ImageIcon(AssetImage(AppIcons.awareIcon)),
-                label: appLocalizations.aware,
-                backgroundColor: AppColors.purple,
-                activeIcon: const ImageIcon(AssetImage(AppIcons.awareFilled)),
-              ),
-              BottomNavigationBarItem(
-                icon: const ImageIcon(AssetImage(AppIcons.menuIcon)),
-                label: appLocalizations.menu,
-                backgroundColor: AppColors.purple,
-                activeIcon: const ImageIcon(AssetImage(AppIcons.menuFilled)),
-              ),
-            ],
-          ),
+          // bottomNavigationBar: BottomNavigationBar(
+          //   type: BottomNavigationBarType.fixed,
+          //   backgroundColor: AppColors.purple,
+          //   selectedItemColor: AppColors.white,
+          //   unselectedItemColor: AppColors.white,
+          //   items: <BottomNavigationBarItem>[
+          //     BottomNavigationBarItem(
+          //       icon: const ImageIcon(AssetImage(AppIcons.homeIcon)),
+          //       label: appLocalizations.home,
+          //       backgroundColor: AppColors.purple,
+          //       activeIcon: const ImageIcon(AssetImage(AppIcons.homeFilled)),
+          //     ),
+          //     BottomNavigationBarItem(
+          //       icon: const ImageIcon(AssetImage(AppIcons.addIcon)),
+          //       label: appLocalizations.add,
+          //       backgroundColor: AppColors.purple,
+          //       activeIcon: const ImageIcon(AssetImage(AppIcons.addFilled)),
+          //     ),
+          //     BottomNavigationBarItem(
+          //       icon: const ImageIcon(AssetImage(AppIcons.awareIcon)),
+          //       label: appLocalizations.aware,
+          //       backgroundColor: AppColors.purple,
+          //       activeIcon: const ImageIcon(AssetImage(AppIcons.awareFilled)),
+          //     ),
+          //     BottomNavigationBarItem(
+          //       icon: const ImageIcon(AssetImage(AppIcons.menuIcon)),
+          //       label: appLocalizations.menu,
+          //       backgroundColor: AppColors.purple,
+          //       activeIcon: const ImageIcon(AssetImage(AppIcons.menuFilled)),
+          //     ),
+          //   ],
+          // ),
         ));
   }
 }

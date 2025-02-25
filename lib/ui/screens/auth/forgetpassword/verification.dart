@@ -26,7 +26,7 @@ class _VerficationScreenState extends State<VerficationScreen> {
   Future<void> resendCode() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.10:8080/api/v1/auth/Resend'),
+        Uri.parse('http://192.168.1.72:9090/api/v1/auth/Resend'),
         headers: {'Content-Type': 'application/json'},
       );
 

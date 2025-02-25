@@ -13,7 +13,7 @@ class AppTheme {
       foregroundColor: AppColors.purple,
       centerTitle: true,
       elevation: 0,
-    ),
+        iconTheme: IconThemeData(color: AppColors.white)),
     radioTheme: RadioThemeData(
       fillColor: WidgetStateProperty.resolveWith<Color>((states) {
         if (states.contains(MaterialState.selected)) {
@@ -109,6 +109,7 @@ class AppTheme {
           side: BorderSide(color: AppColors.white, width: 5),
         ),
       ));
+
   static ThemeData darkTheme = ThemeData(
       scaffoldBackgroundColor: AppColors.dark,
       dividerColor: AppColors.purple,
@@ -132,6 +133,12 @@ class AppTheme {
           return Colors.transparent;
         }),
       ),
+      appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.dark,
+          foregroundColor: AppColors.purple,
+          centerTitle: true,
+          elevation: 0,
+          iconTheme: IconThemeData(color: AppColors.dark)),
       primaryColor: AppColors.purple,
       textTheme: const TextTheme(
         bodyLarge: TextStyle(
@@ -168,12 +175,6 @@ class AppTheme {
             borderRadius: BorderRadius.circular(16),
           ),
         ),
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.dark,
-        foregroundColor: AppColors.purple,
-        centerTitle: true,
-        elevation: 0,
       ),
       textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(

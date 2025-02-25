@@ -15,7 +15,7 @@ import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
 
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -25,13 +25,30 @@ class _HomeScreenState extends State<HomeScreen> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
+  late int currentIndex;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute
+        .of(context)
+        ?.settings
+        .arguments;
+    if (args != null && args is int) {
+      currentIndex = args;
+    } else {
+      currentIndex = 0;
+    }
+  }
+
   List<Widget> tabs = [
     const HomeTab(),
     const AddTab(),
     AwareTab(),
-    const MenuTab(),
+    MenuTab(),
   ];
-  int currentIndex = 0;
+
+  // int currentIndex = 0;
   String scannedBarcode = "Not Scanned yet";
 
   Future<void> scanBarcode() async {
@@ -93,7 +110,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: color,
                     ),
                   ),
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             bottomNavigationBar: BottomNavigationBar(
               onTap: (index) {
                 setState(() {
