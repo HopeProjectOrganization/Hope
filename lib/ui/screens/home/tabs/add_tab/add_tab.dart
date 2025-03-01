@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:hope/Api/add_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_label.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:hope/ui/shared_widgets/custom_text_field.dart';
@@ -33,6 +35,7 @@ class _AddTab extends State<AddTab> {
   var barCode = TextEditingController();
   var productName = TextEditingController();
   var ingredients = TextEditingController();
+  final AddService _addService = AddService(); // كائن من AddService
 
   Future<void> scanBarcode() async {
     try {
@@ -129,6 +132,14 @@ class _AddTab extends State<AddTab> {
     );
   }
 
+  Future<void> addProduct() async {
+    await _addService.addProduct(
+      productName.text,
+      barCode.text,
+      ingredients.text,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
@@ -199,6 +210,17 @@ class _AddTab extends State<AddTab> {
             ),
             const SizedBox(
               height: 16,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                CustomButton(
+                  title: 'Add Product',
+                  onClick: () async {
+                    await addProduct();
+                  },
+                ),
+              ],
             ),
           ],
         ),

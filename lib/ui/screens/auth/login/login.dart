@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Api/add_service.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -38,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var formKey = GlobalKey<FormState>();
 
   Future<void> loginUser(String email, String password) async {
-    const String apiUrl = 'http://192.168.1.72:9090/api/v1/auth/authenticate';
+    const String apiUrl = 'http://192.168.1.4:8080/api/v1/auth/authenticate';
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -50,15 +51,15 @@ class _LoginScreenState extends State<LoginScreen> {
           'password': password,
         }),
       );
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
-        Navigator.pushNamed(context, HomeScreen.routeName);
-        print('Login successful: ${data['token']}');
 
-        setState(() {
-          emailError = null;
-          passwordError = null;
-        });
+        final token = data['token'];
+        await AddService().storeToken(token);
+
+        Navigator.pushNamed(context, HomeScreen.routeName);
+        print('Login successful: $token');
       } else {
         setState(() {
           emailError = 'Email or password may be incorrect';

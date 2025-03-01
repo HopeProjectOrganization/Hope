@@ -23,7 +23,7 @@ class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
 
   Future<void> forgetPassword(String input) async {
     final url =
-    Uri.parse('http://192.168.1.72:9090/api/v1/auth/forgot-password');
+        Uri.parse('http://192.168.78.153:8080/api/v1/auth/forgot-password');
 
     try {
       final response = await http.post(

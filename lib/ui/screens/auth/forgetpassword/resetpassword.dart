@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
+import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,7 +31,7 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
 
   Future<void> resetPassword(String newPassword, String confirmPassword) async {
     final url =
-        Uri.parse('http://192.168.1.72:9090/api/v1/auth/reset-password');
+        Uri.parse('http://192.168.78.153:8080/api/v1/auth/reset-password');
     final body = jsonEncode({
       'newPassword': newPassword,
       'newPasswordConfirm': confirmPassword,
@@ -45,6 +46,7 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
       );
       if (response.statusCode == 200) {
         print('Password reset successfully');
+        Navigator.pushNamed(context, LoginScreen.routeName);
       } else {
         print('Failed to reset password: ${response.body}');
       }
