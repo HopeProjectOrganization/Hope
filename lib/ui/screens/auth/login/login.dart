@@ -40,7 +40,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> loginUser(String email, String password) async {
     const String apiUrl = 'http://192.168.1.4:8080/api/v1/auth/authenticate';
-    const String apiUrl = 'http://192.168.1.24:9090/api/v1/auth/authenticate';
     try {
       final response = await http.post(
         Uri.parse(apiUrl),

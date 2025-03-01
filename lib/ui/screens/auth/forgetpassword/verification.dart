@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -22,10 +23,9 @@ class _VerficationScreenState extends State<VerficationScreen> {
       List.generate(4, (_) => TextEditingController());
   final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
 
-  // Timer variables
   Timer? _timer;
-  int _remainingTime = 60; // 60 seconds countdown
-  bool _isCodeValid = true; // Whether the code is still valid
+  int _remainingTime = 60;
+  bool _isCodeValid = true;
 
   @override
   void initState() {
@@ -33,7 +33,6 @@ class _VerficationScreenState extends State<VerficationScreen> {
     startTimer();
   }
 
-  // Start the countdown timer
   void startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTime > 0) {
@@ -49,7 +48,6 @@ class _VerficationScreenState extends State<VerficationScreen> {
     });
   }
 
-  // Function to resend the code
   Future<void> resendCode() async {
     if (!_isCodeValid) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -61,7 +59,6 @@ class _VerficationScreenState extends State<VerficationScreen> {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.78.153:8080/api/v1/auth/Resend'),
-        Uri.parse('http://192.168.1.24:8080/api/v1/auth/Resend'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -216,7 +213,7 @@ class _VerficationScreenState extends State<VerficationScreen> {
             const SizedBox(height: 32),
             FilledButton(
               onPressed: () {
-                verifyCode(); // Call the API when the button is pressed
+                verifyCode();
               },
               child: Text(appLocalizations.verify),
             ),
@@ -283,7 +280,7 @@ class CircleInputState extends State<CircleInput> {
             enabledBorder: InputBorder.none,
             counterText: '',
           ),
-          onChanged: widget.onChanged, // Updated to onChanged
+          onChanged: widget.onChanged,
         ),
       ),
     );
