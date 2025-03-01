@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hope/core/theme/app_colors.dart';
 
 showLoading(
   BuildContext context,
@@ -11,9 +12,17 @@ showLoading(
         return const CupertinoAlertDialog(
           content: Row(
             children: [
-              Text("Loading..."),
+              Text(
+                "Loading...",
+                style: TextStyle(
+                    color: AppColors.purple,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
               Spacer(),
-              CircularProgressIndicator(),
+              CircularProgressIndicator(
+                color: AppColors.purple,
+              ),
             ],
           ),
         );
@@ -38,7 +47,13 @@ showMessage(
       builder: (context) {
         return CupertinoAlertDialog(
           title: title != null ? Text(title) : null,
-          content: Text(message),
+          content: Text(
+            message,
+            style: TextStyle(
+                color: AppColors.purple,
+                fontSize: 20,
+                fontWeight: FontWeight.bold),
+          ),
           actions: [
             if (posButtonTitle != null)
               FilledButton(

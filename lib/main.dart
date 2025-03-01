@@ -10,7 +10,6 @@ import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/screens/aware/hereditary/hereditary.dart';
 import 'package:hope/ui/screens/home/home.dart';
-import 'package:hope/ui/screens/home/tabs/add_tab/add_scanner.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
@@ -66,11 +65,11 @@ class MyApp extends StatelessWidget {
         AwareTab.routeName: (_) => AwareTab(),
         HomeScreen.routeName: (_) => const HomeScreen(),
         ScanTab.routeName: (_) => const ScanTab(),
-        AddScanner.routeName: (_) => const AddScanner(),
+        // AddScanner.routeName: (_) => const AddScanner(),
         AddTab.routeName: (_) => const AddTab(),
         ResultScreen.routeName: (_) => const ResultScreen(),
       },
-      initialRoute: HomeScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
