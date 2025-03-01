@@ -14,33 +14,6 @@ class CustomScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     Provider.of<ThemeProvider>(context);
     return Scaffold(
-      // drawer: Drawer(
-      //   child: Column(
-      //     children: [
-      //       const DrawerHeader(child: Text('News App')),
-      //       ListTile(
-      //         title: const Text('Go to Home'),
-      //         leading: const Icon(Icons.home),
-      //         onTap: () {
-      //           //ToDo navigate to category Screen
-      //           Navigator.pushNamed(context, RegisterScreen.routeName);
-      //         },
-      //       ),
-      //       ListTile(
-      //         title: const Text(''),
-      //         leading: Icon(themeProvider.isDarkTheme
-      //             ? Icons.dark_mode_outlined
-      //             : Icons.light_mode_outlined),
-      //         onTap: () {
-      //           themeProvider.setThemeModeProvider(
-      //               themeProvider.isDarkTheme
-      //               ? ThemeMode.light
-      //               : ThemeMode.dark);
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_outlined),

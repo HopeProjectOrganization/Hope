@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -17,26 +18,57 @@ class VerficationScreen extends StatefulWidget {
 
 class _VerficationScreenState extends State<VerficationScreen> {
   late AppLocalizations appLocalizations;
-
   final List<TextEditingController> controllers =
       List.generate(4, (_) => TextEditingController());
   final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
 
+  // Timer variables
+  Timer? _timer;
+  int _remainingTime = 60; // 60 seconds countdown
+  bool _isCodeValid = true; // Whether the code is still valid
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  // Start the countdown timer
+  void startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingTime > 0) {
+        setState(() {
+          _remainingTime--;
+        });
+      } else {
+        setState(() {
+          _isCodeValid = false; // Code becomes invalid
+        });
+        _timer?.cancel();
+      }
+    });
+  }
+
   // Function to resend the code
   Future<void> resendCode() async {
+    if (!_isCodeValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Code expired. Please request a new code.")),
+      );
+      return;
+    }
+
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.72:9090/api/v1/auth/Resend'),
+        Uri.parse('http://192.168.1.24:8080/api/v1/auth/Resend'),
         headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
-        // Code sent successfully
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Code sent again successfully")),
         );
       } else {
-        // Handle API errors
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed to resend code")),
         );
@@ -49,6 +81,14 @@ class _VerficationScreenState extends State<VerficationScreen> {
   }
 
   Future<void> verifyCode() async {
+    if (!_isCodeValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text("The code has expired. Please request a new one.")),
+      );
+      return;
+    }
+
     String code = controllers.map((controller) => controller.text).join();
     if (code.length != 4) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -76,6 +116,12 @@ class _VerficationScreenState extends State<VerficationScreen> {
         SnackBar(content: Text("Network error")),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel timer when leaving the screen
+    super.dispose();
   }
 
   @override
@@ -131,6 +177,18 @@ class _VerficationScreenState extends State<VerficationScreen> {
                   ],
                 );
               }),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _isCodeValid
+                      ? "Time left: $_remainingTime seconds"
+                      : "Code expired! Please resend.",
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Row(

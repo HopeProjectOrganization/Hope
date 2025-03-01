@@ -34,5 +34,8 @@ class AppAssets {
   static const String alternative = "assets/images/alternative.png";
   static const String highRiskPeople = "assets/images/highRiskPeople.png";
   static const String healthyDiet = "assets/images/healthyDiet.png";
+
+  //Result
+  static const String result = "assets/images/result.png";
 }
 

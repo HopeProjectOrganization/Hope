@@ -30,7 +30,7 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
 
   Future<void> resetPassword(String newPassword, String confirmPassword) async {
     final url =
-        Uri.parse('http://192.168.1.72:9090/api/v1/auth/reset-password');
+        Uri.parse('http://192.168.1.24:9090/api/v1/auth/reset-password');
     final body = jsonEncode({
       'newPassword': newPassword,
       'newPasswordConfirm': confirmPassword,

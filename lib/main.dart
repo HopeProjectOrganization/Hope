@@ -13,6 +13,7 @@ import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/add_scanner.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
+import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
 import 'package:hope/ui/screens/onBoarding_screens/on_boarding/onboarding_screen.dart';
 import 'package:hope/ui/screens/onBoarding_screens/set_up/setup_screen.dart';
@@ -67,6 +68,9 @@ class MyApp extends StatelessWidget {
         ScanTab.routeName: (_) => const ScanTab(),
         AddScanner.routeName: (_) => const AddScanner(),
         AddTab.routeName: (_) => const AddTab(),
+        ResultScreen.routeName: (_) => const ResultScreen(
+              barcode: '',
+            ),
       },
       initialRoute: HomeScreen.routeName,
       theme: AppTheme.lightTheme,
