@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
+import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
@@ -27,17 +28,20 @@ class _ScanTabState extends State<ScanTab> {
         "back",
         ScanFormat.ONLY_BARCODE,
       );
+      showLoading(context);
+
       if (!mounted) return;
 
       setState(() {
+        hideLoading(context);
         scannedBarcode = barcode != "-1" ? barcode : "Scan canceled";
       });
       if (barcode != "-1") {
-        Navigator.push(
+        hideLoading(context);
+        Navigator.pushNamed(
           context,
-          MaterialPageRoute(
-            builder: (context) => ResultScreen(barcode: barcode),
-          ),
+          ResultScreen.routeName,
+          arguments: barcode,
         );
       }
     } catch (e) {

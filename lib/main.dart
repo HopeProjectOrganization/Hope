@@ -68,9 +68,7 @@ class MyApp extends StatelessWidget {
         ScanTab.routeName: (_) => const ScanTab(),
         AddScanner.routeName: (_) => const AddScanner(),
         AddTab.routeName: (_) => const AddTab(),
-        ResultScreen.routeName: (_) => const ResultScreen(
-              barcode: '',
-            ),
+        ResultScreen.routeName: (_) => const ResultScreen(),
       },
       initialRoute: HomeScreen.routeName,
       theme: AppTheme.lightTheme,

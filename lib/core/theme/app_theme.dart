@@ -9,8 +9,8 @@ class AppTheme {
     primaryColor: AppColors.purple,
     primaryColorDark: AppColors.dark,
     appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.white,
-      foregroundColor: AppColors.purple,
+          backgroundColor: Colors.transparent,
+          foregroundColor: AppColors.purple,
       centerTitle: true,
       elevation: 0,
         iconTheme: IconThemeData(color: AppColors.white)),

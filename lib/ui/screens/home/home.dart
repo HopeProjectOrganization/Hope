@@ -93,7 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Color color = themeProvider.isDark() ? AppColors.dark : AppColors.white;
 
-    themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
 
     final keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
