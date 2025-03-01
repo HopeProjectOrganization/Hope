@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
@@ -8,27 +10,10 @@ class ScanTab extends StatefulWidget {
   static const String routeName = "/ScanTabScreen";
 
   @override
-  State<ScanTab> createState() => ScanTabState();
+  _ScanTabState createState() => _ScanTabState();
 }
 
-class ScanTabState extends State<ScanTab> {
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: BarcodeScannerScreen(),
-    );
-  }
-}
-
-class BarcodeScannerScreen extends StatefulWidget {
-  const BarcodeScannerScreen({super.key});
-
-  @override
-  _BarcodeScannerScreenState createState() => _BarcodeScannerScreenState();
-}
-
-class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
+class _ScanTabState extends State<ScanTab> {
   String scannedBarcode = "Not scanned yet";
 
   Future<void> scanBarcode() async {
@@ -47,6 +32,14 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
       setState(() {
         scannedBarcode = barcode != "-1" ? barcode : "Scan canceled";
       });
+      if (barcode != "-1") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ResultScreen(barcode: barcode),
+          ),
+        );
+      }
     } catch (e) {
       setState(() {
         scannedBarcode = "Error occurred during scanning!";
@@ -57,7 +50,18 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Barcode Scanner")),
+      appBar: AppBar(
+        title: Text("Barcode Scanner"),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_outlined,
+            color: AppColors.purple,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

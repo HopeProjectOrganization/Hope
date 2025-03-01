@@ -7,10 +7,8 @@ import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab//menu_tab.dart';
-import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
+import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_barcode_scanner/enum.dart';
-import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
@@ -28,16 +26,22 @@ class _HomeScreenState extends State<HomeScreen> {
   late int currentIndex;
 
   @override
+  void initState() {
+    super.initState();
+    currentIndex = 0;
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute
-        .of(context)
+    final indexArg = ModalRoute.of(context)
         ?.settings
         .arguments;
-    if (args != null && args is int) {
-      currentIndex = args;
+
+    if (indexArg != null && indexArg is int) {
+      currentIndex = indexArg;
     } else {
-      currentIndex = 0;
+      currentIndex = currentIndex;
     }
   }
 
@@ -48,41 +52,40 @@ class _HomeScreenState extends State<HomeScreen> {
     MenuTab(),
   ];
 
-  // int currentIndex = 0;
   String scannedBarcode = "Not Scanned yet";
 
-  Future<void> scanBarcode() async {
-    try {
-      String barcode = await FlutterBarcodeScanner.scanBarcode(
-          "#ff8E56FF",
-          "Cancel",
-          true,
-          ScanMode.BARCODE,
-          500,
-          "back",
-          ScanFormat.ONLY_BARCODE);
-
-      if (!mounted) return;
-
-      setState(() {
-        scannedBarcode = barcode != "-1" ? barcode : "Scan canceled";
-      });
-      if (scannedBarcode != "-1" && scannedBarcode.isNotEmpty) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Result(
-              barcode: scannedBarcode,
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        scannedBarcode = "Error occurred during scanning!";
-      });
-    }
-  }
+  // Future<void> scanBarcode() async {
+  //   try {
+  //     String barcode = await FlutterBarcodeScanner.scanBarcode(
+  //         "#ff8E56FF",
+  //         "Cancel",
+  //         true,
+  //         ScanMode.BARCODE,
+  //         500,
+  //         "back",
+  //         ScanFormat.ONLY_BARCODE);
+  //
+  //     if (!mounted) return;
+  //
+  //     setState(() {
+  //       scannedBarcode = barcode != "-1" ? barcode : "Scan canceled";
+  //     });
+  //     if (scannedBarcode != "-1" && scannedBarcode.isNotEmpty) {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => Result(
+  //             barcode: scannedBarcode,
+  //           ),
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       scannedBarcode = "Error occurred during scanning!";
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -104,8 +107,13 @@ class _HomeScreenState extends State<HomeScreen> {
             floatingActionButton: keyboardIsOpen
                 ? null
                 : FloatingActionButton(
-                    onPressed: scanBarcode,
-                    child: ImageIcon(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      ScanTab.routeName,
+                    );
+                  },
+                  child: ImageIcon(
                       AssetImage(AppIcons.scanIcon),
                       color: color,
                     ),
@@ -114,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: (index) {
                 setState(() {
               currentIndex = index;
-            });
+              });
           },
           currentIndex: currentIndex,
           type: BottomNavigationBarType.fixed,
@@ -157,7 +165,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
           ],
         ),
-            body: tabs[currentIndex]));
+          body: IndexedStack(
+            index: currentIndex,
+            children: tabs,
+          ),
+          // tabs[currentIndex]));
+        ));
   }
 
 }

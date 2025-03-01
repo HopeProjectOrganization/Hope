@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -18,6 +17,7 @@ class VerficationScreen extends StatefulWidget {
 
 class _VerficationScreenState extends State<VerficationScreen> {
   late AppLocalizations appLocalizations;
+
   final List<TextEditingController> controllers =
       List.generate(4, (_) => TextEditingController());
   final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
@@ -61,14 +61,17 @@ class _VerficationScreenState extends State<VerficationScreen> {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.78.153:8080/api/v1/auth/Resend'),
+        Uri.parse('http://192.168.1.24:8080/api/v1/auth/Resend'),
         headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
+        // Code sent successfully
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Code sent again successfully")),
         );
       } else {
+        // Handle API errors
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed to resend code")),
         );
