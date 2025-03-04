@@ -5,7 +5,7 @@ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_theme.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
-import 'package:hope/ui/screens/auth/forgetpassword/verification.dart';
+import 'package:hope/ui/screens/auth/forgetpassword/verify/verification.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/screens/aware/hereditary/hereditary.dart';

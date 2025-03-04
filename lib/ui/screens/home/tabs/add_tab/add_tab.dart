@@ -2,31 +2,31 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'package:hope/Api/add_service.dart';
+import 'package:hope/Api/add/add_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/ui/screens/home/tabs/add_tab/image_picker.dart';
+import 'package:hope/ui/screens/home/tabs/add_tab/recognize_text.dart';
+import 'package:hope/ui/screens/home/tabs/scan_tab/scan_service.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_label.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:hope/ui/shared_widgets/custom_text_field.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_barcode_scanner/enum.dart';
-import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
 
 class AddTab extends StatefulWidget {
   static const routeName = '/addTab';
   const AddTab({super.key});
 
   @override
-  State<AddTab> createState() => _AddTab();
+  AddTabState createState() => AddTabState();
 }
 
-class _AddTab extends State<AddTab> {
+class AddTabState extends State<AddTab> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
+  late BarcodeScannerService barcodeScanner;
 
   String scannedBarcode = "Not scanned yet";
   String scannedText = "No text detected!";
@@ -37,147 +37,30 @@ class _AddTab extends State<AddTab> {
   var ingredients = TextEditingController();
   final AddService _addService = AddService();
 
-  Future<void> scanBarcode() async {
-    try {
-      String barcode = await FlutterBarcodeScanner.scanBarcode(
-          "#ff8E56FF",
-          "Cancel",
-          true,
-          ScanMode.BARCODE,
-          500,
-          "back",
-          ScanFormat.ONLY_BARCODE);
+  final ImagePickerService imagePickerService = ImagePickerService();
 
-      if (!mounted) return;
+  TextRecognitionService textRecognitionService = TextRecognitionService();
 
-      setState(() {
-        scannedBarcode = barcode != "-1" ? barcode : "Scan canceled";
-        barCode.text = scannedBarcode;
-      });
-    } catch (e) {
-      setState(() {
-        scannedBarcode = "Error occurred during scanning!";
-      });
-    }
-  }
+  Future<void> processImage(File imageFile) async {
+    String extractedText =
+        await textRecognitionService.recognizeText(imageFile);
 
-  Future<void> pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(
-      source: source,
-      preferredCameraDevice: CameraDevice.rear,
-    );
-
-    if (pickedImage != null) {
-      setState(() {
-        _image = File(pickedImage.path);
-        isScanning = true;
-      });
-
-      await recognizeText(_image!);
-    }
-  }
-
-  Future<void> recognizeText(File imageFile) async {
-    final textRecognizer = TextRecognizer();
-    final inputImage = InputImage.fromFile(imageFile);
-
-    try {
-      final RecognizedText recognizedText =
-          await textRecognizer.processImage(inputImage);
-
-      final processedText = postProcessText(recognizedText);
-
-      setState(() {
-        scannedText =
-            processedText.isNotEmpty ? processedText : "No text recognized!";
-        ingredients.text = processedText;
-        isScanning = false;
-      });
-      textRecognizer.close();
-    } catch (e) {
-      setState(() {
-        scannedText = "Error recognizing text: $e";
-        isScanning = false;
-      });
-    }
-  }
-
-  String postProcessText(RecognizedText recognizedText) {
-    List<TextBlock> blocks = recognizedText.blocks;
-
-    // ترتيب النصوص بناءً على موقعها في الصورة
-    blocks.sort((a, b) {
-      if ((a.boundingBox.top - b.boundingBox.top).abs() < 10) {
-        return a.boundingBox.left.compareTo(b.boundingBox.left);
-      }
-      return a.boundingBox.top.compareTo(b.boundingBox.top);
+    setState(() {
+      scannedText = extractedText;
+      ingredients.text = extractedText;
+      isScanning = false;
     });
-
-    StringBuffer processedText = StringBuffer();
-    bool foundIngredients = false;
-
-    for (TextBlock block in blocks) {
-      List<TextLine> lines = block.lines;
-      lines.sort((a, b) => a.boundingBox.left.compareTo(b.boundingBox.left));
-
-      for (TextLine line in lines) {
-        String text = line.text.toLowerCase(); // تجاهل حالة الأحرف
-
-        // العثور على أول "Ingredients"
-        if (text.contains("ingredients") && !foundIngredients) {
-          foundIngredients = true;
-          int index = text.indexOf("ingredients") + "ingredients".length;
-          processedText.write(line.text.substring(index).trim() + " ");
-          continue;
-        }
-
-        // إذا بدأنا بالقراءة، نواصل حتى نجد نقطة (.)
-        if (foundIngredients) {
-          if (text.contains(".")) {
-            processedText.write(text.substring(0, text.indexOf(".") + 1));
-            return processedText.toString().trim(); // إنهاء النص عند النقطة
-          } else {
-            processedText.write(line.text + " ");
-          }
-        }
-      }
-    }
-
-    return foundIngredients
-        ? processedText.toString().trim()
-        : "Ingredients not found!";
   }
 
   void _showImageSourceActionSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Pick from Gallery'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await pickImage(ImageSource.gallery);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('Take a Photo'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await pickImage(ImageSource.camera);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    imagePickerService.showImageSourceActionSheet(context, (File image) {
+      setState(() {
+        _image = image;
+        isScanning = true;
+      });
+
+      processImage(_image!);
+    });
   }
 
   Future<void> addProduct() async {
@@ -190,10 +73,23 @@ class _AddTab extends State<AddTab> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    barcodeScanner = BarcodeScannerService(context);
+  }
+
+  void startScan() {
+    barcodeScanner.scanBarcode((result) {
+      setState(() {
+        scannedBarcode = result;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
-
     return CustomScaffold(
       title: appLocalizations.addProduct,
         body: Padding(
@@ -216,8 +112,8 @@ class _AddTab extends State<AddTab> {
               prefixIcon: null,
               suffixIcon: IconButton(
                 icon: const ImageIcon(AssetImage(AppIcons.barCodeIcon)),
-                onPressed: scanBarcode,
-                color: AppColors.gray,
+                    onPressed: startScan,
+                    color: AppColors.gray,
                 iconSize: 60,
               ),
             ),
@@ -242,9 +138,8 @@ class _AddTab extends State<AddTab> {
             const SizedBox(
               height: 8,
             ),
-                Container(
-                  child: CustomTextField(
-                controller: ingredients,
+                CustomTextField(
+                  controller: ingredients,
                 hint: "",
                 minLines: 6,
                 suffixIcon: IconButton(
@@ -258,7 +153,6 @@ class _AddTab extends State<AddTab> {
                   iconSize: 40,
                 ),
               ),
-            ),
             const SizedBox(
               height: 16,
             ),

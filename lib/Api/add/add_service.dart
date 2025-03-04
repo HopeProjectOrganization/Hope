@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:hope/ui/screens/home/home.dart';
-import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:http/http.dart' as http;

@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Api/auth/register/register_service.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
@@ -11,7 +10,6 @@ import 'package:hope/ui/shared_widgets/custom_check_field.dart';
 import 'package:hope/ui/shared_widgets/custom_drop_down.dart';
 import 'package:hope/ui/shared_widgets/custom_gender.dart';
 import 'package:hope/ui/shared_widgets/custom_text_field.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +25,8 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreen extends State<RegisterScreen> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
+
+  final RegisterService authService = RegisterService();
 
   DateTime selectedDate = DateTime.now();
   var usernameController = TextEditingController();
@@ -48,50 +48,6 @@ class _RegisterScreen extends State<RegisterScreen> {
 
   String cancerType = 'None';
   String familyCancerType = 'None';
-
-  Future<void> registerUser() async {
-    const String apiUrl = 'http://192.168.1.109:9090/api/v1/auth/register';
-    DateTime formatDay =
-        DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-    final Map<String, dynamic> userData = {
-      'username': usernameController.text,
-      'email': emailController.text,
-      'password': passwordController.text,
-      'phone': phoneController.text,
-      'isMale': isMale,
-      'smoker': smoke,
-      'haveCancer': haveCancer,
-      'type': cancerType,
-      'haveAFamilyCancer': familyCancer,
-      'familyType': familyCancerType,
-      'dateOfBirth': "${DateFormat('yyyy-MM-dd').format(selectedDate)}",
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode(userData),
-      );
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم التسجيل بنجاح!')),
-        );
-        Navigator.pushNamed(context, LoginScreen.routeName);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('حدث خطأ في التسجيل!')),
-        );
-      }
-    } catch (e) {
-      print('حدث خطأ: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('فشل في الاتصال بالخادم!')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -290,7 +246,20 @@ class _RegisterScreen extends State<RegisterScreen> {
 
   FilledButton buildRegisterButton(BuildContext context) => FilledButton(
       onPressed: () {
-        registerUser();
+        authService.registerUser(
+          context: context,
+          username: usernameController.text.trim(),
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+          phone: phoneController.text.trim(),
+          isMale: isMale,
+          smoker: smoke,
+          haveCancer: haveCancer,
+          cancerType: cancerType,
+          haveAFamilyCancer: familyCancer,
+          familyType: familyCancerType,
+          dateOfBirth: selectedDate,
+        );
       },
       child: Text(appLocalizations.createAccount));
 

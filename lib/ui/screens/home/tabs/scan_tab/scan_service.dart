@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hope/Api/scan_service.dart';
+import 'package:hope/Api/scan/scan_service.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 

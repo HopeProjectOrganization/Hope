@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/ui/screens/auth/forgetpassword/verification.dart';
+import 'package:hope/ui/screens/auth/forgetpassword/verify/verification.dart';
+import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:http/http.dart' as http;
 
 class ForgetpasswordScreen extends StatefulWidget {
@@ -26,6 +27,7 @@ class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
         Uri.parse('http://192.168.1.109:9090/api/v1/auth/forgot-password');
 
     try {
+      showLoading(context);
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -33,14 +35,32 @@ class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
           'email': input,
         }),
       );
+      hideLoading(context);
 
       if (response.statusCode == 200) {
         Navigator.pushNamed(context, VerficationScreen.routeName);
       } else {
         print('Error');
-        showMessage(context, "error");
+        showMessage(
+          context,
+          "${response.statusCode}",
+          title: "Error during registration! : ",
+          posButtonTitle: "Try again",
+          posButtonClick: () {
+            Navigator.pop;
+          },
+        );
       }
     } catch (e) {
+      showMessage(
+        context,
+        "${e.toString()}",
+        title: "Error during registration! : ",
+        posButtonTitle: "Try again",
+        posButtonClick: () {
+          Navigator.pop;
+        },
+      );
       print('Error: $e');
       showMessage(context, 'Error: $e');
     }
@@ -57,12 +77,6 @@ class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
       return appLocalizations.invalidEmailOrPhoneNumber;
     }
     return null;
-  }
-
-  void showMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
   }
 
   @override

@@ -1,18 +1,15 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/add_service.dart';
+import 'package:hope/Api/auth/login/login_service.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
-import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_text_field.dart';
 import 'package:hope/ui/shared_widgets/language_switch.dart';
-import 'package:http/http.dart' as http;
 import 'package:icons_plus/icons_plus.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -30,6 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
 
+  final LoginService authService = LoginService(); // إنشاء كائن من AuthService
+
   bool _obscurePassword = true;
   String? _emptyFieldError;
 
@@ -37,39 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
   String? passwordError;
 
   var formKey = GlobalKey<FormState>();
-
-  Future<void> loginUser(String email, String password) async {
-    const String apiUrl = 'http://192.168.1.109:9090/api/v1/auth/authenticate';
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'email': email,
-          'password': password,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-
-        final token = data['token'];
-        await AddService().storeToken(token);
-
-        Navigator.pushNamed(context, HomeScreen.routeName);
-        print('Login successful: $token');
-      } else {
-        setState(() {
-          emailError = 'Email or password may be incorrect';
-          passwordError = 'Email or password may be incorrect';
-        });
-      }
-    } catch (e) {
-      print('Error during login: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +140,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return CustomButton(
         onClick: () {
           if (formKey.currentState!.validate()) {
-            loginUser(emailController.text, passwordController.text);
+            authService.loginUser(context, emailController.text.trim(),
+                passwordController.text.trim());
           }
         },
         title: appLocalizations.login);

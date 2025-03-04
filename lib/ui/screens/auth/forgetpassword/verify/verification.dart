@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
+import 'package:hope/ui/screens/auth/forgetpassword/verify/circle_input.dart';
 import 'package:http/http.dart' as http;
 
 class VerficationScreen extends StatefulWidget {
@@ -51,7 +52,8 @@ class _VerficationScreenState extends State<VerficationScreen> {
   Future<void> resendCode() async {
     if (!_isCodeValid) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Code expired. Please request a new code.")),
+        const SnackBar(
+            content: Text("Code expired. Please request a new code.")),
       );
       return;
     }
@@ -63,19 +65,17 @@ class _VerficationScreenState extends State<VerficationScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Code sent successfully
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Code sent again successfully")),
+          const SnackBar(content: Text("Code sent again successfully")),
         );
       } else {
-        // Handle API errors
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Failed to resend code")),
+          const SnackBar(content: Text("Failed to resend code")),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Network error")),
+        const SnackBar(content: Text("Network error")),
       );
     }
   }
@@ -83,7 +83,7 @@ class _VerficationScreenState extends State<VerficationScreen> {
   Future<void> verifyCode() async {
     if (!_isCodeValid) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
             content: Text("The code has expired. Please request a new one.")),
       );
       return;
@@ -92,7 +92,7 @@ class _VerficationScreenState extends State<VerficationScreen> {
     String code = controllers.map((controller) => controller.text).join();
     if (code.length != 4) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Invalid code")),
+        const SnackBar(content: Text("Invalid code")),
       );
       return;
     }
@@ -108,12 +108,12 @@ class _VerficationScreenState extends State<VerficationScreen> {
         Navigator.pushNamed(context, ResetpasswordScreen.routeName);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Verification failed")),
+          const SnackBar(content: Text("Verification failed")),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Network error")),
+        const SnackBar(content: Text("Network error")),
       );
     }
   }
@@ -218,69 +218,6 @@ class _VerficationScreenState extends State<VerficationScreen> {
               child: Text(appLocalizations.verify),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class CircleInput extends StatefulWidget {
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final ValueChanged<String> onChanged;
-
-  const CircleInput({
-    required this.controller,
-    required this.focusNode,
-    required this.onChanged,
-    super.key,
-    required Null Function() onDeleted,
-  });
-
-  @override
-  CircleInputState createState() => CircleInputState();
-}
-
-class CircleInputState extends State<CircleInput> {
-  bool isFilled = false;
-
-  @override
-  void initState() {
-    super.initState();
-    widget.controller.addListener(() {
-      setState(() {
-        isFilled = widget.controller.text.isNotEmpty;
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        color: isFilled ? const Color(0xff8E56FF) : const Color(0xffC9C9C9),
-        // Color changes based on input
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: TextField(
-          controller: widget.controller,
-          focusNode: widget.focusNode,
-          textAlign: TextAlign.center,
-          keyboardType: TextInputType.number,
-          maxLength: 1,
-          style: const TextStyle(fontSize: 24, color: Colors.white),
-          decoration: const InputDecoration(
-            isCollapsed: true,
-            contentPadding: EdgeInsets.all(0),
-            border: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            counterText: '',
-          ),
-          onChanged: widget.onChanged,
         ),
       ),
     );
