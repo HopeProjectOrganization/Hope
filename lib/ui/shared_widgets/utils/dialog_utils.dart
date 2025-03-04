@@ -56,7 +56,11 @@ showMessage(
           ),
           actions: [
             if (posButtonTitle != null)
-              FilledButton(
+              TextButton(
+                  style: FilledButton.styleFrom(
+                    textStyle: TextStyle(fontSize: 16 , color: AppColors.purple),
+                    padding: const EdgeInsets.all(16),
+                  ),
                   onPressed: () {
                     if (context.mounted) {
                       Navigator.pop(context);
@@ -65,7 +69,11 @@ showMessage(
                   },
                   child: Text(posButtonTitle)),
             if (negativeButtonTitle != null)
-              FilledButton(
+              TextButton(
+                  style: FilledButton.styleFrom(
+                    textStyle: TextStyle(fontSize: 16 , color: AppColors.purple),
+                    padding: const EdgeInsets.all(16),
+                  ),
                   onPressed: () {
                     hideLoading(context);
                     if (negativeButtonClick != null) negativeButtonClick();
