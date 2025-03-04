@@ -122,7 +122,9 @@ class ResultScreen extends StatelessWidget {
                   thickness: 1,
                   height: 10,
                 ),
-                itemCount: highRiskIngredients.length,
+                itemCount: highRiskIngredients != null
+                    ? highRiskIngredients.length
+                    : 0,
               ),
             ),
             const SizedBox(height: 15),

@@ -21,7 +21,7 @@ class ScanService {
         return {'message': 'Scan canceled'};
       }
 
-      var url = Uri.parse("http://192.168.1.109:9090/api/scan/$barcode");
+      var url = Uri.parse("http://192.168.1.4:8080/api/scan/$barcode");
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
