@@ -71,7 +71,7 @@ class AddService {
   List<Map<String, dynamic>> extractIngredients(String text) {
     final ingredients = <Map<String, dynamic>>[];
 
-    final ingredientNames = text.split(',');
+    final ingredientNames = text.split(RegExp(r'[,-]'));
 
     for (var name in ingredientNames) {
       final ingredient = {

@@ -23,15 +23,6 @@ class ResultScreen extends StatelessWidget {
     final String barcode = product['barcode'] ?? "Unknown barcode";
     final highRiskIngredients = data['highRiskIngredients'] ?? null;
 
-    Map<String, String> ingredients = {
-      "Carbonated Water": "89%",
-      "Sugar": "11%",
-      "Sodium": "1%",
-      "Caramel Color": "0.1%",
-      "Caffeine": "0.1%",
-      "Phosphoric Acid": "0.01%",
-    };
-
     ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
     AppLocalizations appLocalizations = AppLocalizations.of(context)!;
 
@@ -91,7 +82,7 @@ class ResultScreen extends StatelessWidget {
                     color: Colors.redAccent,
                     borderRadius: BorderRadius.all(Radius.circular(16))),
                 child: Text(
-                  "High-Risk Ingredients: $highRiskIngredients",
+                  "High-Risk Ingredients",
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!
@@ -109,8 +100,8 @@ class ResultScreen extends StatelessWidget {
             Expanded(
               child: ListView.separated(
                 itemBuilder: (context, index) {
-                  String ingredient = ingredients.keys.elementAt(index);
-                  String percentage = ingredients.values.elementAt(index);
+                  final ingredient = highRiskIngredients[index];
+
                   return Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),
                     child: Row(
@@ -118,13 +109,9 @@ class ResultScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            ingredient,
+                            ingredient['ingredientName'],
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
-                        ),
-                        Text(
-                          percentage,
-                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
                     ),
@@ -135,7 +122,7 @@ class ResultScreen extends StatelessWidget {
                   thickness: 1,
                   height: 10,
                 ),
-                itemCount: ingredients.length,
+                itemCount: highRiskIngredients.length,
               ),
             ),
             const SizedBox(height: 15),
