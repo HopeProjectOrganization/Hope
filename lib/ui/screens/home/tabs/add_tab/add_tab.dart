@@ -176,10 +176,12 @@ class _AddTab extends State<AddTab> {
 
     return CustomScaffold(
       title: appLocalizations.addProduct,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               appLocalizations.barcode,
@@ -220,8 +222,8 @@ class _AddTab extends State<AddTab> {
             const SizedBox(
               height: 8,
             ),
-            Expanded(
-              child: CustomTextField(
+                Container(
+                  child: CustomTextField(
                 controller: ingredients,
                 hint: "",
                 minLines: 6,
@@ -257,6 +259,6 @@ class _AddTab extends State<AddTab> {
           ],
         ),
       ),
-    );
+        ));
   }
 }

@@ -50,7 +50,7 @@ class _RegisterScreen extends State<RegisterScreen> {
   String familyCancerType = 'None';
 
   Future<void> registerUser() async {
-    const String apiUrl = 'http://192.168.78.153:8080/api/v1/auth/register';
+    const String apiUrl = 'http://192.168.1.109:9090/api/v1/auth/register';
     DateTime formatDay =
         DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
     final Map<String, dynamic> userData = {

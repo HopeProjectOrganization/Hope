@@ -2,13 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/home.dart';
-import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
+import 'package:hope/ui/screens/home/tabs/scan_tab/scan_service.dart';
 import 'package:hope/ui/shared_widgets/custom_home_button.dart';
 import 'package:hope/ui/shared_widgets/utils/language_button.dart';
 import 'package:hope/ui/shared_widgets/utils/theme_button.dart';
 
-class HomeTab extends StatelessWidget {
+class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
+
+  @override
+  _HomeTabState createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<HomeTab> {
+  String scannedBarcode = "Not scanned yet";
+
+  late BarcodeScannerService barcodeScanner;
+
+  @override
+  void initState() {
+    super.initState();
+    barcodeScanner = BarcodeScannerService(context);
+  }
+
+  void startScan() {
+    barcodeScanner.scanBarcode((result) {
+      setState(() {
+        scannedBarcode = result;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +104,8 @@ class HomeTab extends StatelessWidget {
                   CustomHomeButton(
                     image: AppAssets.scanButton,
                     onClick: () {
-                      Navigator.pushNamed(
-                        context,
-                        ScanTab.routeName,
-                      );
+                      // Navigator.pushNamed(context, ScanTab.routeName);
+                      startScan();
                     },
                   ),
                   CustomHomeButton(
@@ -97,8 +118,7 @@ class HomeTab extends StatelessWidget {
                   CustomHomeButton(
                     image: AppAssets.addButton,
                     onClick: () {
-                      Navigator.pushNamed(
-                          context, HomeScreen.routeName,
+                      Navigator.pushNamed(context, HomeScreen.routeName,
                           arguments: 1);
                     },
                   ),

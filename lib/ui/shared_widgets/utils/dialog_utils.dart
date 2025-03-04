@@ -57,9 +57,10 @@ showMessage(
           actions: [
             if (posButtonTitle != null)
               FilledButton(
-                  style: const ButtonStyle(),
                   onPressed: () {
-                    hideLoading(context);
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
                     if (posButtonClick != null) posButtonClick();
                   },
                   child: Text(posButtonTitle)),

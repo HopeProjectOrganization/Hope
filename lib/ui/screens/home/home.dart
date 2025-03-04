@@ -7,7 +7,7 @@ import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab//menu_tab.dart';
-import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
+import 'package:hope/ui/screens/home/tabs/scan_tab/scan_service.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     currentIndex = 0;
+    barcodeScanner = BarcodeScannerService(context);
   }
 
   @override
@@ -87,6 +88,16 @@ class _HomeScreenState extends State<HomeScreen> {
   //   }
   // }
 
+  late BarcodeScannerService barcodeScanner;
+
+  void startScan() {
+    barcodeScanner.scanBarcode((result) {
+      setState(() {
+        scannedBarcode = result;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
@@ -107,10 +118,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? null
                 : FloatingActionButton(
                   onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      ScanTab.routeName,
-                    );
+                    // Navigator.pushNamed(
+                    //   context,
+                    //   ScanTab.routeName,
+                    // );
+                    startScan();
                   },
                   child: ImageIcon(
                       AssetImage(AppIcons.scanIcon),

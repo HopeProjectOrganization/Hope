@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope/Api/scan_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
-import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
+import 'package:hope/ui/screens/home/tabs/scan_tab/scan_service.dart';
 
 class ScanTab extends StatefulWidget {
   const ScanTab({super.key});
@@ -17,30 +16,20 @@ class _ScanTabState extends State<ScanTab> {
   String scannedBarcode = "Not scanned yet";
   final ScanService _scanService = ScanService();
 
-  Future<void> scanBarcode() async {
-    showLoading(context);
+  late BarcodeScannerService barcodeScanner;
 
-    var result = await _scanService.scanBarcode();
+  @override
+  void initState() {
+    super.initState();
+    barcodeScanner = BarcodeScannerService(context);
+  }
 
-    if (!mounted) return;
-
-    hideLoading(context);
-
-    if (result != null) {
+  void startScan() {
+    barcodeScanner.scanBarcode((result) {
       setState(() {
-        scannedBarcode = result['message'] ?? "No message";
+        scannedBarcode = result;
       });
-
-      Navigator.pushNamed(
-        context,
-        ResultScreen.routeName,
-        arguments: result,
-      );
-    } else {
-      setState(() {
-        scannedBarcode = "Error: No result from scanning";
-      });
-    }
+    });
   }
 
   @override
@@ -68,7 +57,7 @@ class _ScanTabState extends State<ScanTab> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: scanBarcode,
+              onPressed: startScan,
               child: const Text("Start Scanning"),
             ),
           ],
