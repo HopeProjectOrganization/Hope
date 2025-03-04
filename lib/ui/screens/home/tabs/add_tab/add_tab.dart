@@ -106,6 +106,7 @@ class _AddTab extends State<AddTab> {
   String postProcessText(RecognizedText recognizedText) {
     List<TextBlock> blocks = recognizedText.blocks;
 
+    // ترتيب النصوص بناءً على موقعها في الصورة
     blocks.sort((a, b) {
       if ((a.boundingBox.top - b.boundingBox.top).abs() < 10) {
         return a.boundingBox.left.compareTo(b.boundingBox.left);
@@ -114,19 +115,38 @@ class _AddTab extends State<AddTab> {
     });
 
     StringBuffer processedText = StringBuffer();
+    bool foundIngredients = false;
 
     for (TextBlock block in blocks) {
       List<TextLine> lines = block.lines;
       lines.sort((a, b) => a.boundingBox.left.compareTo(b.boundingBox.left));
 
       for (TextLine line in lines) {
-        processedText.write(line.text);
-        processedText.write(" ");
+        String text = line.text.toLowerCase(); // تجاهل حالة الأحرف
+
+        // العثور على أول "Ingredients"
+        if (text.contains("ingredients") && !foundIngredients) {
+          foundIngredients = true;
+          int index = text.indexOf("ingredients") + "ingredients".length;
+          processedText.write(line.text.substring(index).trim() + " ");
+          continue;
+        }
+
+        // إذا بدأنا بالقراءة، نواصل حتى نجد نقطة (.)
+        if (foundIngredients) {
+          if (text.contains(".")) {
+            processedText.write(text.substring(0, text.indexOf(".") + 1));
+            return processedText.toString().trim(); // إنهاء النص عند النقطة
+          } else {
+            processedText.write(line.text + " ");
+          }
+        }
       }
-      processedText.write("\n");
     }
 
-    return processedText.toString();
+    return foundIngredients
+        ? processedText.toString().trim()
+        : "Ingredients not found!";
   }
 
   void _showImageSourceActionSheet(BuildContext context) {
