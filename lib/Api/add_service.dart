@@ -20,7 +20,7 @@ class AddService {
       String productName,
       String barcode,
       String ingredientsText) async {
-    final url = Uri.parse("http://192.168.1.76:9090/products/add");
+    final url = Uri.parse("http://192.168.1.4:8080/products/add");
 
     String? token = await getToken();
 
@@ -70,18 +70,16 @@ class AddService {
 
   List<Map<String, dynamic>> extractIngredients(String text) {
     final ingredients = <Map<String, dynamic>>[];
-    final lines = text.split('\n');
 
-    for (var line in lines) {
-      final match = RegExp(r'(\w+)\s*(\d+\.?\d*)?%?').firstMatch(line);
-      if (match != null) {
-        final ingredient = {
-          "ingredientName": match.group(1),
-          if (match.group(2) != null) "percentage": match.group(2),
-        };
-        ingredients.add(ingredient);
-      }
+    final ingredientNames = text.split(',');
+
+    for (var name in ingredientNames) {
+      final ingredient = {
+        "ingredientName": name.trim(),
+      };
+      ingredients.add(ingredient);
     }
+
     return ingredients;
   }
 }

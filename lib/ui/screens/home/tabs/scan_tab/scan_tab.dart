@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hope/Api/scan_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
-import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class ScanTab extends StatefulWidget {
   const ScanTab({super.key});
@@ -16,37 +15,30 @@ class ScanTab extends StatefulWidget {
 
 class _ScanTabState extends State<ScanTab> {
   String scannedBarcode = "Not scanned yet";
+  final ScanService _scanService = ScanService();
 
   Future<void> scanBarcode() async {
-    try {
-      String barcode = await FlutterBarcodeScanner.scanBarcode(
-        "#ff8E56FF",
-        "Cancel",
-        true,
-        ScanMode.BARCODE,
-        500,
-        "back",
-        ScanFormat.ONLY_BARCODE,
-      );
-      showLoading(context);
+    showLoading(context);
 
-      if (!mounted) return;
+    var result = await _scanService.scanBarcode();
 
+    if (!mounted) return;
+
+    hideLoading(context);
+
+    if (result != null) {
       setState(() {
-        hideLoading(context);
-        scannedBarcode = barcode != "-1" ? barcode : "Scan canceled";
+        scannedBarcode = result['message'] ?? "No message";
       });
-      if (barcode != "-1") {
-        hideLoading(context);
-        Navigator.pushNamed(
-          context,
-          ResultScreen.routeName,
-          arguments: barcode,
-        );
-      }
-    } catch (e) {
+
+      Navigator.pushNamed(
+        context,
+        ResultScreen.routeName,
+        arguments: result,
+      );
+    } else {
       setState(() {
-        scannedBarcode = "Error occurred during scanning!";
+        scannedBarcode = "Error: No result from scanning";
       });
     }
   }

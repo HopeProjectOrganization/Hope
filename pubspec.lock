@@ -230,6 +230,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_genius_scan:
+    dependency: "direct main"
+    description:
+      name: flutter_genius_scan
+      sha256: dc7b4f91f8a371fc49e9ebd5fe335ed7fbcacb9f2bf40250b0f8a4e0156f73aa
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.6.1"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -275,6 +283,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.17"
+  flutter_tesseract_ocr:
+    dependency: "direct main"
+    description:
+      name: flutter_tesseract_ocr
+      sha256: "9cb94ee4e00fa0131f55b0e512a62f514d50cf8cee45d067b728c8d3ca82f655"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.28"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -333,6 +349,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.2"
+  image_cropper:
+    dependency: "direct main"
+    description:
+      name: image_cropper
+      sha256: "0c6ea3f96ccdcbe855fc86e9de582fdd6a94d578be8d817a05d9ecef9f1a258b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.0.0"
+  image_cropper_for_web:
+    dependency: transitive
+    description:
+      name: image_cropper_for_web
+      sha256: "34256c8fb7fcb233251787c876bb37271744459b593a948a2db73caa323034d0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.2"
+  image_cropper_platform_interface:
+    dependency: transitive
+    description:
+      name: image_cropper_platform_interface
+      sha256: e8e9d2ca36360387aee39295ce49029362ae4df3071f23e8e71f2b81e40b7531
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
   image_picker:
     dependency: "direct main"
     description:
@@ -405,6 +445,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.19.0"
+  js:
+    dependency: transitive
+    description:
+      name: js
+      sha256: c1b2e9b5ea78c45e1a0788d29606ba27dc5f71f019f32ca5140f61ef071838cf
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.1"
   leak_tracker:
     dependency: transitive
     description:
@@ -493,6 +541,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  path_provider:
+    dependency: "direct main"
+    description:
+      name: path_provider
+      sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.5"
+  path_provider_android:
+    dependency: transitive
+    description:
+      name: path_provider_android
+      sha256: "4adf4fd5423ec60a29506c76581bc05854c55e3a0b72d35bb28d661c9686edf2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.15"
+  path_provider_foundation:
+    dependency: transitive
+    description:
+      name: path_provider_foundation
+      sha256: "4843174df4d288f5e29185bd6e72a6fbdf5a4a4602717eed565497429f179942"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1"
   path_provider_linux:
     dependency: transitive
     description:

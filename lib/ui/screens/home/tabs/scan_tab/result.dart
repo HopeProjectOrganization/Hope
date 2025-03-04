@@ -7,15 +7,21 @@ import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
 class ResultScreen extends StatelessWidget {
-
   static const String routeName = "/resultScan";
 
   const ResultScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final barcode = ModalRoute.of(context)?.settings.arguments as String? ??
-        "Unknown"; // ✅ تأمين القيم الافتراضية
+    final data =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
+            {};
+
+    final String message = data['message'] ?? "Unknown result";
+    final product = data['product'] ?? {};
+    final String productName = product['productName'] ?? "Unknown product";
+    final String barcode = product['barcode'] ?? "Unknown barcode";
+    final highRiskIngredients = data['highRiskIngredients'] ?? null;
 
     Map<String, String> ingredients = {
       "Carbonated Water": "89%",
@@ -23,7 +29,7 @@ class ResultScreen extends StatelessWidget {
       "Sodium": "1%",
       "Caramel Color": "0.1%",
       "Caffeine": "0.1%",
-      "Phosphoric Acid": "0.01%", // تم تصحيح الخطأ في "Aci" إلى "Acid"
+      "Phosphoric Acid": "0.01%",
     };
 
     ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
@@ -31,7 +37,7 @@ class ResultScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Result"),
+        title: const Text("Result"),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_outlined,
@@ -42,81 +48,101 @@ class ResultScreen extends StatelessWidget {
           },
         ),
       ),
-        body: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              "Risk rate",
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            Image.asset(
+              AppAssets.result,
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.2,
+            ),
+            const SizedBox(height: 15),
+            Text(
+              message,
+              style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: const BoxDecoration(
+                  color: AppColors.purple,
+                  borderRadius: BorderRadius.all(Radius.circular(16))),
+              width: double.infinity,
+              child: Text(
+                "Product: $productName (Barcode: $barcode)",
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
+            const SizedBox(height: 10),
+            if (highRiskIngredients != null) ...[
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: const BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.all(Radius.circular(16))),
+                child: Text(
+                  "High-Risk Ingredients: $highRiskIngredients",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: Colors.white),
+                ),
+              ),
+            ] else ...[
               Text(
-                "Risk rate",
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              Image.asset(
-                AppAssets.result,
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.2,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                "You should eat from this product not more than 3 times per week",
+                "No high-risk ingredients found.",
                 style: Theme.of(context).textTheme.titleMedium,
                 textAlign: TextAlign.center,
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 20),
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                    color: AppColors.purple,
-                    borderRadius: BorderRadius.all(Radius.circular(16))),
-                width: double.infinity,
-                child: Text(
-                  "Ingredients",
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ),
-              Expanded(
-                  child: ListView.separated(
-                      itemBuilder: (context, index) {
-                        String ingredient = ingredients.keys.elementAt(index);
-                        String percentage = ingredients.values.elementAt(index);
-                        return Container(
-                          margin: EdgeInsets.symmetric(vertical: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(ingredient,
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge),
-                              ),
-                              Text(percentage,
-                                  style: Theme.of(context).textTheme.bodyLarge),
-                            ],
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) => const Divider(
-                            color: Colors.grey, // اللون الرمادي
-                            thickness: 1, // سمك الخط
-                            height: 10, // المسافة بين العناصر
-                          ),
-                      itemCount: ingredients.length)),
-              SizedBox(
-                height: 15,
-              ),
-              CustomButton(onClick: () {}, title: "Done"),
             ],
-          ),
-        )
-        // Center(
-        //   child: Text(
-        //     'Scanned Barcode: $barcode',
-        //     style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        //   ),
-        // ),
-        );
+            const SizedBox(height: 15),
+            Expanded(
+              child: ListView.separated(
+                itemBuilder: (context, index) {
+                  String ingredient = ingredients.keys.elementAt(index);
+                  String percentage = ingredients.values.elementAt(index);
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            ingredient,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
+                        Text(
+                          percentage,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) => const Divider(
+                  color: Colors.grey,
+                  thickness: 1,
+                  height: 10,
+                ),
+                itemCount: ingredients.length,
+              ),
+            ),
+            const SizedBox(height: 15),
+            CustomButton(onClick: () {}, title: "Done"),
+          ],
+        ),
+      ),
+    );
   }
 }

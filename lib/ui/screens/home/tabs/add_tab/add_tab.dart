@@ -35,7 +35,7 @@ class _AddTab extends State<AddTab> {
   var barCode = TextEditingController();
   var productName = TextEditingController();
   var ingredients = TextEditingController();
-  final AddService _addService = AddService(); // كائن من AddService
+  final AddService _addService = AddService();
 
   Future<void> scanBarcode() async {
     try {
@@ -85,11 +85,13 @@ class _AddTab extends State<AddTab> {
     try {
       final RecognizedText recognizedText =
           await textRecognizer.processImage(inputImage);
+
+      final processedText = postProcessText(recognizedText);
+
       setState(() {
-        scannedText = recognizedText.text.isNotEmpty
-            ? recognizedText.text
-            : "No text recognized!";
-        ingredients.text = recognizedText.text;
+        scannedText =
+            processedText.isNotEmpty ? processedText : "No text recognized!";
+        ingredients.text = processedText;
         isScanning = false;
       });
       textRecognizer.close();
@@ -99,6 +101,32 @@ class _AddTab extends State<AddTab> {
         isScanning = false;
       });
     }
+  }
+
+  String postProcessText(RecognizedText recognizedText) {
+    List<TextBlock> blocks = recognizedText.blocks;
+
+    blocks.sort((a, b) {
+      if ((a.boundingBox.top - b.boundingBox.top).abs() < 10) {
+        return a.boundingBox.left.compareTo(b.boundingBox.left);
+      }
+      return a.boundingBox.top.compareTo(b.boundingBox.top);
+    });
+
+    StringBuffer processedText = StringBuffer();
+
+    for (TextBlock block in blocks) {
+      List<TextLine> lines = block.lines;
+      lines.sort((a, b) => a.boundingBox.left.compareTo(b.boundingBox.left));
+
+      for (TextLine line in lines) {
+        processedText.write(line.text);
+        processedText.write(" ");
+      }
+      processedText.write("\n");
+    }
+
+    return processedText.toString();
   }
 
   void _showImageSourceActionSheet(BuildContext context) {
@@ -113,16 +141,16 @@ class _AddTab extends State<AddTab> {
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Pick from Gallery'),
                 onTap: () async {
-                  Navigator.pop(context); // Close the modal
-                  await pickImage(ImageSource.gallery); // Pick from gallery
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.gallery);
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('Take a Photo'),
                 onTap: () async {
-                  Navigator.pop(context); // Close the modal
-                  await pickImage(ImageSource.camera); // Open camera
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.camera);
                 },
               ),
             ],
@@ -222,6 +250,9 @@ class _AddTab extends State<AddTab> {
                   },
                 ),
               ],
+            ),
+            const SizedBox(
+              height: 16,
             ),
           ],
         ),
