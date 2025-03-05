@@ -62,6 +62,14 @@ class AddService {
 
         if (responseData['id'] != null) {
           print("Product added successfully!");
+
+          // حفظ المنتج المضاف في التخزين المحلي
+          await saveRecentlyAddedProduct({
+            'productName': productName,
+            'barcode': barcode,
+            'highRiskIngredients': scanResult?['highRiskIngredients'] ?? [],
+          });
+
           showMessage(
             context,
             "Product added successfully!",
@@ -125,7 +133,6 @@ class AddService {
     final List<Map<String, dynamic>> ingredients = [];
 
     final ingredientNames = text.split(RegExp(r'[,-]'));
-    // final ingredientNames = text.split(RegExp(r'[\s,;-]+'));
     for (var name in ingredientNames) {
       final ingredient = {
         "ingredientName": name.trim(),
@@ -134,5 +141,31 @@ class AddService {
     }
 
     return ingredients;
+  }
+
+  Future<void> saveRecentlyAddedProduct(Map<String, dynamic> product) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    String? productsString = prefs.getString('recently_added_products');
+
+    List<dynamic> recentlyAddedProducts = [];
+
+    if (productsString != null) {
+      try {
+        recentlyAddedProducts = json.decode(productsString);
+      } catch (e) {
+        print("Error decoding products: $e");
+      }
+    }
+
+    recentlyAddedProducts.add(product);
+
+    if (recentlyAddedProducts.length > 5) {
+      recentlyAddedProducts =
+          recentlyAddedProducts.sublist(recentlyAddedProducts.length - 5);
+    }
+
+    await prefs.setString(
+        'recently_added_products', json.encode(recentlyAddedProducts));
   }
 }

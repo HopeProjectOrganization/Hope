@@ -20,14 +20,19 @@ class _RecentlyAddedScreenState extends State<RecentlyAddedScreen> {
 
   Future<void> _loadRecentlyAddedProducts() async {
     final prefs = await SharedPreferences.getInstance();
-    List<String>? productsStringList =
-        prefs.getStringList('recently_added_products');
-    if (productsStringList != null) {
-      List<dynamic> products =
-          productsStringList.map((product) => jsonDecode(product)).toList();
-      setState(() {
-        recentlyAddedProducts = products.reversed.take(5).toList();
-      });
+
+    String? productsString = prefs.getString('recently_added_products');
+
+    if (productsString != null) {
+      try {
+        List<dynamic> products = json.decode(productsString);
+
+        setState(() {
+          recentlyAddedProducts = products.reversed.take(5).toList();
+        });
+      } catch (e) {
+        print("Error decoding products: $e");
+      }
     }
   }
 
@@ -37,25 +42,37 @@ class _RecentlyAddedScreenState extends State<RecentlyAddedScreen> {
       return SizedBox.shrink();
     }
 
-    return Container(
-      height: MediaQuery.of(context).size.height * .2,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: recentlyAddedProducts.length,
-        itemBuilder: (context, index) {
-          final product = recentlyAddedProducts[index];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            "Recently Add",
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+        Container(
+          height: MediaQuery.of(context).size.height * .23,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: recentlyAddedProducts.length,
+            itemBuilder: (context, index) {
+              final product = recentlyAddedProducts[index];
 
-          if (product is Map<String, dynamic>) {
-            return CustomRecentlyCard(
-              product: product,
-              barcode: product['barcode'],
-              highRiskIngredients: product['highRiskIngredients'] ?? [],
-            );
-          } else {
-            return SizedBox.shrink();
-          }
-        },
-      ),
+              if (product is Map<String, dynamic>) {
+                return CustomRecentlyCard(
+                  product: product,
+                  barcode: product['barcode'],
+                  highRiskIngredients: product['highRiskIngredients'] ?? [],
+                );
+              } else {
+                return SizedBox.shrink();
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 }

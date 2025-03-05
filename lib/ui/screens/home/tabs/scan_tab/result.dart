@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
@@ -128,7 +129,11 @@ class ResultScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 15),
-            CustomButton(onClick: () {}, title: "Done"),
+            CustomButton(
+                onClick: () {
+                  Navigator.pushNamed(context, HomeScreen.routeName);
+                },
+                title: "Done"),
           ],
         ),
       ),
