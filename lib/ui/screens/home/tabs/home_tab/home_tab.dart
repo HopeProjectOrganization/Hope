@@ -8,6 +8,8 @@ import 'package:hope/ui/shared_widgets/custom_home_button.dart';
 import 'package:hope/ui/shared_widgets/utils/language_button.dart';
 import 'package:hope/ui/shared_widgets/utils/theme_button.dart';
 
+import 'recently_add.dart'; // relative import for RecentlyAddedScreen
+
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
 
@@ -88,47 +90,65 @@ class _HomeTabState extends State<HomeTab> {
             ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomHomeButton(
-                    image: AppAssets.awareButton,
-                    onClick: () {
-                      Navigator.pushNamed(context, HomeScreen.routeName,
-                          arguments: 2);
-                    },
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        CustomHomeButton(
+                          image: AppAssets.awareButton,
+                          onClick: () {
+                            Navigator.pushNamed(context, HomeScreen.routeName,
+                                arguments: 2);
+                          },
+                        ),
+                        CustomHomeButton(
+                          image: AppAssets.scanButton,
+                          onClick: () {
+                            startScan();
+                          },
+                        ),
+                        CustomHomeButton(
+                          image: AppAssets.chatbotButton,
+                          onClick: () {
+                            Navigator.pushNamed(context, HomeScreen.routeName,
+                                arguments: 3);
+                          },
+                        ),
+                        CustomHomeButton(
+                          image: AppAssets.addButton,
+                          onClick: () {
+                            Navigator.pushNamed(context, HomeScreen.routeName,
+                                arguments: 1);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  CustomHomeButton(
-                    image: AppAssets.scanButton,
-                    onClick: () {
-                      // Navigator.pushNamed(context, ScanTab.routeName);
-                      startScan();
-                    },
+                  const SizedBox(height: 32),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      "Recently Add",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                   ),
-                  CustomHomeButton(
-                    image: AppAssets.chatbotButton,
-                    onClick: () {
-                      Navigator.pushNamed(context, HomeScreen.routeName,
-                          arguments: 3);
-                    },
-                  ),
-                  CustomHomeButton(
-                    image: AppAssets.addButton,
-                    onClick: () {
-                      Navigator.pushNamed(context, HomeScreen.routeName,
-                          arguments: 1);
-                    },
-                  ),
+                  const SizedBox(height: 16),
+                  RecentlyAddedScreen(),
+                  const SizedBox(height: 32),
+                  MostRecentScan(),
                 ],
               ),
             ),
           ),
-
-          Expanded(child: MostRecentScan()),
         ],
       ),
     );

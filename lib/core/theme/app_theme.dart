@@ -35,7 +35,9 @@ class AppTheme {
     bottomAppBarTheme: BottomAppBarTheme(color: AppColors.purple, elevation: 5),
       iconTheme: IconThemeData(color: AppColors.white),
       textTheme: const TextTheme(
-      bodyLarge: TextStyle(
+        titleLarge: TextStyle(
+            color: AppColors.dark, fontSize: 32, fontWeight: FontWeight.bold),
+        bodyLarge: TextStyle(
           color: AppColors.dark, fontSize: 16, fontWeight: FontWeight.w500),
       bodyMedium: TextStyle(
           color: AppColors.dark, fontSize: 14, fontWeight: FontWeight.w500),

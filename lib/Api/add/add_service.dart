@@ -22,7 +22,7 @@ class AddService {
       String productName,
       String barcode,
       String ingredientsText) async {
-    final url = Uri.parse("http://192.168.1.109:9090/products/add");
+    final url = Uri.parse("http://192.168.1.4:8080/products/add");
 
     String? token = await getToken();
     if (token == null) {
@@ -67,12 +67,6 @@ class AddService {
             title: "Success",
             posButtonTitle: "Go to result",
             posButtonClick: () {
-              // Navigator.pushNamed(
-              //   context,
-              //   ResultScreen.routeName,
-              //   arguments: barcode,
-              // );
-
               Navigator.pushNamed(
                 context,
                 ResultScreen.routeName,
