@@ -18,10 +18,8 @@ class AddService {
     return prefs.getString('auth_token');
   }
 
-  Future<void> addProduct(BuildContext context,
-      String productName,
-      String barcode,
-      String ingredientsText) async {
+  Future<void> addProduct(BuildContext context, String productName,
+      String barcode, String ingredientsText) async {
     final url = Uri.parse("http://192.168.1.4:8080/products/add");
 
     String? token = await getToken();
@@ -57,7 +55,10 @@ class AddService {
       print("Response body: ${response.body}");
 
       if (response.statusCode == 200 && response.body.isNotEmpty) {
-        final responseData = json.decode(response.body);
+        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+        print(responseData['highRiskIngredients']);
+
+        final scanResult = await fetchScanResult(barcode);
 
         if (responseData['id'] != null) {
           print("Product added successfully!");
@@ -77,7 +78,7 @@ class AddService {
                     'barcode': barcode,
                   },
                   'highRiskIngredients':
-                      responseData['highRiskIngredients'] ?? null,
+                      scanResult?['highRiskIngredients'] ?? [],
                 },
               );
             },
@@ -105,11 +106,26 @@ class AddService {
     }
   }
 
+  Future<Map<String, dynamic>?> fetchScanResult(String barcode) async {
+    try {
+      var url = Uri.parse("http://192.168.1.4:8080/api/scan/$barcode");
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        return {'message': 'Failed to fetch scan result'};
+      }
+    } catch (e) {
+      return {'message': 'Error occurred during fetching scan result: $e'};
+    }
+  }
+
   List<Map<String, dynamic>> extractIngredients(String text) {
     final List<Map<String, dynamic>> ingredients = [];
 
-    // final ingredientNames = text.split(RegExp(r'[,-]'));
-    final ingredientNames = text.split(RegExp(r'[\s,;-]+'));
+    final ingredientNames = text.split(RegExp(r'[,-]'));
+    // final ingredientNames = text.split(RegExp(r'[\s,;-]+'));
     for (var name in ingredientNames) {
       final ingredient = {
         "ingredientName": name.trim(),

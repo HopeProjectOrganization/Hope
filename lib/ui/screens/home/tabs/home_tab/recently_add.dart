@@ -20,9 +20,11 @@ class _RecentlyAddedScreenState extends State<RecentlyAddedScreen> {
 
   Future<void> _loadRecentlyAddedProducts() async {
     final prefs = await SharedPreferences.getInstance();
-    String? productsString = prefs.getString('recently_added_products');
-    if (productsString != null) {
-      List<dynamic> products = json.decode(productsString);
+    List<String>? productsStringList =
+        prefs.getStringList('recently_added_products');
+    if (productsStringList != null) {
+      List<dynamic> products =
+          productsStringList.map((product) => jsonDecode(product)).toList();
       setState(() {
         recentlyAddedProducts = products.reversed.take(5).toList();
       });

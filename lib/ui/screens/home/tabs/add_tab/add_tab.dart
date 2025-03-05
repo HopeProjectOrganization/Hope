@@ -91,88 +91,88 @@ class AddTabState extends State<AddTab> {
     themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
     return CustomScaffold(
-      title: appLocalizations.addProduct,
+        title: appLocalizations.addProduct,
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              appLocalizations.barcode,
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            CustomLabel(
-              controller: barCode,
-              hint: null,
-              prefixIcon: null,
-              suffixIcon: IconButton(
-                icon: const ImageIcon(AssetImage(AppIcons.barCodeIcon)),
+              children: [
+                Text(
+                  appLocalizations.barcode,
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                CustomLabel(
+                  controller: barCode,
+                  hint: null,
+                  prefixIcon: null,
+                  suffixIcon: IconButton(
+                    icon: const ImageIcon(AssetImage(AppIcons.barCodeIcon)),
                     onPressed: startScan,
                     color: AppColors.gray,
-                iconSize: 60,
-              ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            Text(
-              appLocalizations.productName,
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            CustomTextField(controller: productName, hint: ""),
-            const SizedBox(
-              height: 16,
-            ),
-            Text(
-              appLocalizations.ingredients,
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
-            const SizedBox(
-              height: 8,
-            ),
+                    iconSize: 60,
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  appLocalizations.productName,
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                CustomTextField(controller: productName, hint: ""),
+                const SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  appLocalizations.ingredients,
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
                 CustomTextField(
                   controller: ingredients,
-                hint: "",
-                minLines: 6,
-                suffixIcon: IconButton(
-                  icon: const ImageIcon(
-                    AssetImage(AppIcons.camera),
+                  hint: "",
+                  minLines: 6,
+                  suffixIcon: IconButton(
+                    icon: const ImageIcon(
+                      AssetImage(AppIcons.camera),
+                    ),
+                    onPressed: () async {
+                      _showImageSourceActionSheet(context);
+                    },
+                    color: AppColors.gray,
+                    iconSize: 40,
                   ),
-                  onPressed: () async {
-                    _showImageSourceActionSheet(context);
-                  },
-                  color: AppColors.gray,
-                  iconSize: 40,
                 ),
-              ),
-            const SizedBox(
-              height: 16,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                CustomButton(
-                  title: 'Add Product',
-                  onClick: () async {
-                    await addProduct();
-                  },
+                const SizedBox(
+                  height: 16,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    CustomButton(
+                      title: 'Add Product',
+                      onClick: () async {
+                        await addProduct();
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 16,
                 ),
               ],
             ),
-            const SizedBox(
-              height: 16,
-            ),
-          ],
-        ),
-      ),
+          ),
         ));
   }
 }
