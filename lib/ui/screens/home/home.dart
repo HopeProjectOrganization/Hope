@@ -7,13 +7,13 @@ import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab//menu_tab.dart';
-import 'package:hope/ui/screens/home/tabs/scan_tab/scan_service.dart';
+import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
 
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -50,43 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
     const HomeTab(),
     const AddTab(),
     AwareTab(),
-    MenuTab(),
+    const MenuTab(),
   ];
 
   String scannedBarcode = "Not Scanned yet";
 
-  // Future<void> scanBarcode() async {
-  //   try {
-  //     String barcode = await FlutterBarcodeScanner.scanBarcode(
-  //         "#ff8E56FF",
-  //         "Cancel",
-  //         true,
-  //         ScanMode.BARCODE,
-  //         500,
-  //         "back",
-  //         ScanFormat.ONLY_BARCODE);
-  //
-  //     if (!mounted) return;
-  //
-  //     setState(() {
-  //       scannedBarcode = barcode != "-1" ? barcode : "Scan canceled";
-  //     });
-  //     if (scannedBarcode != "-1" && scannedBarcode.isNotEmpty) {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => Result(
-  //             barcode: scannedBarcode,
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       scannedBarcode = "Error occurred during scanning!";
-  //     });
-  //   }
-  // }
 
   late BarcodeScannerService barcodeScanner;
 
@@ -113,10 +81,11 @@ class _HomeScreenState extends State<HomeScreen> {
           FocusScope.of(context).unfocus();
         },
         child: Scaffold(
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-            floatingActionButton: keyboardIsOpen
-                ? null
-                : FloatingActionButton(
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: keyboardIsOpen
+              ? null
+              : FloatingActionButton(
                   onPressed: () {
                     // Navigator.pushNamed(
                     //   context,
@@ -125,57 +94,57 @@ class _HomeScreenState extends State<HomeScreen> {
                     startScan();
                   },
                   child: ImageIcon(
-                      AssetImage(AppIcons.scanIcon),
-                      color: color,
-                    ),
+                    const AssetImage(AppIcons.scanIcon),
+                    color: color,
                   ),
-            bottomNavigationBar: BottomNavigationBar(
-              onTap: (index) {
-                setState(() {
-              currentIndex = index;
+                ),
+          bottomNavigationBar: BottomNavigationBar(
+            onTap: (index) {
+              setState(() {
+                currentIndex = index;
               });
-          },
-          currentIndex: currentIndex,
-          type: BottomNavigationBarType.fixed,
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: ImageIcon(
-                    AssetImage(AppIcons.homeIcon),
-                  ),
-                  label: appLocalizations.home,
-                  activeIcon: ImageIcon(
-                    AssetImage(AppIcons.homeFilled),
-                  ),
+            },
+            currentIndex: currentIndex,
+            type: BottomNavigationBarType.fixed,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: const ImageIcon(
+                  AssetImage(AppIcons.homeIcon),
                 ),
-                BottomNavigationBarItem(
-                  icon: ImageIcon(
-                    AssetImage(AppIcons.addIcon),
-                  ),
-                  label: appLocalizations.add,
-                  activeIcon: ImageIcon(
-                    AssetImage(AppIcons.addFilled),
-                  ),
+                label: appLocalizations.home,
+                activeIcon: const ImageIcon(
+                  AssetImage(AppIcons.homeFilled),
                 ),
-                BottomNavigationBarItem(
-                  icon: ImageIcon(
-                    AssetImage(AppIcons.awareIcon),
-                  ),
-                  label: appLocalizations.aware,
-                  activeIcon: ImageIcon(
-                    AssetImage(AppIcons.awareFilled),
-                  ),
+              ),
+              BottomNavigationBarItem(
+                icon: const ImageIcon(
+                  AssetImage(AppIcons.addIcon),
                 ),
-                BottomNavigationBarItem(
-                  icon: ImageIcon(
-                    AssetImage(AppIcons.menuIcon),
-                  ),
-                  label: appLocalizations.menu,
-                  activeIcon: ImageIcon(
-                    AssetImage(AppIcons.menuFilled),
-                  ),
+                label: appLocalizations.add,
+                activeIcon: const ImageIcon(
+                  AssetImage(AppIcons.addFilled),
                 ),
-          ],
-        ),
+              ),
+              BottomNavigationBarItem(
+                icon: const ImageIcon(
+                  AssetImage(AppIcons.awareIcon),
+                ),
+                label: appLocalizations.aware,
+                activeIcon: const ImageIcon(
+                  AssetImage(AppIcons.awareFilled),
+                ),
+              ),
+              BottomNavigationBarItem(
+                icon: const ImageIcon(
+                  AssetImage(AppIcons.menuIcon),
+                ),
+                label: appLocalizations.menu,
+                activeIcon: const ImageIcon(
+                  AssetImage(AppIcons.menuFilled),
+                ),
+              ),
+            ],
+          ),
           body: IndexedStack(
             index: currentIndex,
             children: tabs,

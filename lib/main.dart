@@ -12,7 +12,6 @@ import 'package:hope/ui/screens/aware/hereditary/hereditary.dart';
 import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
-import 'package:hope/ui/screens/home/tabs/home_tab/utls/recent_scan_provider.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
 import 'package:hope/ui/screens/onBoarding_screens/on_boarding/onboarding_screen.dart';
@@ -31,7 +30,7 @@ main() {
       ChangeNotifierProvider(
         create: (context) => LocaleProvider(),
       ),
-      ChangeNotifierProvider(create: (_) => RecentScannedProductsProvider())
+      //   ChangeNotifierProvider(create: (_) => RecentScannedProductsProvider())
     ], child: MyApp()),
   );
 }

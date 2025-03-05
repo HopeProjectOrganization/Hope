@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/home.dart';
-import 'package:hope/ui/screens/home/tabs/home_tab/most_recent_scan.dart';
-import 'package:hope/ui/screens/home/tabs/scan_tab/scan_service.dart';
+import 'package:hope/ui/screens/home/tabs/home_tab/recently_scan.dart';
 import 'package:hope/ui/shared_widgets/custom_home_button.dart';
 import 'package:hope/ui/shared_widgets/utils/language_button.dart';
 import 'package:hope/ui/shared_widgets/utils/theme_button.dart';
 
-import 'recently_add.dart'; // relative import for RecentlyAddedScreen
+import 'recently_add.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -20,21 +19,21 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> {
   String scannedBarcode = "Not scanned yet";
 
-  late BarcodeScannerService barcodeScanner;
+//  late BarcodeScannerService barcodeScanner;
 
   @override
   void initState() {
     super.initState();
-    barcodeScanner = BarcodeScannerService(context);
+    //  barcodeScanner = BarcodeScannerService(context);
   }
 
-  void startScan() {
-    barcodeScanner.scanBarcode((result) {
-      setState(() {
-        scannedBarcode = result;
-      });
-    });
-  }
+  // void startScan() {
+  //   barcodeScanner.scanBarcode((result) {
+  //     setState(() {
+  //       scannedBarcode = result;
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +112,7 @@ class _HomeTabState extends State<HomeTab> {
                         CustomHomeButton(
                           image: AppAssets.scanButton,
                           onClick: () {
-                            startScan();
+                            //  startScan();
                           },
                         ),
                         CustomHomeButton(
@@ -133,10 +132,26 @@ class _HomeTabState extends State<HomeTab> {
                       ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      "Recently Scan",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  RecentlyScan(),
                   const SizedBox(height: 32),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      "Recently Add",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   RecentlyAddedScreen(),
                   const SizedBox(height: 32),
-                  MostRecentScan(),
                 ],
               ),
             ),

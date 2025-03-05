@@ -20,7 +20,7 @@ class AddService {
 
   Future<void> addProduct(BuildContext context, String productName,
       String barcode, String ingredientsText) async {
-    final url = Uri.parse("http://192.168.1.4:8080/products/add");
+    final url = Uri.parse("http://192.168.1.122:9090/products/add");
 
     String? token = await getToken();
     if (token == null) {
@@ -63,7 +63,6 @@ class AddService {
         if (responseData['id'] != null) {
           print("Product added successfully!");
 
-          // حفظ المنتج المضاف في التخزين المحلي
           await saveRecentlyAddedProduct({
             'productName': productName,
             'barcode': barcode,
@@ -116,7 +115,7 @@ class AddService {
 
   Future<Map<String, dynamic>?> fetchScanResult(String barcode) async {
     try {
-      var url = Uri.parse("http://192.168.1.4:8080/api/scan/$barcode");
+      var url = Uri.parse("http://192.168.1.122:9090/api/scan/$barcode");
       var response = await http.get(url);
 
       if (response.statusCode == 200) {

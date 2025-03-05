@@ -22,12 +22,10 @@ class ScanService {
         return {'message': 'Scan canceled'};
       }
 
-      // Call the API with the scanned barcode
-      var url = Uri.parse("http://192.168.1.4:8080/api/scan/$barcode");
+      var url = Uri.parse("http://192.168.1.122:9090/api/scan/$barcode");
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
-        // Parse and return the response body
         return jsonDecode(response.body) as Map<String, dynamic>;
       } else {
         return {'message': 'Failed to fetch data from the server'};
