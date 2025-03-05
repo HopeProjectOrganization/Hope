@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/home.dart';
+import 'package:hope/ui/screens/home/tabs/home_tab/most_recent_scan.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scan_service.dart';
 import 'package:hope/ui/shared_widgets/custom_home_button.dart';
 import 'package:hope/ui/shared_widgets/utils/language_button.dart';
@@ -126,6 +127,8 @@ class _HomeTabState extends State<HomeTab> {
               ),
             ),
           ),
+
+          Expanded(child: MostRecentScan()),
         ],
       ),
     );

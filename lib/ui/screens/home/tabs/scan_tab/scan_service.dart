@@ -20,7 +20,6 @@ class BarcodeScannerService {
     hideLoading(context);
 
     if (result != null) {
-      onResult(result['message'] ?? "No message");
 
       Navigator.pushNamed(
         context,

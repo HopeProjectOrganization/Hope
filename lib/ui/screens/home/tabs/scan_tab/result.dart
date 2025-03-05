@@ -128,7 +128,11 @@ class ResultScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 15),
-            CustomButton(onClick: () {}, title: "Done"),
+            CustomButton(
+                onClick: () {
+                  Navigator.pop;
+                },
+                title: "Done"),
           ],
         ),
       ),
