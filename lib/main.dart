@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
         AddTab.routeName: (_) => const AddTab(),
         ResultScreen.routeName: (_) => const ResultScreen(),
       },
-      initialRoute: HomeScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

@@ -3,6 +3,7 @@ import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/recently_scan.dart';
+import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
 import 'package:hope/ui/shared_widgets/custom_home_button.dart';
 import 'package:hope/ui/shared_widgets/utils/language_button.dart';
 import 'package:hope/ui/shared_widgets/utils/theme_button.dart';
@@ -19,21 +20,22 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> {
   String scannedBarcode = "Not scanned yet";
 
-//  late BarcodeScannerService barcodeScanner;
 
   @override
   void initState() {
     super.initState();
-    //  barcodeScanner = BarcodeScannerService(context);
+    barcodeScanner = BarcodeScannerService(context);
   }
 
-  // void startScan() {
-  //   barcodeScanner.scanBarcode((result) {
-  //     setState(() {
-  //       scannedBarcode = result;
-  //     });
-  //   });
-  // }
+  late BarcodeScannerService barcodeScanner;
+
+  void startScan() {
+    barcodeScanner.scanBarcode((result) {
+      setState(() {
+        scannedBarcode = result;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +114,7 @@ class _HomeTabState extends State<HomeTab> {
                         CustomHomeButton(
                           image: AppAssets.scanButton,
                           onClick: () {
-                            //  startScan();
+                            startScan();
                           },
                         ),
                         CustomHomeButton(
