@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:hope/Api/add/add_service.dart';
 import 'package:hope/ui/shared_widgets/custom_recently_cards.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RecentlyAddedScreen extends StatefulWidget {
   @override
@@ -11,6 +9,7 @@ class RecentlyAddedScreen extends StatefulWidget {
 
 class _RecentlyAddedScreenState extends State<RecentlyAddedScreen> {
   List<dynamic> recentlyAddedProducts = [];
+  final AddService _addService = AddService();
 
   @override
   void initState() {
@@ -19,20 +18,18 @@ class _RecentlyAddedScreenState extends State<RecentlyAddedScreen> {
   }
 
   Future<void> _loadRecentlyAddedProducts() async {
-    final prefs = await SharedPreferences.getInstance();
+    try {
+      List<dynamic>? products = await _addService.getAddedProducts();
 
-    String? productsString = prefs.getString('recently_added_products');
-
-    if (productsString != null) {
-      try {
-        List<dynamic> products = json.decode(productsString);
-
+      if (products != null) {
         setState(() {
           recentlyAddedProducts = products.reversed.take(5).toList();
         });
-      } catch (e) {
-        print("Error decoding products: $e");
+      } else {
+        print("No recently added products found.");
       }
+    } catch (e) {
+      print("Error loading recently added products: $e");
     }
   }
 
@@ -48,7 +45,7 @@ class _RecentlyAddedScreenState extends State<RecentlyAddedScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
-            "Recently Add",
+            "Recently Added",
             style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),

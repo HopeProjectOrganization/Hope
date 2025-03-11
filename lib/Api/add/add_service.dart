@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:hope/Api/history/add_to_history.dart';
 import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
@@ -20,7 +21,7 @@ class AddService {
 
   Future<void> addProduct(BuildContext context, String productName,
       String barcode, String ingredientsText) async {
-    final url = Uri.parse("http://192.168.1.122:9090/products/add");
+    final url = Uri.parse("http://192.168.78.153:8080/products/add");
 
     String? token = await getToken();
     if (token == null) {
@@ -63,11 +64,8 @@ class AddService {
         if (responseData['id'] != null) {
           print("Product added successfully!");
 
-          await saveRecentlyAddedProduct({
-            'productName': productName,
-            'barcode': barcode,
-            'highRiskIngredients': scanResult?['highRiskIngredients'] ?? [],
-          });
+          final addToHistory = AddToHistory();
+          await addToHistory.updateHistory(barcode, "ADDED");
 
           showMessage(
             context,
@@ -115,7 +113,7 @@ class AddService {
 
   Future<Map<String, dynamic>?> fetchScanResult(String barcode) async {
     try {
-      var url = Uri.parse("http://192.168.1.122:9090/api/scan/$barcode");
+      var url = Uri.parse("http://192.168.78.153:8080/api/scan/$barcode");
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -142,29 +140,33 @@ class AddService {
     return ingredients;
   }
 
-  Future<void> saveRecentlyAddedProduct(Map<String, dynamic> product) async {
-    final prefs = await SharedPreferences.getInstance();
+  Future<List<dynamic>?> getAddedProducts() async {
+    final url = Uri.parse("http://192.168.78.153:8080/history/added");
 
-    String? productsString = prefs.getString('recently_added_products');
+    String? token = await getToken();
+    if (token == null) {
+      print("Token not found!");
+      return null;
+    }
 
-    List<dynamic> recentlyAddedProducts = [];
+    final headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    };
 
-    if (productsString != null) {
-      try {
-        recentlyAddedProducts = json.decode(productsString);
-      } catch (e) {
-        print("Error decoding products: $e");
+    try {
+      var response = await http.get(url, headers: headers);
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as List<dynamic>;
+      } else {
+        print(
+            'Failed to fetch added products. Status code: ${response.statusCode}');
+        return null;
       }
+    } catch (e) {
+      print('Error fetching added products: $e');
+      return null;
     }
-
-    recentlyAddedProducts.add(product);
-
-    if (recentlyAddedProducts.length > 5) {
-      recentlyAddedProducts =
-          recentlyAddedProducts.sublist(recentlyAddedProducts.length - 5);
-    }
-
-    await prefs.setString(
-        'recently_added_products', json.encode(recentlyAddedProducts));
   }
 }

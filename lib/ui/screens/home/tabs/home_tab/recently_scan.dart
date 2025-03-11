@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:hope/Api/scan/scan_service.dart';
 import 'package:hope/ui/shared_widgets/custom_recently_cards.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RecentlyScan extends StatefulWidget {
   @override
@@ -11,6 +9,7 @@ class RecentlyScan extends StatefulWidget {
 
 class _RecentlyScanState extends State<RecentlyScan> {
   List<dynamic> recentlyScannedProducts = [];
+  final ScanService scanService = ScanService();
 
   @override
   void initState() {
@@ -19,31 +18,28 @@ class _RecentlyScanState extends State<RecentlyScan> {
   }
 
   Future<void> _loadRecentlyScannedProducts() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? productsString = prefs.getString('recently_scanned_products');
+    try {
+      List<dynamic>? products = await scanService.getScannedProducts();
 
-    if (productsString != null) {
-      try {
-        List<dynamic> products = json.decode(productsString);
+      if (products != null) {
+        Map<String, dynamic> uniqueProductsMap = {};
 
-        if (products is List) {
-          Map<String, dynamic> uniqueProductsMap = {};
-
-          for (var product in products) {
-            if (product is Map<String, dynamic> &&
-                product.containsKey('barcode')) {
-              uniqueProductsMap[product['barcode']] = product;
-            }
+        for (var product in products) {
+          if (product is Map<String, dynamic> &&
+              product.containsKey('barcode')) {
+            uniqueProductsMap[product['barcode']] = product;
           }
-
-          setState(() {
-            recentlyScannedProducts =
-                uniqueProductsMap.values.toList().reversed.take(5).toList();
-          });
         }
-      } catch (e) {
-        print("Error decoding products: $e");
+
+        setState(() {
+          recentlyScannedProducts =
+              uniqueProductsMap.values.toList().reversed.take(5).toList();
+        });
+      } else {
+        print('No recently scanned products found.');
       }
+    } catch (e) {
+      print("Error loading scanned products: $e");
     }
   }
 
@@ -53,25 +49,34 @@ class _RecentlyScanState extends State<RecentlyScan> {
       return SizedBox.shrink();
     }
 
-    return Container(
-      height: MediaQuery.of(context).size.height * .23,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: recentlyScannedProducts.length,
-        itemBuilder: (context, index) {
-          final product = recentlyScannedProducts[index];
-
-          if (product is Map<String, dynamic>) {
-            return CustomRecentlyCard(
-              product: product,
-              barcode: product['barcode'] ?? '',
-              highRiskIngredients: product['highRiskIngredients'] ?? [],
-            );
-          } else {
-            return SizedBox.shrink();
-          }
-        },
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Text(
+          "Recently Scanned",
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
       ),
-    );
+      Container(
+        height: MediaQuery.of(context).size.height * .23,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: recentlyScannedProducts.length,
+          itemBuilder: (context, index) {
+            final product = recentlyScannedProducts[index];
+
+            if (product is Map<String, dynamic>) {
+              return CustomRecentlyCard(
+                product: product,
+                barcode: product['barcode'] ?? '',
+                highRiskIngredients: product['highRiskIngredients'] ?? [],
+              );
+            } else {
+              return SizedBox.shrink();
+            }
+          },
+        ),
+      )
+    ]);
   }
 }
