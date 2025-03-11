@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hope/Api/add/add_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 
-class CustomRecentlyCard extends StatelessWidget {
+class CustomRecentlyCard extends StatefulWidget {
   final Map<String, dynamic> product;
   final String barcode;
   final List<dynamic> highRiskIngredients;
@@ -12,6 +13,30 @@ class CustomRecentlyCard extends StatelessWidget {
     required this.barcode,
     required this.highRiskIngredients,
   });
+
+  @override
+  State<CustomRecentlyCard> createState() => _CustomRecentlyCardState();
+}
+
+class _CustomRecentlyCardState extends State<CustomRecentlyCard> {
+  Map<String, dynamic>? scanResult;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchScanResult();
+  }
+
+  Future<void> _fetchScanResult() async {
+    try {
+      final result = await AddService().fetchScanResult(widget.barcode);
+      setState(() {
+        scanResult = result;
+      });
+    } catch (e) {
+      print("Error fetching scan result: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +56,7 @@ class CustomRecentlyCard extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
-                product['productName'],
+                widget.product['productName'],
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -49,10 +74,11 @@ class CustomRecentlyCard extends StatelessWidget {
                         arguments: {
                           'message': "Product successfully added!",
                           'product': {
-                            'productName': product['productName'],
-                            'barcode': barcode,
+                            'productName': widget.product['productName'],
+                            'barcode': widget.barcode,
                           },
-                          'highRiskIngredients': highRiskIngredients,
+                          'highRiskIngredients':
+                              scanResult?['highRiskIngredients'] ?? [],
                         },
                       );
                     },
