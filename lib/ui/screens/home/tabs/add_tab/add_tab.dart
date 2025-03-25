@@ -58,13 +58,12 @@ class AddTabState extends State<AddTab> {
         _image = image;
         isScanning = true;
       });
-
       processImage(_image!);
     });
   }
 
   Future<void> addProduct() async {
-    await _addService.addProduct(
+    await AddService.addProduct(
       context,
       productName.text,
       barCode.text,

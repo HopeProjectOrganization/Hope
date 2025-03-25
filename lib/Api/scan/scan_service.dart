@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+import 'package:hope/Api/add/fetchProductData.dart';
 import 'package:hope/Api/history/add_to_history.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +14,8 @@ class ScanService {
     return prefs.getString('auth_token');
   }
 
-  Future<Map<String, dynamic>?> scanBarcode() async {
+  Future<Map<String, dynamic>?> scanBarcode(BuildContext context) async {
+    // await ProductImporter.fetchAndAddProducts(context);
     try {
       String barcode = await FlutterBarcodeScanner.scanBarcode(
         "#ff8E56FF",

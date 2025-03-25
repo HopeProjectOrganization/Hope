@@ -21,7 +21,7 @@ class _ScanTabState extends State<ScanTab> {
     showLoading(context);
 
     // Call the ScanService to perform scanning and fetch the API result
-    var result = await _scanService.scanBarcode();
+    var result = await _scanService.scanBarcode(context);
 
     if (!mounted) return;
 

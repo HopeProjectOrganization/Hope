@@ -14,14 +14,14 @@ class AddService {
     await prefs.setString('auth_token', token);
   }
 
-  Future<String?> getToken() async {
+  static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('auth_token');
   }
 
-  Future<void> addProduct(BuildContext context, String productName,
+  static Future<void> addProduct(BuildContext context, String productName,
       String barcode, String ingredientsText) async {
-    final url = Uri.parse("http://192.168.78.153:8080/products/add");
+    final url = Uri.parse("http://192.168.8.222:8080/products/add");
 
     String? token = await getToken();
     if (token == null) {
@@ -111,7 +111,7 @@ class AddService {
     }
   }
 
-  Future<Map<String, dynamic>?> fetchScanResult(String barcode) async {
+  static Future<Map<String, dynamic>?> fetchScanResult(String barcode) async {
     try {
       var url = Uri.parse("http://192.168.78.153:8080/api/scan/$barcode");
       var response = await http.get(url);
@@ -126,7 +126,7 @@ class AddService {
     }
   }
 
-  List<Map<String, dynamic>> extractIngredients(String text) {
+  static List<Map<String, dynamic>> extractIngredients(String text) {
     final List<Map<String, dynamic>> ingredients = [];
 
     final ingredientNames = text.split(RegExp(r'[,-]'));
@@ -141,7 +141,7 @@ class AddService {
   }
 
   Future<List<dynamic>?> getAddedProducts() async {
-    final url = Uri.parse("http://192.168.78.153:8080/history/added");
+    final url = Uri.parse("http://192.168.8.222:8080/history/added");
 
     String? token = await getToken();
     if (token == null) {

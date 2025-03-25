@@ -15,7 +15,7 @@ class BarcodeScannerService {
   Future<void> scanBarcode(Function(String) onResult) async {
     showLoading(context);
 
-    var result = await _scanService.scanBarcode();
+    var result = await _scanService.scanBarcode(context);
 
     print("📌 Result from API: $result"); // تأكد من أن البيانات صحيحة
 

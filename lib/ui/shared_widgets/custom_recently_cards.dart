@@ -29,7 +29,7 @@ class _CustomRecentlyCardState extends State<CustomRecentlyCard> {
 
   Future<void> _fetchScanResult() async {
     try {
-      final result = await AddService().fetchScanResult(widget.barcode);
+      final result = await AddService.fetchScanResult(widget.barcode);
       setState(() {
         scanResult = result;
       });
