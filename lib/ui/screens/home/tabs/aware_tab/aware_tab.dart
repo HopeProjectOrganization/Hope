@@ -28,7 +28,7 @@ class AwareTab extends StatelessWidget {
       CategoryModel(
           image: AppAssets.awareness,
           id: appLocalizations.awareness,
-          route: '/hereditary'),
+          route: '/newsScreen'),
       CategoryModel(
           image: AppAssets.hereditary,
           id: appLocalizations.hereditary,

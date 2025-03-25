@@ -14,6 +14,8 @@ import 'package:hope/ui/shared_widgets/custom_label.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:hope/ui/shared_widgets/custom_text_field.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class AddTab extends StatefulWidget {
   static const routeName = '/addTab';
@@ -71,6 +73,38 @@ class AddTabState extends State<AddTab> {
     );
   }
 
+  Future<Map<String, dynamic>?> scanBarcode(BuildContext context) async {
+    // await ProductImporter.fetchAndAddProducts(context);
+    try {
+      String barcode = await FlutterBarcodeScanner.scanBarcode(
+        "#ff8E56FF",
+        "Cancel",
+        true,
+        ScanMode.BARCODE,
+        500,
+        "back",
+        ScanFormat.ONLY_BARCODE,
+      );
+
+      if (barcode != "-1") {
+        setState(() {
+          scannedBarcode = barcode;
+          barCode.text = barcode;
+        });
+      } else {
+        // Handle scan cancellation
+        setState(() {
+          scannedBarcode = "Scan canceled";
+        });
+      }
+    } catch (e) {
+      // Handle errors during the scan
+      setState(() {
+        scannedBarcode = "Error occurred during scanning: $e";
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -78,11 +112,7 @@ class AddTabState extends State<AddTab> {
   }
 
   void startScan() {
-    barcodeScanner.scanBarcode((result) {
-      setState(() {
-        scannedBarcode = result;
-      });
-    });
+    scanBarcode(context);
   }
 
   @override

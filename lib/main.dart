@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
         ResultScreen.routeName: (_) => const ResultScreen(),
         NewsScreen.routeName: (_) => NewsScreen()
       },
-      initialRoute: NewsScreen.routeName,
+      initialRoute: HomeScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

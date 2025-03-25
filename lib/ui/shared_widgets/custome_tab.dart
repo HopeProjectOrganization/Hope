@@ -34,7 +34,7 @@ class _CustomeTabState extends State<CustomeTab> {
           children: [
             ImageIcon(AssetImage(widget.icon)),
             SizedBox(
-              width: 8,
+              width: 0,
             ),
             Text(widget.text),
           ],

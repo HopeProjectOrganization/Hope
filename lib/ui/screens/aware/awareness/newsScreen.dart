@@ -92,8 +92,9 @@ class _NewsScreenState extends State<NewsScreen>
         bottom: TabBar(
           controller: _tabController,
           indicatorSize: TabBarIndicatorSize.label,
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
           isScrollable: true,
+          labelPadding: const EdgeInsets.symmetric(horizontal: 7),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           tabs: buildTabs(cancerTypes),
         ),
       ),
