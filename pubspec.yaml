@@ -57,6 +57,8 @@ dependencies:
   flutter_genius_scan: ^5.6.1
   image_cropper: ^9.0.0
   dotted_border: ^2.1.0
+  url_launcher: ^6.3.1
+  cached_network_image: ^3.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

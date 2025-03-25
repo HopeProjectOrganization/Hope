@@ -141,7 +141,7 @@ class AddService {
   }
 
   Future<List<dynamic>?> getAddedProducts() async {
-    final url = Uri.parse("http://192.168.78.153:8080/history/added");
+    final url = Uri.parse("http://192.168.1.191:8081/history/added");
 
     String? token = await getToken();
     if (token == null) {
