@@ -20,10 +20,10 @@ class NewsList extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           print(
-              "NewsList Error: ${snapshot.error}"); // ✅ طباعة الخطأ في الـ console
+              "NewsList Error: ${snapshot.error}");
           return Center(child: Text("Error fetching news: ${snapshot.error}"));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          print("No News Available for $type"); // ✅ طباعة أنه لا توجد أخبار
+          print("No News Available for $type");
           return const Center(child: Text("No news available."));
         } else {
           final articles = snapshot.data!;
