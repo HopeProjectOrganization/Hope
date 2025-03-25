@@ -97,14 +97,6 @@ class _NewsScreenState extends State<NewsScreen>
           tabs: buildTabs(cancerTypes),
         ),
       ),
-      // appBar: AppBar(
-      //   title: Text("Cancer News"),
-      //   backgroundColor: Colors.teal,
-      //   bottom: TabBar(
-      //     controller: _tabController,
-      //     isScrollable: true,
-      //     tabs: cancerTypes.map((type) => BuildTab(),
-      //   ),)
       body: TabBarView(
         controller: _tabController,
         children: cancerTypes

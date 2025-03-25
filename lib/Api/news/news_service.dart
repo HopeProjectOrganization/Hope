@@ -4,13 +4,14 @@ import 'package:hope/model/article_dm.dart';
 import 'package:http/http.dart' as http;
 
 class NewsService {
-  static Future<List<ArticleDM>> fetchNews(
-      String cancerType, String apiKey) async {
+  static Future<List<ArticleDM>> fetchNews(String cancerType, String apiKey,
+      bool news) async {
     String query = "${Uri.encodeComponent(cancerType)} cancer";
     final url = Uri.parse(
         "https://newsapi.org/v2/everything?q=$query&language=en&apiKey=$apiKey");
 
     final response = await http.get(url);
+    print("Response: ${response.body}");
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
@@ -26,7 +27,7 @@ class NewsService {
         return title.contains(cancerType.toLowerCase());
       }).toList();
 
-      return filteredArticles;
+      return news == true ? filteredArticles : articles;
     } else {
       throw Exception("Failed to load news");
     }

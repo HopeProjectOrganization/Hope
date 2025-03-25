@@ -7,69 +7,27 @@ import 'package:intl/intl.dart';
 class NewsList extends StatelessWidget {
   final String type;
   final String apiKey;
+  final bool news;
 
-  NewsList({required this.type, required this.apiKey});
+  NewsList({required this.type, required this.apiKey, this.news = false});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<ArticleDM>>(
-      future: NewsService.fetchNews(type, apiKey),
+      future: NewsService.fetchNews(type, apiKey, news),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error.toString()}"));
+          print(
+              "NewsList Error: ${snapshot.error}"); // ✅ طباعة الخطأ في الـ console
+          return Center(child: Text("Error fetching news: ${snapshot.error}"));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          print("No News Available for $type"); // ✅ طباعة أنه لا توجد أخبار
+          return const Center(child: Text("No news available."));
         } else {
-          final articles = snapshot.data as List<ArticleDM>;
-          return buildListView(snapshot.data ?? [])
-              //   ListView.builder(
-              //   itemCount: articles.length,
-              //   itemBuilder: (context, index) {
-              //     final article = articles[index];
-              //     return Card(
-              //       margin: EdgeInsets.all(8.0),
-              //       child: ListTile(
-              //         leading: article["urlToImage"] != null
-              //             ? ClipRRect(
-              //             borderRadius: BorderRadius.circular(12),
-              //             child: CachedNetworkImage(
-              //               imageUrl: article["urlToImage"],
-              //               errorWidget: (context, url, error) => Center(
-              //                 child: Icon(Icons.error),
-              //               ),
-              //               placeholder: (context, url) => Center(
-              //                   child: CircularProgressIndicator(
-              //                     strokeWidth: 1,
-              //                   )),
-              //             ))
-              //             : Icon(Icons.image_not_supported),
-              //         title: Text(article["title"] ?? "No Title"),
-              //         subtitle: Text(article["source"]["name"] ?? "Unknown Source"),
-              //         onTap: () {
-              //           showDialog(
-              //             context: context,
-              //             builder: (context) => AlertDialog(
-              //               title: Text(article["title"] ?? "No Title"),
-              //               content: Text(article["description"] ?? "No Description"),
-              //               actions: [
-              //                 TextButton(
-              //                   onPressed: () => Navigator.pop(context),
-              //                   child: Text("Close"),
-              //                 ),
-              //                 TextButton(
-              //                   onPressed: () {
-              //                   },
-              //                   child: Text("Read More"),
-              //                 ),
-              //               ],
-              //             ),
-              //           );
-              //         },
-              //       ),
-              //     );
-              //   },
-              // )
-              ;
+          final articles = snapshot.data!;
+          return buildListView(articles);
         }
       },
     );
@@ -79,7 +37,7 @@ class NewsList extends StatelessWidget {
     if (dateStr == null || dateStr.isEmpty) return "Unknown Date";
     try {
       DateTime dateTime = DateTime.parse(dateStr);
-      return DateFormat("dd MMM yyyy").format(dateTime); // شكل: 25 Mar 2025
+      return DateFormat("dd MMM yyyy").format(dateTime);
     } catch (e) {
       return "Invalid Date";
     }
@@ -87,11 +45,11 @@ class NewsList extends StatelessWidget {
 
   Widget buildListView(List<ArticleDM> articles) => ListView.separated(
       itemBuilder: (context, index) {
-        var article = articles[index]; //load this from api;
+        var article = articles[index];
         return BuildArticleItem(
           image: article.urlToImage ?? '',
-          title: (article.title != null && article.title!.length > 80)
-              ? "${article.title!.substring(0, 80)}..."
+          title: (article.title != null && article.title!.length > 70)
+              ? "${article.title!.substring(0, 70)}..."
               : article.title ?? '',
           description:
               (article.description != null && article.description!.length > 50)
