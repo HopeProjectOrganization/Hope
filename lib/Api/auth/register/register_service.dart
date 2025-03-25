@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class RegisterService {
-  static const String _baseUrl = 'http://192.168.1.109:9090/api/v1/auth';
+  static const String _baseUrl = 'http://192.168.1.191:8081/api/v1/auth';
 
   Future<void> registerUser({
     required BuildContext context,

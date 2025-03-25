@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/ui/shared_widgets/custome_tab.dart';
 import 'package:provider/provider.dart';
 
 class Hereditary extends StatefulWidget {
@@ -17,13 +18,20 @@ class Hereditary extends StatefulWidget {
 class _HereditaryState extends State<Hereditary> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
+  final List<String> cancerTypes = [
+    "All",
+    "breast",
+    "lung",
+    "leukemia",
+    "prostate",
+    "brain"
+  ];
+  String selectedCancerType = "All";
 
-  Decoration boxDecoration() {
-    return BoxDecoration(
-      border: Border.all(color: AppColors.white),
-      borderRadius: BorderRadius.circular(50),
-    );
+  List<Widget> buildTabs(List<String> types) {
+    return types.map((type) => CustomeTab(text: type)).toList();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -31,20 +39,8 @@ class _HereditaryState extends State<Hereditary> {
     appLocalizations = AppLocalizations.of(context)!;
 
     return DefaultTabController(
-        length: 4,
+        length: cancerTypes.length,
         child: Scaffold(
-          // floatingActionButtonLocation:
-          //     FloatingActionButtonLocation.centerDocked,
-          // floatingActionButton: FloatingActionButton(
-          //   backgroundColor: AppColors.purple,
-          //   shape: const CircleBorder(
-          //     side: BorderSide(color: AppColors.white, width: 5),
-          //   ),
-          //   onPressed: () {},
-          //   child: const ImageIcon(
-          //     AssetImage(AppIcons.scanIcon),
-          //   ),
-          // ),
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(
@@ -77,71 +73,7 @@ class _HereditaryState extends State<Hereditary> {
               dividerColor: Colors.transparent,
               unselectedLabelStyle: const TextStyle(color: AppColors.white),
               labelStyle: const TextStyle(color: AppColors.purple),
-              tabs: [
-                Tab(
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: boxDecoration(),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ImageIcon(AssetImage(AppIcons.allIcon)),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(appLocalizations.all),
-                      ],
-                    ),
-                  ),
-                ),
-                Tab(
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: boxDecoration(),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ImageIcon(AssetImage(AppIcons.awareFilled)),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(appLocalizations.breast),
-                      ],
-                    ),
-                  ),
-                ),
-                Tab(
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: boxDecoration(),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ImageIcon(AssetImage(AppIcons.awareFilled)),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(appLocalizations.prostate),
-                      ],
-                    ),
-                  ),
-                ),
-                Tab(
-                    child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: boxDecoration(),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ImageIcon(AssetImage(AppIcons.awareFilled)),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(appLocalizations.ovarian),
-                    ],
-                  ),
-                ))
-              ],
+              tabs: buildTabs(cancerTypes),
             ),
           ),
           //    buildEventsListView()
@@ -182,10 +114,12 @@ class _HereditaryState extends State<Hereditary> {
           //       icon: const ImageIcon(AssetImage(AppIcons.menuIcon)),
           //       label: appLocalizations.menu,
           //       backgroundColor: AppColors.purple,
-          //       activeIcon: const ImageIcon(AssetImage(AppIcons.menuFilled)),
+          //       activeI, String allIconcon: const ImageIcon(AssetImage(AppIcons.menuFilled)),
           //     ),
           //   ],
           // ),
-        ));
+        )
+    );
   }
+
 }

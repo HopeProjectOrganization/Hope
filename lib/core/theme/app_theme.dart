@@ -3,7 +3,17 @@ import 'package:hope/core/theme/app_colors.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
-    brightness: Brightness.light,
+      tabBarTheme: TabBarTheme(
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+          border: Border.all(color: AppColors.white),
+          color: AppColors.white,
+        ),
+        dividerColor: Colors.transparent,
+        unselectedLabelStyle: const TextStyle(color: AppColors.white),
+        labelStyle: const TextStyle(color: AppColors.purple),
+      ),
+      brightness: Brightness.light,
     scaffoldBackgroundColor: AppColors.white,
     dividerColor: AppColors.purple,
     primaryColor: AppColors.purple,
@@ -35,6 +45,8 @@ class AppTheme {
     bottomAppBarTheme: BottomAppBarTheme(color: AppColors.purple, elevation: 5),
       iconTheme: IconThemeData(color: AppColors.white),
       textTheme: const TextTheme(
+        titleSmall: TextStyle(
+            color: AppColors.gray, fontSize: 12, fontWeight: FontWeight.w500),
         titleLarge: TextStyle(
             color: AppColors.dark, fontSize: 32, fontWeight: FontWeight.bold),
         bodyLarge: TextStyle(
@@ -49,7 +61,7 @@ class AppTheme {
           color: AppColors.purple, fontSize: 20, fontWeight: FontWeight.bold),
       labelSmall: TextStyle(
           color: AppColors.purple, fontSize: 16, fontWeight: FontWeight.bold),
-    ),
+      ),
     dividerTheme: const DividerThemeData(
       color: AppColors.purple,
     ),
@@ -113,6 +125,16 @@ class AppTheme {
       ));
 
   static ThemeData darkTheme = ThemeData(
+      tabBarTheme: TabBarTheme(
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+          border: Border.all(color: AppColors.dark),
+          color: AppColors.dark,
+        ),
+        dividerColor: Colors.transparent,
+        unselectedLabelStyle: const TextStyle(color: AppColors.white),
+        labelStyle: const TextStyle(color: AppColors.purple),
+      ),
       scaffoldBackgroundColor: AppColors.dark,
       dividerColor: AppColors.purple,
       dividerTheme: const DividerThemeData(
@@ -155,6 +177,8 @@ class AppTheme {
             color: AppColors.white,
             fontSize: 12,
             fontWeight: FontWeight.w500),
+        titleSmall: TextStyle(
+            color: AppColors.gray, fontSize: 12, fontWeight: FontWeight.w500),
         labelLarge: TextStyle(
             color: AppColors.purple, fontSize: 22, fontWeight: FontWeight.bold),
         labelMedium: TextStyle(
