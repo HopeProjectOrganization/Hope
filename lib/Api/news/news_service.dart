@@ -7,11 +7,14 @@ class NewsService {
   static Future<List<ArticleDM>> fetchNews(
       String cancerType, String apiKey) async {
     // Fetch news from external API
+  static Future<List<ArticleDM>> fetchNews(String cancerType, String apiKey,
+      bool news) async {
     String query = "${Uri.encodeComponent(cancerType)} cancer";
     final url = Uri.parse(
         "https://newsapi.org/v2/everything?q=$query&language=en&apiKey=$apiKey");
 
     final response = await http.get(url);
+    print("Response: ${response.body}");
 
     List<ArticleDM> externalArticles = [];
     if (response.statusCode == 200) {
@@ -28,6 +31,18 @@ class NewsService {
           return title.contains(cancerType.toLowerCase());
         }).toList();
       }
+      if (jsonData["articles"] == null) {
+        return [];
+      }
+      List<ArticleDM> articles = List.from(jsonData["articles"]).map((data) {
+        return ArticleDM.fromJson(data);
+      }).toList();
+      List<ArticleDM> filteredArticles = articles.where((article) {
+        String title = (article.title ?? "").toLowerCase();
+        return title.contains(cancerType.toLowerCase());
+      }).toList();
+
+      return news == true ? filteredArticles : articles;
     } else {
       throw Exception("Failed to load news from external API");
     }
