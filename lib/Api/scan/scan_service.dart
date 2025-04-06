@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:hope/Api/history/add_to_history.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
@@ -19,8 +18,8 @@ class ScanService {
     var response = await http.get(url);
 
     if (response.statusCode == 200) {
-      final addToHistory = AddToHistory();
-      await addToHistory.updateHistory(barcode, "SCANNED");
+      // final addToHistory = AddToHistory();
+      // await addToHistory.updateHistory(barcode, "SCANNED");
 
       return jsonDecode(response.body) as Map<String, dynamic>;
     } else {

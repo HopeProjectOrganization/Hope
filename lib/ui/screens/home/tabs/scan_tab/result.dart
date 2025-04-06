@@ -17,7 +17,7 @@ class ResultScreen extends StatelessWidget {
     final data =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
             {};
-
+    print("Data received: $data");
     final String message = data['message'] ?? "Unknown result";
     final product = data['product'] ?? {};
     final String productName = product['productName'] ?? "Unknown product";

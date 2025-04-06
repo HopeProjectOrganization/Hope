@@ -19,15 +19,11 @@ class NewsList extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          print(
-              "NewsList Error: ${snapshot.error}");
+          print("NewsList Error: ${snapshot.error}");
           return Center(child: Text("Error fetching news: ${snapshot.error}"));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           print("No News Available for $type");
           return const Center(child: Text("No news available."));
-          return Center(child: Text("Error: ${snapshot.error.toString()}"));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text("No articles available"));
         } else {
           final articles = snapshot.data!;
           return buildListView(articles);
@@ -47,41 +43,24 @@ class NewsList extends StatelessWidget {
   }
 
   Widget buildListView(List<ArticleDM> articles) => ListView.separated(
-        itemBuilder: (context, index) {
-          var article = articles[index];
-          return BuildArticleItem(
-            image: article.urlToImage ?? '',
-            title: (article.title != null && article.title!.length > 80)
-                ? "${article.title!.substring(0, 80)}..."
-                : article.title ?? '',
-            description: (article.description != null &&
-                    article.description!.length > 50)
-                ? "${article.description!.substring(0, 35)}..."
-                : article.description ?? '',
-            date: formatDate(article.publishedAt),
-          );
-        },
-        separatorBuilder: (context, index) => SizedBox(
+    itemBuilder: (context, index) {
+      var article = articles[index];
+      return BuildArticleItem(
+        image: article.urlToImage ?? '',
+        title: (article.title != null && article.title!.length > 80)
+            ? "${article.title!.substring(0, 80)}..."
+            : article.title ?? '',
+        description: (article.description != null &&
+            article.description!.length > 50)
+            ? "${article.description!.substring(0, 35)}..."
+            : article.description ?? '',
+        date: formatDate(article.publishedAt),
+      );
+    },
+    separatorBuilder: (context, index) =>
+        SizedBox(
           height: 10,
         ),
-        itemCount: articles.length,
-      );
-      itemBuilder: (context, index) {
-        var article = articles[index];
-        return BuildArticleItem(
-          image: article.urlToImage ?? '',
-          title: (article.title != null && article.title!.length > 70)
-              ? "${article.title!.substring(0, 70)}..."
-              : article.title ?? '',
-          description:
-              (article.description != null && article.description!.length > 50)
-                  ? "${article.description!.substring(0, 35)}..."
-                  : article.description ?? '',
-          date: formatDate(article.publishedAt),
-        );
-      },
-      separatorBuilder: (context, index) => SizedBox(
-            height: 10,
-          ),
-      itemCount: articles.length);
+    itemCount: articles.length,
+  );
 }

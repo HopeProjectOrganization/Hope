@@ -111,6 +111,70 @@ class AddService {
     }
   }
 
+  static Future<void> addProductAfterScan(BuildContext context,
+      String productName,
+      String barcode, String ingredientsText) async {
+    final url = Uri.parse("http://192.168.8.222:8080/products/add");
+
+    String? token = await getToken();
+    if (token == null) {
+      showMessage(context, "Not found!", title: "Error");
+      print("Token not found!");
+      return;
+    }
+
+    final headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    };
+
+    final ingredientsList = extractIngredients(ingredientsText);
+
+    final body = {
+      "productName": productName,
+      "barcode": barcode,
+      "ingredients": ingredientsList,
+    };
+
+    try {
+      showLoading(context);
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: json.encode(body),
+      );
+      hideLoading(context);
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+
+        // Assuming highRiskIngredients is part of responseData after product addition
+        final highRiskIngredients = responseData['highRiskIngredients'] ?? [];
+
+        // Show result screen
+        Navigator.pushNamed(
+          context,
+          ResultScreen.routeName,
+          arguments: {
+            'message': "Product added successfully!",
+            'product': {
+              'productName': productName,
+              'barcode': barcode,
+            },
+            'highRiskIngredients': highRiskIngredients,
+          },
+        );
+      } else {
+        showMessage(context, "Error adding product: ${response.statusCode}",
+            title: "Error");
+      }
+    } catch (e) {
+      hideLoading(context);
+      print("Error: $e");
+      showMessage(context, "Error: $e", title: "Exception");
+    }
+  }
+
   static Future<Map<String, dynamic>?> fetchScanResult(String barcode) async {
     try {
       var url = Uri.parse("http://192.168.78.153:8080/api/scan/$barcode");

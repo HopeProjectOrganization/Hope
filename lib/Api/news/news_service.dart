@@ -1,14 +1,19 @@
 import 'dart:convert';
-
 import 'package:hope/model/article_dm.dart';
 import 'package:http/http.dart' as http;
 
 class NewsService {
-  static Future<List<ArticleDM>> fetchNews(
-      String cancerType, String apiKey) async {
-    // Fetch news from external API
   static Future<List<ArticleDM>> fetchNews(String cancerType, String apiKey,
       bool news) async {
+    List<ArticleDM> externalArticles = await fetchExternalNews(
+        cancerType, apiKey, news);
+    List<ArticleDM> localArticles = await fetchLocalNews(cancerType);
+
+    return [...localArticles, ...externalArticles];
+  }
+
+  static Future<List<ArticleDM>> fetchExternalNews(String cancerType,
+      String apiKey, bool news) async {
     String query = "${Uri.encodeComponent(cancerType)} cancer";
     final url = Uri.parse(
         "https://newsapi.org/v2/everything?q=$query&language=en&apiKey=$apiKey");
@@ -16,27 +21,17 @@ class NewsService {
     final response = await http.get(url);
     print("Response: ${response.body}");
 
-    List<ArticleDM> externalArticles = [];
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
 
-      if (jsonData["articles"] != null) {
-        externalArticles = List.from(jsonData["articles"]).map((data) {
-          return ArticleDM.fromJson(data);
-        }).toList();
-
-        // Filter articles based on cancerType
-        externalArticles = externalArticles.where((article) {
-          String title = (article.title ?? "").toLowerCase();
-          return title.contains(cancerType.toLowerCase());
-        }).toList();
-      }
       if (jsonData["articles"] == null) {
         return [];
       }
+
       List<ArticleDM> articles = List.from(jsonData["articles"]).map((data) {
         return ArticleDM.fromJson(data);
       }).toList();
+
       List<ArticleDM> filteredArticles = articles.where((article) {
         String title = (article.title ?? "").toLowerCase();
         return title.contains(cancerType.toLowerCase());
@@ -46,12 +41,6 @@ class NewsService {
     } else {
       throw Exception("Failed to load news from external API");
     }
-
-    // Fetch news from your local API
-    List<ArticleDM> localArticles = await fetchLocalNews(cancerType);
-
-    // Combine both local and external articles
-    return [...localArticles, ...externalArticles];
   }
 
   static Future<List<ArticleDM>> fetchLocalNews(String cancerType) async {
@@ -77,7 +66,7 @@ class NewsService {
     }
   }
 
-  static Future<void> addNews(ArticleDM article, String category) async {
+  Future<void> addNews(ArticleDM article, String category) async {
     final url = Uri.parse("http://192.168.8.222:8080/api/news/add");
     final response = await http.post(
       url,
@@ -95,8 +84,7 @@ class NewsService {
     }
   }
 
-  static Future<void> editNews(
-      int id, ArticleDM article, String category) async {
+  Future<void> editNews(int id, ArticleDM article, String category) async {
     final url = Uri.parse("http://192.168.8.222:8080/api/news/edit/$id");
     final response = await http.put(
       url,

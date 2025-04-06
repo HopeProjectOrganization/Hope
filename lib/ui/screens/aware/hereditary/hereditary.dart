@@ -22,7 +22,7 @@ class _HereditaryState extends State<Hereditary>
 
   late TabController _tabController;
   final String apiKey =
-      "aaf38ddb49e2443faf60cecf9e3a875d"; //b3559d03ae7d44b883b82f7368ef3b3a
+      "a11077e149254297aeed5b0a443616a1"; //b3559d03ae7d44b883b82f7368ef3b3a
 
   final List<String> cancerTypes = [
     "All",
