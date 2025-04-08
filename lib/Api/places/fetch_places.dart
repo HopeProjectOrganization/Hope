@@ -1,17 +1,20 @@
+import 'dart:convert';
+
 import 'package:hope/model/places_dm.dart';
 import 'package:http/http.dart' as http;
 
 Future<PlaceModel?> fetchPlaceById(String id) async {
-  final url = Uri.parse('http://192.168.1.45:8081/Places/id/$id');
-  try {
-    final response = await http.get(url);
+  final url = Uri.parse("http://192.168.1.45:8081/Places/id/$id");
+  final response = await http.get(url);
 
-    if (response.statusCode == 200) {
-      print("Response: ${response.body}");
-    } else {
-      print("Failed to load place. Status: ${response.statusCode}");
-    }
-  } catch (e) {
-    print("Error: $e");
+  if (response.statusCode == 200) {
+    print("Response: ${response.body}");
+    final json = jsonDecode(response.body);
+    final place = PlaceModel.fromJson(json);
+    print("Fetched place: $place"); // لازم يطبع مش null
+    return place;
+  } else {
+    throw Exception('Failed to load place');
   }
 }
+

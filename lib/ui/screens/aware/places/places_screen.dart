@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hope/Api/places/fetch_places.dart';
-import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/places_dm.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PlacesScreen extends StatefulWidget {
   static const routeName = '/places';
@@ -12,31 +12,14 @@ class PlacesScreen extends StatefulWidget {
 }
 
 class _PlacesScreenState extends State<PlacesScreen> {
-  List<Map<String, String>> hospitals = [
-    {
-      "name": "Children Cancer Hospital 57357",
-      "website": "www.57357.org",
-      "phone": "+20 2 25351500",
-      "address": "1 St, Seket El Emam, Sayeda Zeinab, Cairo",
-      "logo": AppAssets.places
-    },
-    {
-      "name": "Baheya Hospital",
-      "website": "www.baheya.org",
-      "phone": "+20 2 33927460",
-      "address": "Off El Haram Street, Next to Dairy & Abiba Square, Giza",
-      "logo": AppAssets.healthyDiet
-    },
-  ];
-
   String searchQuery = "";
-
   PlaceModel? place;
 
   @override
   void initState() {
     super.initState();
-    fetchPlaceById("2").then((value) {
+    fetchPlaceById("1").then((value) {
+      print("Fetched place: ${value?.name}");
       setState(() {
         place = value;
       });
@@ -48,9 +31,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_outlined,
-          ),
+          icon: const Icon(Icons.arrow_back_outlined),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -81,69 +62,95 @@ class _PlacesScreenState extends State<PlacesScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            // List of Hospitals
-            place == null
-                ? Center(child: CircularProgressIndicator())
-                : Expanded(
-                    child: ListView(
-                      children: [
-                        Card(
-                          color: AppColors.lavender,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.2,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 2,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          place!.name,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        buildRow(Icons.language,
-                                            place!.website ?? 'No website'),
-                                        buildRow(Icons.phone, place!.phone),
-                                        buildRow(
-                                            Icons.location_on, place!.address),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+            const SizedBox(height: 16),
+            // Body content
+            Expanded(
+              child: place == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView(
+                children: [
+                  Card(
+                    color: AppColors.lavender,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        children: [
+                          // الصورة
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              place!.image,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 12),
+                          // التفاصيل
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  place!.name,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    final url = place!.website;
+                                    if (await canLaunchUrl(
+                                        Uri.parse(url))) {
+                                      await launchUrl(Uri.parse(url));
+                                    }
+                                  },
+                                  child: buildRow(
+                                      Icons.language, place!.website),
+                                ),
+                                buildRow(Icons.phone, place!.phone),
+                                GestureDetector(
+                                  onTap: () async {
+                                    final url = place!.location;
+                                    if (await canLaunchUrl(
+                                        Uri.parse(url))) {
+                                      await launchUrl(Uri.parse(url));
+                                    }
+                                  },
+                                  child: buildRow(Icons.location_on,
+                                      place!.address),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  )
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget buildRow(IconData icon, String website) {
-    return Row(
-      children: [
-        Icon(icon, size: 16, color: AppColors.dark),
-        SizedBox(
-          width: 5,
-        ),
-        Expanded(child: Text(website)),
-      ],
+  Widget buildRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: AppColors.dark),
+          const SizedBox(width: 5),
+          Expanded(child: Text(text)),
+        ],
+      ),
     );
   }
 }
