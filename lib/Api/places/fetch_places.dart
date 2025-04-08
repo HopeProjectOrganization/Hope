@@ -2,7 +2,7 @@ import 'package:hope/model/places_dm.dart';
 import 'package:http/http.dart' as http;
 
 Future<PlaceModel?> fetchPlaceById(String id) async {
-  final url = Uri.parse('http://192.168.1.45:8081/Places/id/$id');
+  final url = Uri.parse('http://192.168.78.153:8080/Places/id/$id');
   try {
     final response = await http.get(url);
 

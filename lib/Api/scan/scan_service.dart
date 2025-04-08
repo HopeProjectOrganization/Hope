@@ -38,12 +38,10 @@ class ScanService {
         final productName = product['product_name'] ?? 'Unknown';
         final ingredients = product['ingredients_text'] ?? '';
 
-        // إضافة المنتج للداتا بيز
         await AddService.addProductAfterScan(
             context, productName, barcode, ingredients);
 
-        // تحديث التاريخ بعد إضافة المنتج
-        await AddToHistory().updateHistory(barcode, 'scanned');
+        await AddToHistory().updateHistory(barcode, 'SCANNED');
 
         return product;
       }
@@ -105,11 +103,12 @@ class ScanService {
       /// 1. Local API
       final local = await searchInLocalAPI(barcode);
       if (local != null) {
-        if (local['productName'] != 'Unknown') {
+        if (local['productName'] != null) {
           message = 'Product found in Local API';
           product = {
             'productName': local['productName'],
             'barcode': local['barcode'] ?? barcode,
+            'highRiskIngredients': local['highRiskIngredients'] ?? [],
           };
           // تحديث التاريخ بعد إضافة المنتج
           await AddToHistory().updateHistory(barcode, 'SCANNED');
@@ -126,7 +125,9 @@ class ScanService {
             product = {
               'productName': food['product_name'],
               'barcode': food['code'] ?? barcode,
+              'highRiskIngredients': food['highRiskIngredients'] ?? [],
             };
+
             // تحديث التاريخ بعد إضافة المنتج
             await AddToHistory().updateHistory(barcode, 'SCANNED');
           }
@@ -148,9 +149,10 @@ class ScanService {
             product = {
               'productName': productName,
               'barcode': beauty['code'] ?? barcode,
+              'highRiskIngredients': beauty['highRiskIngredients'] ?? [],
             };
             // تحديث التاريخ بعد إضافة المنتج
-            await AddToHistory().updateHistory(barcode, 'scanned');
+            await AddToHistory().updateHistory(barcode, 'SCANNED');
           }
         }
       }
