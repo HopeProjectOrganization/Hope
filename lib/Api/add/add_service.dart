@@ -21,7 +21,7 @@ class AddService {
 
   static Future<void> addProduct(BuildContext context, String productName,
       String barcode, String ingredientsText) async {
-    final url = Uri.parse("http://192.168.8.222:8080/products/add");
+    final url = Uri.parse("http://192.168.78.153:8080/products/add");
 
     String? token = await getToken();
     if (token == null) {
@@ -114,7 +114,7 @@ class AddService {
   static Future<void> addProductAfterScan(BuildContext context,
       String productName,
       String barcode, String ingredientsText) async {
-    final url = Uri.parse("http://192.168.8.222:8080/products/add");
+    final url = Uri.parse("http://192.168.78.153:8080/products/add");
 
     String? token = await getToken();
     if (token == null) {

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:hope/Api/add/add_service.dart';
+import 'package:hope/Api/history/add_to_history.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
@@ -12,77 +14,73 @@ class ScanService {
     return prefs.getString('auth_token');
   }
 
-  // Function to search for product in your local API
   Future<Map<String, dynamic>?> searchInLocalAPI(String barcode) async {
-    var url = Uri.parse("http://192.168.8.222:8080/api/scan/$barcode");
-    var response = await http.get(url);
+    final url = Uri.parse("http://192.168.78.153:8080/api/scan/$barcode");
+    final response = await http.get(url);
 
     if (response.statusCode == 200) {
-      // final addToHistory = AddToHistory();
-      // await addToHistory.updateHistory(barcode, "SCANNED");
-
-      return jsonDecode(response.body) as Map<String, dynamic>;
+      return jsonDecode(response.body);
     } else {
-      return {'message': 'Failed to fetch data from the server'};
+      return null;
     }
   }
 
-  // Function to search for product in OpenFoodFacts API
-  Future<Map<String, dynamic>?> searchInOpenFoodFacts(String barcode) async {
-    var url = Uri.parse(
+  Future<Map<String, dynamic>?> searchInOpenFoodFacts(
+      BuildContext context, String barcode) async {
+    final url = Uri.parse(
         'https://world.openfoodfacts.org/api/v0/product/$barcode.json');
-    var response = await http.get(url);
-
+    final response = await http.get(url);
     if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-
-      // إذا تم العثور على المنتج
+      final data = jsonDecode(response.body);
       if (data['status'] == 1) {
-        var productData = data['product'];
+        final product = data['product'];
 
-        // بعد الحصول على بيانات المنتج من OpenFoodFacts، أرسل الـ barcode إلى Local API
-        await searchInLocalAPI(barcode);
+        final productName = product['product_name'] ?? 'Unknown';
+        final ingredients = product['ingredients_text'] ?? '';
 
-        // إعادة البيانات من OpenFoodFacts بعد إرسالها إلى الـ Local API
-        return productData;
+        await AddService.addProductAfterScan(
+            context, productName, barcode, ingredients);
+
+        await AddToHistory().updateHistory(barcode, 'SCANNED');
+
+        return product;
       }
     }
     return null;
   }
 
-  // Function to search for product in OpenBeautyFacts API
-  Future<Map<String, dynamic>?> searchInOpenBeautyFacts(String barcode) async {
-    var url = Uri.parse(
+  Future<Map<String, dynamic>?> searchInOpenBeautyFacts(
+      BuildContext context, String barcode) async {
+    final url = Uri.parse(
         'https://world.openbeautyfacts.org/api/v0/product/$barcode.json');
-    var response = await http.get(url);
-
+    final response = await http.get(url);
     if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
+      final data = jsonDecode(response.body);
 
-      // التحقق من حالة الرد إذا كان المنتج موجودًا
       if (data['status'] == 1) {
-        var productData = data['product'];
+        final product = data['product'];
 
-        // بعد الحصول على بيانات المنتج من OpenBeautyFacts، أرسل الـ barcode إلى Local API
-        await searchInLocalAPI(barcode);
+        final productName = product['product_name'] ??
+            product['generic_name'] ??
+            product['brands'] ??
+            'Unknown';
 
-        // إعادة البيانات من OpenBeautyFacts بعد إرسالها إلى الـ Local API
-        return productData;
-      } else {
-        print("Product not found in OpenBeautyFacts.");
-        return null;
+        final ingredients = product['ingredients_text'] ?? '';
+
+        await AddService.addProductAfterScan(
+            context, productName, barcode, ingredients);
+
+        // تحديث التاريخ بعد إضافة المنتج
+        await AddToHistory().updateHistory(barcode, 'SCANNED');
+
+        return product;
       }
-    } else {
-      print(
-          'Failed to fetch from OpenBeautyFacts. Status code: ${response.statusCode}');
-      return null;
     }
+    return null;
   }
 
-  // Main function to handle scanning and searching in all databases
   Future<Map<String, dynamic>?> scanBarcode(BuildContext context) async {
     try {
-      // مسح الباركود
       String barcode = await FlutterBarcodeScanner.scanBarcode(
         "#ff8E56FF",
         "Cancel",
@@ -97,58 +95,101 @@ class ScanService {
         return {'message': 'Scan canceled'};
       }
 
-      // البحث في Local API أولاً
-      var localData = await searchInLocalAPI(barcode);
-      if (localData != null) {
-        return localData;
+      String message = '';
+      Map<String, dynamic>? product;
+
+      // نبدأ نبحث في الـ APIs المختلفة
+
+      /// 1. Local API
+      final local = await searchInLocalAPI(barcode);
+      if (local != null) {
+        if (local['productName'] != null) {
+          message = 'Product found in Local API';
+          product = {
+            'productName': local['productName'],
+            'barcode': local['barcode'] ?? barcode,
+            'highRiskIngredients': local['highRiskIngredients'] ?? [],
+          };
+          // تحديث التاريخ بعد إضافة المنتج
+          await AddToHistory().updateHistory(barcode, 'SCANNED');
+        }
       }
 
-      // البحث في OpenFoodFacts
-      var foodData = await searchInOpenFoodFacts(barcode);
-      if (foodData != null) {
-        return foodData;
+      /// 2. OpenFoodFacts
+      if (product == null) {
+        // إذا لم نجد المنتج في الـ Local API
+        final food = await searchInOpenFoodFacts(context, barcode);
+        if (food != null) {
+          if (food['product_name'] != 'Unknown') {
+            message = 'Product found in OpenFoodFacts';
+            product = {
+              'productName': food['product_name'],
+              'barcode': food['code'] ?? barcode,
+              'highRiskIngredients': food['highRiskIngredients'] ?? [],
+            };
+
+            // تحديث التاريخ بعد إضافة المنتج
+            await AddToHistory().updateHistory(barcode, 'SCANNED');
+          }
+        }
       }
 
-      // البحث في OpenBeautyFacts
-      var beautyData = await searchInOpenBeautyFacts(barcode);
-      if (beautyData != null) {
-        return beautyData;
+      /// 3. OpenBeautyFacts
+      if (product == null) {
+        // إذا لم نجد المنتج في الـ Local API أو OpenFoodFacts
+        final beauty = await searchInOpenBeautyFacts(context, barcode);
+        if (beauty != null) {
+          final productName = beauty['product_name'] ??
+              beauty['generic_name'] ??
+              beauty['brands'] ??
+              'Unknown';
+
+          if (productName != 'Unknown') {
+            message = 'Product found in OpenBeautyFacts';
+            product = {
+              'productName': productName,
+              'barcode': beauty['code'] ?? barcode,
+              'highRiskIngredients': beauty['highRiskIngredients'] ?? [],
+            };
+            // تحديث التاريخ بعد إضافة المنتج
+            await AddToHistory().updateHistory(barcode, 'SCANNED');
+          }
+        }
       }
 
-      return {'message': 'Product not found in any database'};
+      // إذا لم يتم العثور على المنتج في أي قاعدة بيانات
+      if (product == null) {
+        return {'message': 'Product not found in any database'};
+      }
+
+      return {
+        'message': message,
+        'product': product,
+      };
     } catch (e) {
-      return {'message': 'Error occurred during scanning: $e'};
+      return {'message': 'Error during scan: $e'};
     }
   }
 
-  // Function to retrieve scanned products history
   Future<List<dynamic>?> getScannedProducts() async {
     try {
-      String? token = await getToken();
-      if (token == null) {
-        print("Token not found!");
-        return null;
-      }
+      final token = await getToken();
+      if (token == null) return null;
 
-      var url = Uri.parse("http://192.168.8.222:8080/history/scanned");
-
+      final url = Uri.parse("http://192.168.78.153:8080/history/scanned");
       final headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
       };
 
-      var response = await http.get(url, headers: headers);
+      final response = await http.get(url, headers: headers);
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as List<dynamic>;
-      } else {
-        print(
-            'Failed to fetch scanned products. Status code: ${response.statusCode}');
-        return null;
       }
     } catch (e) {
       print('Error fetching scanned products: $e');
-      return null;
     }
+    return null;
   }
 }

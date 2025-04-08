@@ -58,7 +58,7 @@ class _RecentlyScanState extends State<RecentlyScan> {
         ),
       ),
       Container(
-        height: MediaQuery.of(context).size.height * .23,
+        height: MediaQuery.of(context).size.height * .26,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: recentlyScannedProducts.length,
