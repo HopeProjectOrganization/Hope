@@ -37,5 +37,8 @@ class AppAssets {
 
   //Result
   static const String result = "assets/images/result.png";
+  static const String lowRisk = "assets/images/lowRisk.png";
+  static const String mediumRisk = "assets/images/mediumRisk.png";
+  static const String higiRisk = "assets/images/higiRisk.png";
 }
 

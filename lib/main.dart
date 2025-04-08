@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget {
         NewsScreen.routeName: (_) => NewsScreen(),
         PlacesScreen.routeName: (_) => PlacesScreen()
       },
-      initialRoute: HomeScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
