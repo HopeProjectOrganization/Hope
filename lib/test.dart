@@ -14,11 +14,8 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(title: Text("Article Preview")),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: BuildArticleItem(
-            title: "Understanding Cancer Treatment",
-            date: "25/3/2025",
-            author: "Dr. John Doe",
-            image: "https://via.placeholder.com/300", // مثال لصورة
+          child: ArticleScreen(
+
           ),
         ),
       ),
@@ -26,81 +23,65 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class BuildArticleItem extends StatelessWidget {
-  const BuildArticleItem({
-    super.key,
-    required this.title,
-    required this.author,
-    required this.date,
-    required this.image,
-  });
+class ArticleScreen extends StatelessWidget {
+  final String imageUrl =
+      'https://images.unsplash.com/photo-1557804506-669a67965ba0'; // صورة الخبر
+  final String title =
+      'دواء جديد يثبت فعاليته في علاج أنواع نادرة من السرطان';
+  final String date = '10 أبريل 2025';
+  final String content = '''
+توصلت دراسة حديثة إلى أن دواءً جديداً أظهر فعالية كبيرة في علاج أنواع نادرة من السرطان لدى مجموعة من المرضى المشاركين في التجربة السريرية.
 
-  final String image;
-  final String title;
-  final String author;
-  final String date;
+وأشار الباحثون إلى أن الدواء استهدف الطفرات الجينية المرتبطة بنمو الأورام، وساهم في تقليص حجم الورم بنسبة تجاوزت 60% في بعض الحالات.
+
+كما أوصت الدراسة بالمزيد من التجارب للتحقق من الآثار الجانبية طويلة المدى والتأكد من فعالية الدواء في مراحل مختلفة من المرض.
+
+وتُعد هذه النتائج خطوة مهمة نحو تطوير علاجات أكثر دقة وتخصصًا لمرضى السرطان حول العالم.
+''';
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("تفاصيل الخبر"),
+        backgroundColor: Colors.deepPurple,
       ),
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.35,
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-                flex: 7,
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      AppAssets.result,
-                    )
-                    // CachedNetworkImage(
-                    //   imageUrl: image,
-                    //   height: 200,
-                    //   width: double.infinity,
-                    //   fit: BoxFit.cover,
-                    //   errorWidget: (context, url, error) => Icon(
-                    //     Icons.image_not_supported,
-                    //     size: 100,
-                    //     color: Colors.grey,
-                    //   ),
-                    //   placeholder: (context, url) => Center(
-                    //     child: CircularProgressIndicator(),
-                    //   ),
-                    // ),
-                    )),
-            SizedBox(
-              height: 20,
+            // صورة المقال
+            Image.network(imageUrl, width: double.infinity, height: 250, fit: BoxFit.cover),
+
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // عنوان
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  // التاريخ
+                  Text(
+                    date,
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                  SizedBox(height: 16),
+                  // نص الخبر
+                  Text(
+                    content,
+                    style: TextStyle(fontSize: 16, height: 1.6),
+                    textAlign: TextAlign.justify,
+                  ),
+                ],
+              ),
             ),
-            Expanded(
-                flex: 4,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          author,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        Text(
-                          date,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                      ],
-                    ),
-                  ],
-                ))
           ],
         ),
       ),
