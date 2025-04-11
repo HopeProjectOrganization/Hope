@@ -1,3 +1,5 @@
+
+
 class PlaceModel {
   final int id;
   final String name;
@@ -21,7 +23,10 @@ class PlaceModel {
     return PlaceModel(
       id: json['id'] ?? 0,
       name: json['hospitalName'] ?? '',
-      phone: json['hospitalNumber'] ?? '',
+      phone: (json['hospitalNumber'] ?? '')
+          .toString()
+          .replaceAll(RegExp(r'[^\d\+]'), '')
+          .trim(),
       address: json['hospitalAddress'] ?? '',
       location: json['hospitalLocation'] ?? '',
       website: json['hospitalWebsite'] ?? '',

@@ -45,8 +45,7 @@ class NewsService {
   }
 
   static Future<List<ArticleDM>> fetchLocalNews(String cancerType) async {
-    final url = Uri.parse(
-        "http://192.168.78.153:8080/api/news/all?category=$cancerType");
+    final url = Uri.parse("http://192.168.1.45:8081/api/news/all?category=$cancerType");
 
     final response = await http.get(url);
 
@@ -68,7 +67,7 @@ class NewsService {
   }
 
   Future<void> addNews(ArticleDM article, String category) async {
-    final url = Uri.parse("http://192.168.78.153:8080/api/news/add");
+    final url = Uri.parse("http://192.168.1.45:8081/api/news/add");
     final response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
@@ -86,7 +85,7 @@ class NewsService {
   }
 
   Future<void> editNews(int id, ArticleDM article, String category) async {
-    final url = Uri.parse("http://192.168.78.153:8080/api/news/edit/$id");
+    final url = Uri.parse("http://192.168.1.45:8081/api/news/edit/$id");
     final response = await http.put(
       url,
       headers: {"Content-Type": "application/json"},
