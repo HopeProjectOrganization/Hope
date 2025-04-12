@@ -1,90 +1,159 @@
-import 'package:flutter/material.dart';
-import 'package:hope/core/assets/app_assets.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(title: Text("Article Preview")),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ArticleScreen(
-
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ArticleScreen extends StatelessWidget {
-  final String imageUrl =
-      'https://images.unsplash.com/photo-1557804506-669a67965ba0'; // صورة الخبر
-  final String title =
-      'دواء جديد يثبت فعاليته في علاج أنواع نادرة من السرطان';
-  final String date = '10 أبريل 2025';
-  final String content = '''
-توصلت دراسة حديثة إلى أن دواءً جديداً أظهر فعالية كبيرة في علاج أنواع نادرة من السرطان لدى مجموعة من المرضى المشاركين في التجربة السريرية.
-
-وأشار الباحثون إلى أن الدواء استهدف الطفرات الجينية المرتبطة بنمو الأورام، وساهم في تقليص حجم الورم بنسبة تجاوزت 60% في بعض الحالات.
-
-كما أوصت الدراسة بالمزيد من التجارب للتحقق من الآثار الجانبية طويلة المدى والتأكد من فعالية الدواء في مراحل مختلفة من المرض.
-
-وتُعد هذه النتائج خطوة مهمة نحو تطوير علاجات أكثر دقة وتخصصًا لمرضى السرطان حول العالم.
-''';
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("تفاصيل الخبر"),
-        backgroundColor: Colors.deepPurple,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // صورة المقال
-            Image.network(imageUrl, width: double.infinity, height: 250, fit: BoxFit.cover),
-
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // عنوان
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  // التاريخ
-                  Text(
-                    date,
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
-                  SizedBox(height: 16),
-                  // نص الخبر
-                  Text(
-                    content,
-                    style: TextStyle(fontSize: 16, height: 1.6),
-                    textAlign: TextAlign.justify,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// import 'package:flutter/material.dart';
+// import 'package:hope/core/theme/app_colors.dart';
+//
+// // void main() {
+// //   runApp(MyApp());
+// // }
+// //
+// // class MyApp extends StatelessWidget {
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     return MaterialApp(
+// //       title: 'News App',
+// //       debugShowCheckedModeBanner: false,
+// //       theme: ThemeData(fontFamily: 'Roboto', primarySwatch: Colors.green),
+// //       home: const SimilarArticle(),
+// //     );
+// //   }
+// // }
+// //
+// // class NewsArticleScreen extends StatelessWidget {
+// //   const NewsArticleScreen({super.key});
+// //
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     return Scaffold(
+// //       backgroundColor: AppColors.white,
+// //       appBar: AppBar(
+// //         backgroundColor: AppColors.white,
+// //         elevation: 0,
+// //         leading: IconButton(
+// //           icon: const Icon(Icons.arrow_back, color: AppColors.dark),
+// //           onPressed: () {
+// //             // إضافة عملية العودة هنا (مثل Navigator.pop)
+// //             Navigator.pop(context);
+// //           },
+// //         ),
+// //         actions: [
+// //           IconButton(
+// //             icon: const Icon(Icons.favorite_outline_sharp, color: AppColors.dark),
+// //             onPressed: () {
+// //             },
+// //           ),
+// //         ],
+// //       ),
+// //       body: ListView(
+// //         padding: const EdgeInsets.all(16),
+// //         children: const [
+// //           Text(
+// //             'Wednesday, April 10, 2025',
+// //             style: TextStyle(color: AppColors.gray),
+// //           ),
+// //           SizedBox(height: 16),
+// //           NewsCard(
+// //             title: 'New Cancer Treatment Breakthrough Announced',
+// //             imageUrl: 'https://via.placeholder.com/300x200',
+// //             author: 'Dr. Sarah Ali',
+// //             date: 'April 10, 2025',
+// //           ),
+// //           SizedBox(height: 24),
+// //           Text(
+// //             "Today's Posts",
+// //             style: TextStyle(
+// //               fontSize: 18,
+// //               fontWeight: FontWeight.bold,
+// //               color: AppColors.dark,
+// //             ),
+// //           ),
+// //           SizedBox(height: 12),
+// //          ]),
+// //       floatingActionButton: FloatingActionButton(
+// //         backgroundColor: AppColors.purple,
+// //         onPressed: () {},
+// //         child: const Icon(Icons.add),
+// //       ),
+// //     );
+// //   }
+// // }
+// //
+// class NewsCard extends StatelessWidget {
+//   final String title, imageUrl, author, date;
+//
+//   const NewsCard({
+//     required this.title,
+//     required this.imageUrl,
+//     required this.author,
+//     required this.date,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.circular(16),
+//         color: AppColors.lavender,
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           ClipRRect(
+//             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+//             child: Image.network(
+//               imageUrl,
+//               height: 200,
+//               width: double.infinity,
+//               fit: BoxFit.cover,  // Ensures image covers the area properly
+//               loadingBuilder: (context, child, loadingProgress) {
+//                 if (loadingProgress == null) return child;
+//                 return Center(child: CircularProgressIndicator());
+//               },
+//               errorBuilder: (context, error, stackTrace) {
+//                 return Center(
+//                   child: Icon(Icons.image_not_supported, size: 100, color: AppColors.gray),
+//                 );
+//               },
+//             ),
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.all(16.0),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(
+//                   title,
+//                   style: const TextStyle(
+//                     fontSize: 18,
+//                     fontWeight: FontWeight.bold,
+//                     color: AppColors.dark,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 8),
+//                 Row(
+//                   children: [
+//                     const CircleAvatar(
+//                       radius: 12,
+//                       backgroundColor: AppColors.purple,
+//                       child: Icon(Icons.person, size: 14, color: AppColors.white),
+//                     ),
+//                     const SizedBox(width: 8),
+//                     Text(
+//                       author,
+//                       style: const TextStyle(color: AppColors.gray),
+//                     ),
+//                     const Spacer(),
+//                     Text(
+//                       date,
+//                       style: const TextStyle(color: AppColors.gray),
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+//
