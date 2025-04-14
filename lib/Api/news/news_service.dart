@@ -8,9 +8,9 @@ class NewsService {
       bool news) async {
     List<ArticleDM> externalArticles = await fetchExternalNews(
         cancerType, apiKey, news);
-    List<ArticleDM> localArticles = await fetchLocalNews(cancerType);
-
-    return [...localArticles, ...externalArticles];
+    //  List<ArticleDM> localArticles = await fetchLocalNews(cancerType);
+    // return [...localArticles, ...externalArticles];
+    return externalArticles;
   }
 
   static Future<List<ArticleDM>> fetchExternalNews(String cancerType,
@@ -44,62 +44,61 @@ class NewsService {
     }
   }
 
-  static Future<List<ArticleDM>> fetchLocalNews(String cancerType) async {
-    final url = Uri.parse(
-        "http://192.168.78.153:8080/api/news/all?category=$cancerType");
-
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
-
-      if (jsonData == null) {
-        return [];
-      }
-
-      List<ArticleDM> articles = List.from(jsonData).map((data) {
-        return ArticleDM.fromJson(data);
-      }).toList();
-
-      return articles;
-    } else {
-      throw Exception("Failed to load local news");
-    }
-  }
-
-  Future<void> addNews(ArticleDM article, String category) async {
-    final url = Uri.parse("http://192.168.78.153:8080/api/news/add");
-    final response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "title": article.title,
-        "content": article.content,
-        "category": category,
-        "imageUrl": article.url,
-      }),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to add news");
-    }
-  }
-
-  Future<void> editNews(int id, ArticleDM article, String category) async {
-    final url = Uri.parse("http://192.168.78.153:8080/api/news/edit/$id");
-    final response = await http.put(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "title": article.title,
-        "content": article.content,
-        "category": category,
-        "imageUrl": article.url,
-      }),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to edit news");
-    }
-  }
+// static Future<List<ArticleDM>> fetchLocalNews(String cancerType) async {
+//   final url = Uri.parse("http://192.168.1.31:8081/api/news/all?category=$cancerType");
+//
+//   final response = await http.get(url);
+//
+//   if (response.statusCode == 200) {
+//     final jsonData = json.decode(response.body);
+//
+//     if (jsonData == null) {
+//       return [];
+//     }
+//
+//     List<ArticleDM> articles = List.from(jsonData).map((data) {
+//       return ArticleDM.fromJson(data);
+//     }).toList();
+//
+//     return articles;
+//   } else {
+//     throw Exception("Failed to load local news");
+//   }
+// }
+//
+// Future<void> addNews(ArticleDM article, String category) async {
+//   final url = Uri.parse("http://192.168.1.31:8081/api/news/add");
+//   final response = await http.post(
+//     url,
+//     headers: {"Content-Type": "application/json"},
+//     body: jsonEncode({
+//       "title": article.title,
+//       "content": article.content,
+//       "category": category,
+//       "imageUrl": article.url,
+//     }),
+//   );
+//
+//   if (response.statusCode != 200) {
+//     throw Exception("Failed to add news");
+//   }
+// }
+//
+// Future<void> editNews(int id, ArticleDM article, String category) async {
+//   final url = Uri.parse("http://192.168.1.31:8081/api/news/edit/$id");
+//   final response = await http.put(
+//     url,
+//     headers: {"Content-Type": "application/json"},
+//     body: jsonEncode({
+//       "title": article.title,
+//       "content": article.content,
+//       "category": category,
+//       "imageUrl": article.url,
+//     }),
+//   );
+//
+//   if (response.statusCode != 200) {
+//     throw Exception("Failed to edit news");
+//   }
+// }
 }

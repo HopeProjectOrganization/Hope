@@ -19,8 +19,9 @@ class _NewsScreenState extends State<NewsScreen>
   late AppLocalizations appLocalizations;
 
   late TabController _tabController;
-  final String apiKey =
-      "a11077e149254297aeed5b0a443616a1"; //b3559d03ae7d44b883b82f7368ef3b3a
+  final String apiKey = "b3559d03ae7d44b883b82f7368ef3b3a";
+
+  //  "a11077e149254297aeed5b0a443616a1";
   final List<String> cancerTypes = [
     "All",
     "Breast",

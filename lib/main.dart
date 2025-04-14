@@ -11,6 +11,7 @@ import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/screens/aware/awareness/newsScreen.dart';
 import 'package:hope/ui/screens/aware/hereditary/hereditary.dart';
 import 'package:hope/ui/screens/aware/places/places_screen.dart';
+import 'package:hope/ui/screens/aware/shared_widgets/article/article_screen.dart';
 import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
@@ -72,9 +73,10 @@ class MyApp extends StatelessWidget {
         AddTab.routeName: (_) => const AddTab(),
         ResultScreen.routeName: (_) => const ResultScreen(),
         NewsScreen.routeName: (_) => NewsScreen(),
-        PlacesScreen.routeName: (_) => PlacesScreen()
+        PlacesScreen.routeName: (_) => PlacesScreen(),
+        NewsArticleScreen.routeName: (_) => NewsArticleScreen()
       },
-      initialRoute: HomeScreen.routeName,
+      initialRoute: NewsScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
