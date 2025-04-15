@@ -8,6 +8,7 @@ import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/verify/verification.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
+import 'package:hope/ui/screens/aware/alternative/alternative_screen.dart';
 import 'package:hope/ui/screens/aware/awareness/newsScreen.dart';
 import 'package:hope/ui/screens/aware/hereditary/hereditary.dart';
 import 'package:hope/ui/screens/aware/places/places_screen.dart';
@@ -69,14 +70,15 @@ class MyApp extends StatelessWidget {
         AwareTab.routeName: (_) => AwareTab(),
         HomeScreen.routeName: (_) => const HomeScreen(),
         ScanTab.routeName: (_) => const ScanTab(),
-        // AddScanner.routeName: (_) => const AddScanner(),
+        SuggestedReplacementsScreen.routeName: (_) =>
+            SuggestedReplacementsScreen(),
         AddTab.routeName: (_) => const AddTab(),
         ResultScreen.routeName: (_) => const ResultScreen(),
         NewsScreen.routeName: (_) => NewsScreen(),
         PlacesScreen.routeName: (_) => PlacesScreen(),
         NewsArticleScreen.routeName: (_) => NewsArticleScreen()
       },
-      initialRoute: NewsScreen.routeName,
+      initialRoute: AwareTab.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
