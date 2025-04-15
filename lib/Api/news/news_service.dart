@@ -35,7 +35,9 @@ class NewsService {
 
       List<ArticleDM> filteredArticles = articles.where((article) {
         String title = (article.title ?? "").toLowerCase();
-        return title.contains(cancerType.toLowerCase());
+        final pattern =
+            RegExp(r'\b' + RegExp.escape(cancerType.toLowerCase()) + r'\b');
+        return pattern.hasMatch(title);
       }).toList();
 
       return news == true ? filteredArticles : articles;

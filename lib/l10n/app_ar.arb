@@ -84,6 +84,15 @@
   "alternative": "بديل",
   "highRiskPeople": "الأشخاص المعرضون للخطر",
   "healthyDiet": "نظام غذائي صحي",
-  "viewAll": "عرض المزيد"
+  "viewAll": "عرض المزيد",
+  "elderly": "كبار السن",
+  "pregnant": "الحوامل",
+  "weakImmunesystem": "ضعف المناعة",
+  "smokers": "المدخنون",
+  "obese": "السمنة",
+  "geneticMutation": "الطفرة الجينية",
+  "inactive": "الخمول",
+  "chemicalexposure": "التعرض للمواد الكيميائية",
+  "pollutedareas": "المناطق الملوثة"
 
 }

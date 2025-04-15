@@ -84,7 +84,14 @@
   "alternative": "Alternative",
   "highRiskPeople": "High risk people",
   "healthyDiet": "Healthy diet",
-  "viewAll": "View all"
-
-
+  "viewAll": "View all",
+  "elderly": "Elderly",
+  "pregnant": "Pregnant",
+  "weakImmunesystem": "Weak immune system",
+  "smokers": "Smokers",
+  "obese": "Obese",
+  "geneticMutation": "Genetic mutation",
+  "inactive": "Inactive",
+  "chemicalexposure": "Chemical exposure",
+  "pollutedareas": "Polluted areas"
 }

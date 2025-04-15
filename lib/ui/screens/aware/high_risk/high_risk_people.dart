@@ -6,48 +6,33 @@ import 'package:hope/ui/screens/aware/awareness/news_list.dart';
 import 'package:hope/ui/shared_widgets/custome_tab.dart';
 import 'package:provider/provider.dart';
 
-class NewsScreen extends StatefulWidget {
-  static const String routeName = '/newsScreen';
+class HighRiskPeople extends StatefulWidget {
+  static const String routeName = '/highRisk';
 
   @override
-  _NewsScreenState createState() => _NewsScreenState();
+  _HighRiskPeopleState createState() => _HighRiskPeopleState();
 }
 
-class _NewsScreenState extends State<NewsScreen>
+class _HighRiskPeopleState extends State<HighRiskPeople>
     with SingleTickerProviderStateMixin {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
   late TabController _tabController;
-  final String apiKey =
-      //"b3559d03ae7d44b883b82f7368ef3b3a";
-      "a11077e149254297aeed5b0a443616a1";
-  final List<String> cancerTypes = [
+
+  final List<String> highRiskPeople = [
     "All",
-    "Breast",
-    "Lung",
-    "Prostate",
-    "Colorectal",
-    "Skin",
-    "Ovarian",
-    "Pancreatic",
-    "Leukemia",
-    "Lymphoma",
-    "Brain",
-    "Liver",
-    "Stomach",
-    "Esophageal",
-    "Bladder",
-    "Kidney",
-    "Thyroid",
-    "Bone",
-    "Testicular",
-    "Endometrial",
-    "Cervical",
-    "Gallbladder",
-    "Multiple Myeloma",
-    "Oral"
+    'Elderly',
+    'Pregnant',
+    'Weak immune system',
+    'Smokers',
+    'Obese',
+    'Genetic mutation',
+    'Inactive',
+    'Chemical exposure',
+    'Polluted areas',
   ];
+
   String selectedCancerType = "All";
 
   List<Widget> buildTabs(List<String> types) {
@@ -57,10 +42,10 @@ class _NewsScreenState extends State<NewsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: cancerTypes.length, vsync: this);
+    _tabController = TabController(length: highRiskPeople.length, vsync: this);
     _tabController.addListener(() {
       setState(() {
-        selectedCancerType = cancerTypes[_tabController.index];
+        selectedCancerType = highRiskPeople[_tabController.index];
       });
     });
   }
@@ -87,7 +72,7 @@ class _NewsScreenState extends State<NewsScreen>
                 bottomRight: Radius.circular(20))),
         centerTitle: true,
         title: Text(
-          "News",
+          "High Risk People",
           style: TextStyle(color: AppColors.white),
         ),
         bottom: TabBar(
@@ -96,12 +81,14 @@ class _NewsScreenState extends State<NewsScreen>
           isScrollable: true,
           labelPadding: const EdgeInsets.symmetric(horizontal: 7),
           padding: const EdgeInsets.symmetric(vertical: 10),
-          tabs: buildTabs(cancerTypes),
+          tabs: buildTabs(highRiskPeople),
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: cancerTypes.map((type) => NewsList(type: type)).toList(),
+        children: highRiskPeople
+            .map((type) => NewsList(type: "$type at high risk of cancer"))
+            .toList(),
       ),
     );
   }

@@ -5,13 +5,16 @@ import 'package:hope/ui/screens/aware/awareness/build_article_item.dart';
 
 class NewsList extends StatelessWidget {
   final String type;
-  final String apiKey;
   final bool news;
 
-  NewsList({required this.type, required this.apiKey, this.news = false});
+  NewsList({required this.type, this.news = false});
 
   @override
   Widget build(BuildContext context) {
+    final String apiKey = "b3559d03ae7d44b883b82f7368ef3b3a";
+
+    //  "a11077e149254297aeed5b0a443616a1";
+
     return FutureBuilder<List<ArticleDM>>(
       future: NewsService.fetchNews(type, apiKey, news),
       builder: (context, snapshot) {

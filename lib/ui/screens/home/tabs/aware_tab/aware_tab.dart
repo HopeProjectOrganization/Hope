@@ -36,15 +36,15 @@ class AwareTab extends StatelessWidget {
       CategoryModel(
           image: AppAssets.alternative,
           id: appLocalizations.alternative,
-          route: '/hereditary'),
+          route: '/alternative'),
       CategoryModel(
           image: AppAssets.highRiskPeople,
           id: appLocalizations.highRiskPeople,
-          route: '/hereditary'),
+          route: '/highRisk'),
       CategoryModel(
           image: AppAssets.healthyDiet,
           id: appLocalizations.healthyDiet,
-          route: '/hereditary'),
+          route: '/healthyDiet'),
     ];
 
     return CustomScaffold(

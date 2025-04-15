@@ -14,8 +14,8 @@ class BuildArticleItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String image = article.urlToImage ?? '';
-    final String title = (article.title != null && article.title!.length > 80)
-        ? "${article.title!.substring(0, 80)}..."
+    final String title = (article.title != null && article.title!.length > 70)
+        ? "${article.title!.substring(0, 70)}..."
         : article.title ?? '';
     final String description =
         (article.description != null && article.description!.length > 50)

@@ -9,7 +9,9 @@ import 'package:hope/ui/screens/auth/forgetpassword/verify/verification.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/screens/aware/awareness/newsScreen.dart';
+import 'package:hope/ui/screens/aware/healthy_diet/healthy_diet.dart';
 import 'package:hope/ui/screens/aware/hereditary/hereditary.dart';
+import 'package:hope/ui/screens/aware/high_risk/high_risk_people.dart';
 import 'package:hope/ui/screens/aware/places/places_screen.dart';
 import 'package:hope/ui/screens/aware/shared_widgets/article/article_screen.dart';
 import 'package:hope/ui/screens/home/home.dart';
@@ -74,9 +76,11 @@ class MyApp extends StatelessWidget {
         ResultScreen.routeName: (_) => const ResultScreen(),
         NewsScreen.routeName: (_) => NewsScreen(),
         PlacesScreen.routeName: (_) => PlacesScreen(),
-        NewsArticleScreen.routeName: (_) => NewsArticleScreen()
+        NewsArticleScreen.routeName: (_) => NewsArticleScreen(),
+        HighRiskPeople.routeName: (_) => HighRiskPeople(),
+        HealthyDiet.routeName: (_) => HealthyDiet()
       },
-      initialRoute: NewsScreen.routeName,
+      initialRoute: HomeScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

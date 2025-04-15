@@ -21,8 +21,6 @@ class _HereditaryState extends State<Hereditary>
   late AppLocalizations appLocalizations;
 
   late TabController _tabController;
-  final String apiKey =
-      "a11077e149254297aeed5b0a443616a1"; //b3559d03ae7d44b883b82f7368ef3b3a
 
   final List<String> cancerTypes = [
     "All",
@@ -88,7 +86,7 @@ class _HereditaryState extends State<Hereditary>
       body: TabBarView(
         controller: _tabController,
         children: cancerTypes
-            .map((type) => NewsList(type: "hereditary $type", apiKey: apiKey))
+            .map((type) => NewsList(type: "hereditary $type"))
             .toList(),
       ),
     );
