@@ -119,12 +119,12 @@ class AppTheme {
         ),
         unselectedItemColor: AppColors.white,
       ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: AppColors.purple,
-        shape: CircleBorder(
-          side: BorderSide(color: AppColors.white, width: 5),
-        ),
-      ));
+    // floatingActionButtonTheme: FloatingActionButtonThemeData(
+    //   backgroundColor: AppColors.purple,
+    //   shape: CircleBorder(
+    //     side: BorderSide(color: AppColors.white, width: 5),
+    //)   ),
+  );
 
   static ThemeData darkTheme = ThemeData(
       tabBarTheme: TabBarTheme(
@@ -249,10 +249,11 @@ class AppTheme {
         ),
         unselectedItemColor: AppColors.dark,
       ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: AppColors.purple,
-        shape: CircleBorder(
-          side: BorderSide(color: AppColors.dark, width: 5),
-        ),
-      ));
+    // floatingActionButtonTheme: FloatingActionButtonThemeData(
+    //   backgroundColor: AppColors.purple,
+    //   shape: CircleBorder(
+    //     side: BorderSide(color: AppColors.dark, width: 5),
+    //   ),
+    // )
+  );
 }

@@ -10,6 +10,7 @@ import 'package:hope/ui/screens/home/tabs/add_tab/image_picker.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/recognize_text.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
+import 'package:hope/ui/shared_widgets/custom_drop_down.dart';
 import 'package:hope/ui/shared_widgets/custom_label.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:hope/ui/shared_widgets/custom_text_field.dart';
@@ -26,6 +27,8 @@ class AddTab extends StatefulWidget {
 }
 
 class AddTabState extends State<AddTab> {
+  String? selectedType;
+
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
   late BarcodeScannerService barcodeScanner;
@@ -38,18 +41,36 @@ class AddTabState extends State<AddTab> {
   var productName = TextEditingController();
   var ingredients = TextEditingController();
   final AddService _addService = AddService();
+  bool isFood = false;
 
   final ImagePickerService imagePickerService = ImagePickerService();
 
   TextRecognitionService textRecognitionService = TextRecognitionService();
 
   Future<void> processImage(File imageFile) async {
-    String extractedText =
-        await textRecognitionService.recognizeText(imageFile);
+    final extractedText =
+        await textRecognitionService.recognizeAndExtractInfo(imageFile, isFood);
+    final extractedValues =
+        textRecognitionService.extractIngredientsWithValues(extractedText);
+
+    final buffer = StringBuffer();
+
+    if (isFood) {
+      if (extractedValues.isNotEmpty) {
+        // extractedValues.forEach((key, value) {
+        //   buffer.writeln("$key: $value");
+        //}
+        //);
+        buffer.writeln("$extractedText");
+      } else {
+        buffer.writeln("لم يتم العثور على نسب غذائية.");
+      }
+    }
+    // buffer.writeln("$extractedText");
 
     setState(() {
       scannedText = extractedText;
-      ingredients.text = extractedText;
+      ingredients.text = isFood ? buffer.toString() : extractedText;
       isScanning = false;
     });
   }
@@ -128,6 +149,28 @@ class AddTabState extends State<AddTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  "Choose the product type :",
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                CustomDropDown(
+                  items: ["Beauty", "Food"],
+                  labelText: "Type of product :",
+                  initialValue: selectedType,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedType = value;
+                      selectedType == "Food" ? isFood = true : isFood = false;
+                    });
+                    print("SELECTED TYPE IS FOOD ? $isFood");
+                  },
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
                 Text(
                   appLocalizations.barcode,
                   style: Theme.of(context).textTheme.labelSmall,

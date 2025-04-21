@@ -86,6 +86,10 @@ class _HomeScreenState extends State<HomeScreen> {
           floatingActionButton: keyboardIsOpen
               ? null
               : FloatingActionButton(
+                  backgroundColor: AppColors.purple,
+                  shape: CircleBorder(
+                    side: BorderSide(color: AppColors.white, width: 5),
+                  ),
                   onPressed: () {
                     // Navigator.pushNamed(
                     //   context,

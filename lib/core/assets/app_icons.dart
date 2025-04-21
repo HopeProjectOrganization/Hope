@@ -11,6 +11,7 @@ class AppIcons {
   //Home
   static const String homeIcon = "assets/icons/homeIcon.png";
   static const String homeFilled = "assets/icons/homeFilled.png";
+  static const String chatbot = "assets/icons/robot.png";
 
   static const String addIcon = "assets/icons/addIcon.png";
   static const String addFilled = "assets/icons/addFilled.png";
