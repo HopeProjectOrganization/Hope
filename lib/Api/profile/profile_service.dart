@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class GetUserProfile {
   Future<Data?> fetchUserProfile(String token) async {
-    final url = Uri.parse('http://192.168.1.58:8081/api/profile');
+    final url = Uri.parse('http://192.168.78.153:8080/api/profile');
 
     try {
       final response = await http.get(

@@ -73,7 +73,7 @@ class _MenuTabState extends State<MenuTab> {
     localeProvider = Provider.of<LocaleProvider>(context);
 
     print('Building UserProfile'); // تأكد أن الـ build method يعمل
-    print('Username: ${userProfile?.username ?? 'No Name'}');
+    print('Username: ${userProfile?.name ?? 'No Name'}');
 
     appLocalizations = AppLocalizations.of(context)!;
 
@@ -117,8 +117,7 @@ class _MenuTabState extends State<MenuTab> {
           const SizedBox(height: 20),
           Center(
             child: Text(
-              "${userProfile?.username ?? "No Name"}",
-              // استخدم قيمة بديلة عند null
+              "${userProfile?.name ?? "No Name"}",
               style: Theme.of(context).textTheme.labelLarge,
             ),
           ),

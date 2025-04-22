@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hope/Api/add/add_service.dart';
 import 'package:hope/Api/history/add_to_history.dart';
+import 'package:hope/Api/scan/sharedData.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
@@ -108,6 +109,8 @@ class ScanService {
           'highRiskIngredients': local['highRiskIngredients'] ?? [],
         };
         await AddToHistory().updateHistory(barcode, 'SCANNED');
+        ScanDataService().scannedProduct = product;
+        ScanDataService().highRiskIngredients = product['highRiskIngredients'];
         return {
           'message': message,
           'product': product,

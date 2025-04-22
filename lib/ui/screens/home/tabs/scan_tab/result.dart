@@ -17,15 +17,15 @@ class ResultScreen extends StatelessWidget {
       case "A (High Risk)":
         return AppAssets.higiRisk;
       case "B (Moderate Risk)":
-        return AppAssets.mediumRisk;
+        return AppAssets.mediumHighRisk;
       case "C (Medium Risk)":
-        return AppAssets.lowRisk;
+        return AppAssets.mediumRisk;
       case "D (Low Risk)":
-        return AppAssets.lowRisk;
+        return AppAssets.lowMediumRisk;
       case "E (Minimal or No Risk)":
         return AppAssets.lowRisk;
       default:
-        return AppAssets.result;
+        return AppAssets.lowRisk;
     }
   }
 
