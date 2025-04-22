@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/auth/login/logout_service.dart';
 import 'package:hope/Api/profile/profile_service.dart';
-import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/locale_provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/model/avatar.dart';
 import 'package:hope/model/get_profile.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab/edit_profile.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
@@ -106,7 +106,12 @@ class _MenuTabState extends State<MenuTab> {
           Center(
             child: CircleAvatar(
               radius: 60,
-              backgroundImage: AssetImage(AppAssets.user),
+              child: Image.asset(
+                Avatar.getAvatarById(userProfile!.avatarId ?? "5"),
+                height: 118,
+                width: 118,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
           const SizedBox(height: 20),

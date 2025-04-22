@@ -22,7 +22,7 @@ class Data {
   final String password;
   final String username;
   final String phone;
-  final int? avatarId;
+  final String? avatarId;
   final bool isMale;
   final bool smoker;
   final bool haveCancer;
@@ -58,7 +58,7 @@ class Data {
           json["username"]?.isNotEmpty == true ? json["username"] : 'No Name',
       // تغيير هنا للتحقق من القيمة الفارغة
       phone: json["phone"] ?? '11111111',
-      avatarId: json["imageId"] ?? 5,
+      avatarId: json["imageId"] ?? "5",
       isMale: json["isMale"] ?? false,
       smoker: json["smoker"] ?? false,
       haveCancer: json["haveCancer"] ?? false,

@@ -11,9 +11,10 @@ class Avatar {
     {'id': 8, 'asset': 'assets/avatar/avatar8.png'},
   ];
 
-  static String getAvatarById(int id) {
+  static String getAvatarById(String id) {
+    int parsedId = int.tryParse(id) ?? -1;
     return avatars.firstWhere(
-      (avatar) => avatar['id'] == id,
+      (avatar) => avatar['id'] == parsedId,
       orElse: () => {'asset': 'assets/avatar/default.png'},
     )['asset'];
   }
