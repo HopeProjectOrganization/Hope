@@ -21,6 +21,7 @@ class Data {
   final String email;
   final String password;
   final String username;
+  final String name;
   final String phone;
   final String? avatarId;
   final bool isMale;
@@ -33,6 +34,7 @@ class Data {
   final String role;
 
   Data({
+    required this.name,
     required this.id,
     required this.username,
     required this.password,
@@ -56,6 +58,7 @@ class Data {
       password: json["password"] ?? '',
       username:
           json["username"]?.isNotEmpty == true ? json["username"] : 'No Name',
+      name: json["name"]?.isNotEmpty == true ? json["name"] : 'No Name',
       // تغيير هنا للتحقق من القيمة الفارغة
       phone: json["phone"] ?? '11111111',
       avatarId: json["imageId"] ?? "5",

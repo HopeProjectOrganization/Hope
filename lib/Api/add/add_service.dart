@@ -184,7 +184,7 @@ class AddService {
 
   static Future<Map<String, dynamic>?> fetchScanResult(String barcode) async {
     try {
-      var url = Uri.parse("http://192.168.1.48:8081/api/scan/$barcode");
+      var url = Uri.parse("http://192.168.78.153:8080/api/scan/$barcode");
       var response = await http.get(url);
 
       if (response.statusCode == 200) {

@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginService {
   static const String _apiUrl =
-      'http://192.168.1.58:8081/api/v1/auth/authenticate';
+      'http://192.168.78.153:8080/api/v1/auth/authenticate';
 
   Future<void> loginUser(
       BuildContext context, String email, String password) async {
