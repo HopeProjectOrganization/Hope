@@ -12,7 +12,9 @@ class RegisterService {
 
   Future<void> registerUser({
     required BuildContext context,
+    required int imageId,
     required String username,
+    required String name,
     required String email,
     required String password,
     required String phone,
@@ -29,6 +31,7 @@ class RegisterService {
     final Map<String, dynamic> userData = {
       'username': username,
       'email': email,
+      'imageId': imageId,
       'password': password,
       'phone': phone,
       'isMale': isMale,

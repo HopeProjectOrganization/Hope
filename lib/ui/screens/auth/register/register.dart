@@ -284,6 +284,8 @@ class _RegisterScreen extends State<RegisterScreen> {
   FilledButton buildRegisterButton(BuildContext context) => FilledButton(
       onPressed: () {
         authService.registerUser(
+          name: usernameController.text,
+          imageId: selectedAvatarId,
           context: context,
           username: usernameController.text.trim(),
           email: emailController.text.trim(),

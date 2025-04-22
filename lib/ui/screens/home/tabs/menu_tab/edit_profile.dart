@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Api/profile/profile_service.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/get_profile.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_text_field.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfile extends StatefulWidget {
   static const String routeName = "editProfile";
@@ -28,12 +30,49 @@ class _EditProfileState extends State<EditProfile> {
   var emailController = TextEditingController();
   var phoneController = TextEditingController();
 
+  Data? userProfile;
+  bool isLoading = true;
+  String? token;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // selectedAvatarAsset =
+  //   //     Avatar.getAvatarById(widget.user!.data!.avaterId ?? 0);
+  //   // selectedAvatarId = widget.user!.data!.avaterId ?? 0;
+  // }
   @override
   void initState() {
     super.initState();
-    // selectedAvatarAsset =
-    //     Avatar.getAvatarById(widget.user!.data!.avaterId ?? 0);
-    // selectedAvatarId = widget.user!.data!.avaterId ?? 0;
+    fetchToken();
+  }
+
+  Future<void> fetchToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedToken = prefs.getString('auth_token');
+
+    if (storedToken != null) {
+      setState(() {
+        token = storedToken;
+      });
+      fetchUserProfile(storedToken);
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchUserProfile(String token) async {
+    GetUserProfile fetchUserProfile = GetUserProfile();
+    Data? profileData = await fetchUserProfile.fetchUserProfile(token);
+
+    if (mounted) {
+      setState(() {
+        userProfile = profileData;
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -88,19 +127,19 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               CustomTextField(
-                hint: widget.user?.data?.name?.toString() ?? 'N/A',
+                hint: userProfile?.username ?? "No Name",
                 controller: userNameController,
                 prefixIcon: ImageIcon(AssetImage(AppIcons.userIcon)),
               ),
               const SizedBox(height: 20),
               CustomTextField(
-                hint: widget.user?.data?.email?.toString() ?? 'N/A',
+                hint: userProfile?.email ?? "No email",
                 prefixIcon: ImageIcon(AssetImage(AppIcons.emailIcon)),
                 controller: emailController,
               ),
               const SizedBox(height: 20),
               CustomTextField(
-                hint: widget.user?.data?.phone?.toString() ?? 'N/A',
+                hint: userProfile?.phone ?? "No email",
                 prefixIcon: ImageIcon(AssetImage(AppIcons.phoneIcon)),
                 controller: phoneController,
               ),

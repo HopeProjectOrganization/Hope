@@ -13,13 +13,14 @@ class GetUserProfileData {
       data: json["data"] == null ? null : Data.fromJson(json["data"]),
     );
   }
+
 }
 
 class Data {
   final int? id;
   final String email;
   final String password;
-  final String name;
+  final String username;
   final String phone;
   final int? avatarId;
   final bool isMale;
@@ -33,7 +34,7 @@ class Data {
 
   Data({
     required this.id,
-    required this.name,
+    required this.username,
     required this.password,
     required this.email,
     required this.phone,
@@ -53,9 +54,11 @@ class Data {
       id: json["id"] as int?,
       email: json["email"] ?? 'N/A',
       password: json["password"] ?? '',
-      name: json["name"] ?? 'N/A',
-      phone: json["phone"] ?? '',
-      avatarId: json["imageId"] as int?,
+      username:
+          json["username"]?.isNotEmpty == true ? json["username"] : 'No Name',
+      // تغيير هنا للتحقق من القيمة الفارغة
+      phone: json["phone"] ?? '11111111',
+      avatarId: json["imageId"] ?? 5,
       isMale: json["isMale"] ?? false,
       smoker: json["smoker"] ?? false,
       haveCancer: json["haveCancer"] ?? false,
