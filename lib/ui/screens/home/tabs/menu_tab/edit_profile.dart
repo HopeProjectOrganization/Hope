@@ -88,7 +88,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               CustomTextField(
-                hint: widget.user?.data?.username?.toString() ?? 'N/A',
+                hint: widget.user?.data?.name?.toString() ?? 'N/A',
                 controller: userNameController,
                 prefixIcon: ImageIcon(AssetImage(AppIcons.userIcon)),
               ),

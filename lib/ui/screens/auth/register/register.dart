@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/auth/register/register_service.dart';
-import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/model/avatar.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/shared_widgets/custom_check_field.dart';
 import 'package:hope/ui/shared_widgets/custom_drop_down.dart';
@@ -25,8 +25,13 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreen extends State<RegisterScreen> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
+  final PageController _pageController =
+      PageController(initialPage: 5, viewportFraction: 0.5);
 
   final RegisterService authService = RegisterService();
+
+  double currentPage = 5.0;
+  int selectedAvatarId = Avatar.avatars[5]['id'];
 
   DateTime selectedDate = DateTime.now();
   var usernameController = TextEditingController();
@@ -62,10 +67,42 @@ class _RegisterScreen extends State<RegisterScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Image.asset(
-              AppAssets.register,
-              height: MediaQuery.of(context).size.height * 0.3,
-            ),
+            Container(
+                margin: const EdgeInsets.only(bottom: 30),
+                child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: Avatar.avatars.length,
+                        onPageChanged: (index) {
+                          setState(() {
+                            selectedAvatarId = Avatar.avatars[index]['id'];
+                            currentPage = index.toDouble();
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          double distanceFromCenter =
+                              (currentPage - index).abs();
+                          double scaleFactor =
+                              (1 - distanceFromCenter * 0.4).clamp(0.4, 1.0);
+                          double widthFactor =
+                              (1 - distanceFromCenter * 0.03).clamp(0.4, 1.0);
+                          return Center(
+                              child: Transform.scale(
+                            scale: scaleFactor,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width *
+                                  0.35 *
+                                  widthFactor,
+                              child:
+                                  Image.asset(Avatar.avatars[index]['asset']),
+                            ),
+                          ));
+                        }))),
+            // Image.asset(
+            //   AppAssets.register,
+            //   height: MediaQuery.of(context).size.height * 0.3,
+            // ),
             CustomTextField(
                 controller: usernameController,
                 hint: appLocalizations.username,

@@ -16,24 +16,24 @@ class GetUserProfileData {
 }
 
 class Data {
-  final String? id;
-  final String? email;
-  final String? password;
-  final String? username;
-  final String? phone;
+  final int? id;
+  final String email;
+  final String password;
+  final String name;
+  final String phone;
   final int? avatarId;
   final bool isMale;
   final bool smoker;
   final bool haveCancer;
-  final String? type;
+  final String type;
   final bool haveAFamillyCancer;
-  final String? familyType;
+  final String familyType;
   final String dateOfBirth;
   final String role;
 
   Data({
     required this.id,
-    required this.username,
+    required this.name,
     required this.password,
     required this.email,
     required this.phone,
@@ -50,23 +50,20 @@ class Data {
 
   factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
-      id: json["id"],
-      email: json["email"],
-      password: json["password"],
-      username: json["username"] ?? 'NNN',
-      phone: json["phone"],
-      avatarId: json["avaterId"],
+      id: json["id"] as int?,
+      email: json["email"] ?? 'N/A',
+      password: json["password"] ?? '',
+      name: json["name"] ?? 'N/A',
+      phone: json["phone"] ?? '',
+      avatarId: json["imageId"] as int?,
       isMale: json["isMale"] ?? false,
-      // تأكد من أن الاسم في JSON مطابق
       smoker: json["smoker"] ?? false,
       haveCancer: json["haveCancer"] ?? false,
-      type: json["type"],
+      type: json["type"] ?? 'None',
       haveAFamillyCancer: json["haveAFamillyCancer"] ?? false,
-      // تأكد من أن الاسم في JSON مطابق
-      familyType: json["familyType"],
-      dateOfBirth: json["dateOfBirth"] ?? "",
-      // تأكد من أن الاسم في JSON مطابق
-      role: json["role"] ?? "",
+      familyType: json["familyType"] ?? 'None',
+      dateOfBirth: json["dateOfBirth"] ?? '',
+      role: json["role"] ?? '',
     );
   }
 }

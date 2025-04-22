@@ -71,7 +71,7 @@ class _MenuTabState extends State<MenuTab> {
 
   late LocaleProvider localeProvider;
   late AppLocalizations appLocalizations;
-  GetUserProfileData? userProfile;
+  Data? userProfile;
   bool isLoading = true;
   String? token;
   int historyCount = 0;
@@ -105,12 +105,11 @@ class _MenuTabState extends State<MenuTab> {
 
     if (mounted) {
       setState(() {
-        userProfile = data;
+        userProfile = data?.data;
         isLoading = false;
       });
 
-      // طباعة بيانات الاستجابة للتحقق من المحتوى
-      print("Fetched UserProfile: ${data?.data?.username}");
+      print("Fetched UserProfile: ${userProfile?.name}");
     }
   }
 
@@ -121,8 +120,7 @@ class _MenuTabState extends State<MenuTab> {
 
     print('Building UserProfile'); // تأكد أن الـ build method يعمل
 
-    print('Username: ${userProfile?.data?.username}'); // استخدم data.username
-
+    print('Username: ${userProfile?.name}'); // استخدم data.username
 
     appLocalizations = AppLocalizations.of(context)!;
 
@@ -141,7 +139,6 @@ class _MenuTabState extends State<MenuTab> {
   }
 
   Widget _buildProfileContent() {
-    final profile = userProfile?.data;
 
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 30),
@@ -156,7 +153,7 @@ class _MenuTabState extends State<MenuTab> {
           const SizedBox(height: 20),
           Center(
             child: Text(
-              "${profile?.username ?? "N/A"}", // عرض اسم المستخدم
+              "${userProfile?.name ?? "N/A"}", // عرض اسم المستخدم
               style: Theme
                   .of(context)
                   .textTheme
