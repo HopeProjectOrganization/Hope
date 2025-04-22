@@ -93,5 +93,22 @@
   "geneticMutation": "Genetic mutation",
   "inactive": "Inactive",
   "chemicalexposure": "Chemical exposure",
-  "pollutedareas": "Polluted areas"
+  "pollutedareas": "Polluted areas",
+  "chooseTheProductType": "Choose the product type :",
+  "search": "Search...",
+  "cancerTreatmentPlaces": "Cancer treatment places",
+  "editProfile": "Edit Profile",
+  "updateAccount": "Update Account",
+  "deleteAccount": "Delete Account",
+  "exit": "Exit",
+  "address": "Address",
+  "changePassword": "Change Password",
+  "notification": "Notification",
+  "dark": "Dark",
+  "light": "Light",
+  "ar": "AR",
+  "en": "EN"
+
+
+
 }

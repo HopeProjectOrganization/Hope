@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:hope/Api/add/add_service.dart';
 import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:http/http.dart' as http;
@@ -9,12 +8,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginService {
   static const String _apiUrl =
-      'http://192.168.1.31:8081/api/v1/auth/authenticate';
+      'http://192.168.1.48:8081/api/v1/auth/authenticate';
 
   Future<void> loginUser(
       BuildContext context, String email, String password) async {
     try {
-      showLoading(context);
+      showLoading(context); // عرض الديالوج
       final response = await http.post(
         Uri.parse(_apiUrl),
         headers: <String, String>{
@@ -26,42 +25,41 @@ class LoginService {
         }),
       );
 
-      hideLoading(context);
+      hideLoading(context); // إخفاء الديالوج عند الانتهاء
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final token = data['token'];
+        print("TOKEEEEEEEEN : $token");
 
-        await AddService().storeToken(token);
-
-        Navigator.pushNamed(context, HomeScreen.routeName);
-        print('Login successful: $token');
+        if (token != null) {
+          await storeToken(token); // تخزين التوكن في SharedPreferences
+          Navigator.pushNamed(
+              context, HomeScreen.routeName); // الانتقال للصفحة الرئيسية
+          print('Login successful: $token');
+        } else {
+          showMessage(context, "Token not found in response");
+        }
       } else {
-        _showError(context, "Email or password may be incorrect");
+        showMessage(context, "Email or password may be incorrect");
       }
     } catch (e) {
       print('Error during login: $e');
-      _showError(context, "An error occurred during login");
+      showMessage(context, "An error occurred during login: $e");
     }
   }
 
-  void _showError(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(message, style: const TextStyle(color: Colors.white)),
-          backgroundColor: Colors.red),
-    );
-  }
-
-  Future<void> logoutUser(BuildContext context) async {
+  // دالة لتخزين التوكن في SharedPreferences
+  Future<void> storeToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
-    Navigator.pushNamedAndRemoveUntil(
-        context, '/', (route) => false); // العودة لصفحة البداية
+    await prefs.setString('auth_token', token);
+    print('Token stored: $token');
   }
 
+  // دالة لجلب التوكن من SharedPreferences
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('auth_token');
   }
 }
+

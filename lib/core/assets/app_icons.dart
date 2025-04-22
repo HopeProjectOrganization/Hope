@@ -29,4 +29,6 @@ class AppIcons {
 
   static const String barCodeIcon = "assets/icons/BarcodeIcon.png";
   static const String camera = "assets/icons/camera.png";
+
+  static const String exit = "assets/icons/exit.png";
 }

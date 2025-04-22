@@ -72,7 +72,7 @@ class _HereditaryState extends State<Hereditary>
                 bottomRight: Radius.circular(20))),
         centerTitle: true,
         title: Text(
-          "News",
+          appLocalizations.hereditary,
           style: TextStyle(color: AppColors.white),
         ),
         bottom: TabBar(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/places/fetch_places.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -16,6 +17,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
   String searchQuery = "";
   List<PlaceModel> places = [];
   bool isLoading = true;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -38,6 +40,8 @@ class _PlacesScreenState extends State<PlacesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    appLocalizations = AppLocalizations.of(context)!;
+
     final filteredPlaces = places.where((place) {
       return place.name.toLowerCase().contains(searchQuery);
     }).toList();
@@ -51,7 +55,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
         backgroundColor: AppColors.purple,
         centerTitle: true,
         title: Text(
-          "Cancer treatment places",
+          appLocalizations.cancerTreatmentPlaces,
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ),
@@ -68,7 +72,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
               },
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search, color: AppColors.purple),
-                hintText: "Search...",
+                hintText: appLocalizations.search,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),

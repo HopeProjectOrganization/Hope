@@ -13,6 +13,7 @@ class _FloatButtonState extends State<FloatButton> {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
+      heroTag: 'chatbot',
       onPressed: () {},
       backgroundColor: AppColors.purple,
       child: Image.asset(AppIcons.chatbot),

@@ -150,7 +150,7 @@ class AddTabState extends State<AddTab> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Choose the product type :",
+                  appLocalizations.chooseTheProductType,
                   style: Theme.of(context).textTheme.labelSmall,
                 ),
                 const SizedBox(
@@ -232,7 +232,7 @@ class AddTabState extends State<AddTab> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     CustomButton(
-                      title: 'Add Product',
+                      title: appLocalizations.add,
                       onClick: () async {
                         await addProduct();
                       },

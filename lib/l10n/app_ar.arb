@@ -93,6 +93,22 @@
   "geneticMutation": "الطفرة الجينية",
   "inactive": "الخمول",
   "chemicalexposure": "التعرض للمواد الكيميائية",
-  "pollutedareas": "المناطق الملوثة"
+  "pollutedareas": "المناطق الملوثة",
+  "chooseTheProductType": "اختر نوع المنتج:",
+  "search": "بحث...",
+  "cancerTreatmentPlaces": "أماكن علاج السرطان",
+  "editProfile": "تعديل الملف الشخصي",
+  "updateAccount": "تحديث الحساب",
+  "deleteAccount": "حذف الحساب",
+  "exit": "خروج",
+  "address": "العنوان",
+  "changePassword": "تغيير كلمة المرور",
+  "notification": "الإشعارات",
+  "dark": "داكن",
+  "light": "فاتح",
+  "ar": "العربية",
+  "en": "الإنجليزية"
+
+
 
 }

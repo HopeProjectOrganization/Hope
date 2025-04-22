@@ -48,13 +48,13 @@ class AppTheme {
         titleMedium: TextStyle(
             color: AppColors.white, fontSize: 26, fontWeight: FontWeight.bold),
         titleSmall: TextStyle(
-            color: AppColors.gray, fontSize: 12, fontWeight: FontWeight.w500),
-        titleLarge: TextStyle(
+          color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
+      titleLarge: TextStyle(
             color: AppColors.dark, fontSize: 32, fontWeight: FontWeight.bold),
         bodyLarge: TextStyle(
           color: AppColors.dark, fontSize: 16, fontWeight: FontWeight.w500),
       bodyMedium: TextStyle(
-          color: AppColors.dark, fontSize: 14, fontWeight: FontWeight.w500),
+          color: AppColors.purple, fontSize: 14, fontWeight: FontWeight.w500),
       bodySmall: TextStyle(
           color: AppColors.dark, fontSize: 12, fontWeight: FontWeight.w500),
       labelLarge: TextStyle(
@@ -172,16 +172,15 @@ class AppTheme {
             fontSize: 16,
             fontWeight: FontWeight.w500),
         bodyMedium: TextStyle(
-            color: AppColors.white,
-            fontSize: 14,
+          color: AppColors.purple, fontSize: 14,
             fontWeight: FontWeight.w500),
         bodySmall: TextStyle(
             color: AppColors.white,
             fontSize: 12,
             fontWeight: FontWeight.w500),
         titleSmall: TextStyle(
-            color: AppColors.gray, fontSize: 12, fontWeight: FontWeight.w500),
-        labelLarge: TextStyle(
+          color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
+      labelLarge: TextStyle(
             color: AppColors.purple, fontSize: 22, fontWeight: FontWeight.bold),
         labelMedium: TextStyle(
             color: AppColors.purple, fontSize: 20, fontWeight: FontWeight.bold),
@@ -192,8 +191,8 @@ class AppTheme {
         titleMedium: TextStyle(
             color: AppColors.white, fontSize: 16, fontWeight: FontWeight.w500),
         titleSmall: TextStyle(
-            color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
-      ),
+          color: AppColors.white, fontSize: 16, fontWeight: FontWeight.w500),
+    ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.purple,

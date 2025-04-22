@@ -6,7 +6,7 @@ import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
-import 'package:hope/ui/screens/home/tabs/menu_tab//menu_tab.dart';
+import 'package:hope/ui/screens/home/tabs/menu_tab/menu_tab.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
 import 'package:provider/provider.dart';
 
@@ -39,7 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ?.settings
         .arguments;
 
-    if (indexArg != null && indexArg is int) {
+    if (indexArg != null &&
+        indexArg is int &&
+        indexArg >= 0 &&
+        indexArg < tabs.length) {
       currentIndex = indexArg;
     } else {
       currentIndex = currentIndex;
@@ -50,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const HomeTab(),
     const AddTab(),
     AwareTab(),
-    const MenuTab(),
+    MenuTab(),
   ];
 
   String scannedBarcode = "Not Scanned yet";
@@ -86,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
           floatingActionButton: keyboardIsOpen
               ? null
               : FloatingActionButton(
+                  heroTag: 'scan',
                   backgroundColor: AppColors.purple,
                   shape: CircleBorder(
                     side: BorderSide(color: AppColors.white, width: 5),
