@@ -86,12 +86,8 @@ class AddTabState extends State<AddTab> {
   }
 
   Future<void> addProduct() async {
-    await AddService.addProduct(
-      context,
-      productName.text,
-      barCode.text,
-      ingredients.text,
-    );
+    await AddService.addProduct(context, productName.text, barCode.text,
+        ingredients.text, selectedType ?? "Beauty");
   }
 
   Future<Map<String, dynamic>?> scanBarcode(BuildContext context) async {

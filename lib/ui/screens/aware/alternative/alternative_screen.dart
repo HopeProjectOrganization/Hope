@@ -103,15 +103,19 @@ class _SuggestedReplacementsScreenState
 
         List<Map<String, dynamic>> finalPairs = [];
 
+        bool isSimilarName(String a, String b) {
+          final wordsA = a.toLowerCase().split(' ');
+          final lowerB = b.toLowerCase();
+          return wordsA.any((word) => lowerB.contains(word));
+        }
+
         for (var product in products) {
           final nutrients = product['nutriments'];
           final fat = nutrients['fat_100g'] ?? 0.0;
           final sugar = nutrients['sugars_100g'] ?? 0.0;
 
-          // لو المنتج عالي في fat أو sugar
           if (fat > 10 || sugar > 10) {
-            // دور على منتج تاني من نفس التصنيف fat و sugar فيه أقل
-            final sameCategory = products.where((p) {
+            final List sameCategory = products.where((p) {
               final n = p['nutriments'];
               final f = n['fat_100g'] ?? 0.0;
               final s = n['sugars_100g'] ?? 0.0;
@@ -124,9 +128,18 @@ class _SuggestedReplacementsScreenState
             }).toList();
 
             if (sameCategory.isNotEmpty) {
-              final healthyAlternative = sameCategory.first;
+              // حاول تلاقي بديل مشابه في الاسم
+              final similarNameAlternatives = sameCategory
+                  .where((alt) => isSimilarName(
+                      product['product_name'], alt['product_name'] ?? ''))
+                  .toList();
+
+              final selectedAlternative = similarNameAlternatives.isNotEmpty
+                  ? similarNameAlternatives.first
+                  : sameCategory.first;
+
               finalPairs
-                  .add({'unhealthy': product, 'healthy': healthyAlternative});
+                  .add({'unhealthy': product, 'healthy': selectedAlternative});
             }
           }
         }
@@ -163,50 +176,98 @@ class _SuggestedReplacementsScreenState
     final healthy = pair['healthy'];
 
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 4,
-      child: Padding(
-        padding: EdgeInsets.all(12),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 6,
+      shadowColor: Colors.grey.withOpacity(0.3),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            colors: [AppColors.lavender.withOpacity(0.3), Colors.white],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 10),
+            // Text(
+            //   "مقارنة المنتج غير الصحي بالبديل الصحي",
+            //   style: TextStyle(
+            //     fontSize: 16,
+            //     fontWeight: FontWeight.bold,
+            //     color: Colors.black87,
+            //   ),
+            //   textAlign: TextAlign.center,
+            // ),
+            // const SizedBox(height: 16),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Unhealthy product
+                // Unhealthy Product
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("❌ ${unhealthy['product_name']}",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        "❌ ${unhealthy['product_name']}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.red[800],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                       if (unhealthy['image_small_url'] != null)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: Image.network(unhealthy['image_small_url'],
-                              height: 80),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              unhealthy['image_small_url'],
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                       buildNutritionComparison(unhealthy),
                     ],
                   ),
                 ),
+                // Divider
                 Container(
-                    width: 1,
-                    color: Colors.grey[300],
-                    margin: EdgeInsets.symmetric(horizontal: 10)),
-                // Healthy product
+                  width: 1.5,
+                  height: 150,
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.grey[300],
+                ),
+                // Healthy Product
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("✅ ${healthy['product_name']}",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        "✅ ${healthy['product_name']}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.green[800],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                       if (healthy['image_small_url'] != null)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: Image.network(healthy['image_small_url'],
-                              height: 80),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              healthy['image_small_url'],
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                       buildNutritionComparison(healthy),
                     ],
