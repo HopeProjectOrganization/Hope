@@ -20,7 +20,10 @@ class AddService {
   }
 
   static Future<void> addProduct(BuildContext context, String productName,
-      String barcode, String ingredientsText) async {
+    String barcode,
+    String ingredientsText,
+    String productType,
+  ) async {
     final url = Uri.parse("http://192.168.78.153:8080/products/add");
 
     String? token = await getToken();
@@ -41,6 +44,7 @@ class AddService {
       "productName": productName,
       "barcode": barcode,
       "ingredients": ingredientsList,
+      "productType": productType,
     };
 
     try {
@@ -113,7 +117,9 @@ class AddService {
 
   static Future<void> addProductAfterScan(BuildContext context,
       String productName,
-      String barcode, String ingredientsText) async {
+      String barcode,
+      String ingredientsText,
+      String productType) async {
     final url = Uri.parse("http://192.168.78.153:8080/products/add");
 
     String? token = await getToken();
@@ -134,6 +140,7 @@ class AddService {
       "productName": productName,
       "barcode": barcode,
       "ingredients": ingredientsList,
+      "productType": productType,
     };
 
     try {

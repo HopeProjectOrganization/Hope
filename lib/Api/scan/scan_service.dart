@@ -39,7 +39,7 @@ class ScanService {
         final ingredients = product['ingredients_text'] ?? '';
 
         await AddService.addProductAfterScan(
-            context, productName, barcode, ingredients);
+            context, productName, barcode, ingredients, "Food");
 
         await AddToHistory().updateHistory(barcode, 'SCANNED');
 
@@ -68,7 +68,7 @@ class ScanService {
         final ingredients = product['ingredients_text'] ?? '';
 
         await AddService.addProductAfterScan(
-            context, productName, barcode, ingredients);
+            context, productName, barcode, ingredients, "Beauty");
 
         // تحديث التاريخ بعد إضافة المنتج
         await AddToHistory().updateHistory(barcode, 'SCANNED');
@@ -98,74 +98,77 @@ class ScanService {
       String message = '';
       Map<String, dynamic>? product;
 
-      // نبدأ نبحث في الـ APIs المختلفة
-
-      /// 1. Local API
+      /// 1. جرّب السيرفر المحلي أولًا
       final local = await searchInLocalAPI(barcode);
-      if (local != null) {
-        if (local['productName'] != null) {
-          message = 'Product found in Local API';
+      if (local != null && local['productName'] != null) {
+        message = 'Product found in Local API';
+        product = {
+          'productName': local['productName'],
+          'barcode': local['barcode'] ?? barcode,
+          'highRiskIngredients': local['highRiskIngredients'] ?? [],
+        };
+        await AddToHistory().updateHistory(barcode, 'SCANNED');
+        return {
+          'message': message,
+          'product': product,
+          'highRiskIngredients': product['highRiskIngredients'],
+        };
+      }
+
+      /// 2. لو مش موجود، جرّب OpenFoodFacts
+      final food = await searchInOpenFoodFacts(context, barcode);
+      if (food != null && food['product_name'] != 'Unknown') {
+        message = 'Product found in OpenFoodFacts';
+
+        // ابعت البيانات للسيرفر (تم إرسالها داخل الدالة بالفعل)
+        // ثم ارجع حللها تاني عن طريق السيرفر المحلي
+        final analyzed = await searchInLocalAPI(barcode);
+
+        product = {
+          'productName': food['product_name'],
+          'barcode': food['code'] ?? barcode,
+          'highRiskIngredients': analyzed?['highRiskIngredients'] ?? [],
+        };
+        await AddToHistory().updateHistory(barcode, 'SCANNED');
+
+        return {
+          'message': message,
+          'product': product,
+          'highRiskIngredients': product['highRiskIngredients'],
+        };
+      }
+
+      /// 3. لو مش موجود، جرّب OpenBeautyFacts
+      final beauty = await searchInOpenBeautyFacts(context, barcode);
+      if (beauty != null) {
+        final productName = beauty['product_name'] ??
+            beauty['generic_name'] ??
+            beauty['brands'] ??
+            'Unknown';
+
+        if (productName != 'Unknown') {
+          message = 'Product found in OpenBeautyFacts';
+
+          // بعد الإرسال، ارجع حلل من السيرفر
+          final analyzed = await searchInLocalAPI(barcode);
+
           product = {
-            'productName': local['productName'],
-            'barcode': local['barcode'] ?? barcode,
-            'highRiskIngredients': local['highRiskIngredients'] ?? [],
+            'productName': productName,
+            'barcode': beauty['code'] ?? barcode,
+            'highRiskIngredients': analyzed?['highRiskIngredients'] ?? [],
           };
-          // تحديث التاريخ بعد إضافة المنتج
+
           await AddToHistory().updateHistory(barcode, 'SCANNED');
+
+          return {
+            'message': message,
+            'product': product,
+            'highRiskIngredients': product['highRiskIngredients'],
+          };
         }
       }
 
-      /// 2. OpenFoodFacts
-      if (product == null) {
-        // إذا لم نجد المنتج في الـ Local API
-        final food = await searchInOpenFoodFacts(context, barcode);
-        if (food != null) {
-          if (food['product_name'] != 'Unknown') {
-            message = 'Product found in OpenFoodFacts';
-            product = {
-              'productName': food['product_name'],
-              'barcode': food['code'] ?? barcode,
-              'highRiskIngredients': food['highRiskIngredients'] ?? [],
-            };
-
-            // تحديث التاريخ بعد إضافة المنتج
-            await AddToHistory().updateHistory(barcode, 'SCANNED');
-          }
-        }
-      }
-
-      /// 3. OpenBeautyFacts
-      if (product == null) {
-        // إذا لم نجد المنتج في الـ Local API أو OpenFoodFacts
-        final beauty = await searchInOpenBeautyFacts(context, barcode);
-        if (beauty != null) {
-          final productName = beauty['product_name'] ??
-              beauty['generic_name'] ??
-              beauty['brands'] ??
-              'Unknown';
-
-          if (productName != 'Unknown') {
-            message = 'Product found in OpenBeautyFacts';
-            product = {
-              'productName': productName,
-              'barcode': beauty['code'] ?? barcode,
-              'highRiskIngredients': beauty['highRiskIngredients'] ?? [],
-            };
-            // تحديث التاريخ بعد إضافة المنتج
-            await AddToHistory().updateHistory(barcode, 'SCANNED');
-          }
-        }
-      }
-
-      // إذا لم يتم العثور على المنتج في أي قاعدة بيانات
-      if (product == null) {
-        return {'message': 'Product not found in any database'};
-      }
-
-      return {
-        'message': message,
-        'product': product,
-      };
+      return {'message': 'Product not found in any database'};
     } catch (e) {
       return {'message': 'Error during scan: $e'};
     }
