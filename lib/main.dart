@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
         HealthyDiet.routeName: (_) => HealthyDiet(),
         EditProfile.routeName: (_) => EditProfile()
       },
-      initialRoute: HomeScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
