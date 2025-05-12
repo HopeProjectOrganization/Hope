@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
         ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
         SavedListScreen.routeName: (_) => SavedListScreen(),
       },
-      initialRoute: LoginScreen.routeName,
+      initialRoute: SavedListScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
