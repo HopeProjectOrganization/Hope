@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/ui/screens/chatbot/chat.dart';
 import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/recently_scan.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
@@ -124,9 +125,11 @@ class _HomeTabState extends State<HomeTab> {
                             CustomHomeButton(
                               image: AppAssets.chatbotButton,
                               onClick: () {
-                                Navigator.pushNamed(
-                                    context, HomeScreen.routeName,
-                                    arguments: 3);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ChatScreen()),
+                                );
                               },
                             ),
                             CustomHomeButton(
