@@ -8,6 +8,7 @@ import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab/menu_tab.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
+import 'package:hope/ui/shared_widgets/float_button.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -88,24 +89,38 @@ class _HomeScreenState extends State<HomeScreen> {
               FloatingActionButtonLocation.centerDocked,
           floatingActionButton: keyboardIsOpen
               ? null
-              : FloatingActionButton(
-                  heroTag: 'scan',
-                  backgroundColor: AppColors.purple,
-                  shape: CircleBorder(
-                    side: BorderSide(color: AppColors.white, width: 5),
-                  ),
-                  onPressed: () {
-                    // Navigator.pushNamed(
-                    //   context,
-                    //   ScanTab.routeName,
-                    // );
-                    startScan();
-                  },
-                  child: ImageIcon(
-                    const AssetImage(AppIcons.scanIcon),
-                    color: color,
-                  ),
+              : Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).size.height * 0.04),
+                        child: FloatingActionButton(
+                          heroTag: 'scan-main-button',
+                          backgroundColor: AppColors.purple,
+                          shape: CircleBorder(
+                            side: BorderSide(color: AppColors.white, width: 5),
+                          ),
+                          onPressed: () {
+                            startScan();
+                          },
+                          child: ImageIcon(
+                            const AssetImage(AppIcons.scanIcon),
+                            color: color,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: MediaQuery.of(context).size.height * 0.1,
+                      right: MediaQuery.of(context).size.width * 0.05,
+                      child: FloatButton(),
+                    ),
+                  ],
                 ),
+
           bottomNavigationBar: BottomNavigationBar(
             onTap: (index) {
               setState(() {

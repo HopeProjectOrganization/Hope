@@ -98,8 +98,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                                  child: (place.image == null ||
-                                          place.image.isEmpty)
+                                  child: (place.image.isEmpty)
                                       ? Image.asset(
                                           AppAssets.hospital,
                                           width: 100,
@@ -139,7 +138,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
                                                     await launchUrl(
                                                       Uri.parse(place.website),
                                                       mode: LaunchMode
-                                                          .externalApplication, // مهم جداً
+                                                          .externalApplication,
                                                     );
                                                   } else {
                                                     print(
@@ -151,8 +150,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
                                               },
                                               child: buildRow(
                                                   Icons.language,
-                                                  place.website ??
-                                                      'No website'),
+                                                  place.website),
                                             ),
                                       GestureDetector(
                                   onTap: () async {

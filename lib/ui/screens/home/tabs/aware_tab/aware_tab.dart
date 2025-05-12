@@ -7,6 +7,7 @@ import 'package:hope/ui/shared_widgets/category_item_widget.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class AwareTab extends StatelessWidget {
   static const String routeName = '/aware_tab';
 

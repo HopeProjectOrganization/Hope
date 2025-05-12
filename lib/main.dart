@@ -24,6 +24,8 @@ import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
 import 'package:hope/ui/screens/onBoarding_screens/on_boarding/onboarding_screen.dart';
 import 'package:hope/ui/screens/onBoarding_screens/set_up/setup_screen.dart';
 import 'package:hope/ui/screens/onBoarding_screens/splash/splash_screen.dart';
+import 'package:hope/ui/screens/profileDetails/change_password.dart';
+import 'package:hope/ui/screens/profileDetails/saved_list.dart';
 import 'package:provider/provider.dart';
 
 main() {
@@ -79,10 +81,12 @@ class MyApp extends StatelessWidget {
         ResultScreen.routeName: (_) => const ResultScreen(),
         NewsScreen.routeName: (_) => NewsScreen(),
         PlacesScreen.routeName: (_) => PlacesScreen(),
-        NewsArticleScreen.routeName: (_) => NewsArticleScreen(),
+        NewsArticleScreen.routeName: (_) => const NewsArticleScreen(),
         HighRiskPeople.routeName: (_) => HighRiskPeople(),
-        HealthyDiet.routeName: (_) => HealthyDiet(),
-        EditProfile.routeName: (_) => EditProfile()
+        HealthyDiet.routeName: (_) => const HealthyDiet(),
+        EditProfile.routeName: (_) => const EditProfile(),
+        ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
+        SavedListScreen.routeName: (_) => SavedListScreen(),
       },
       initialRoute: LoginScreen.routeName,
       theme: AppTheme.lightTheme,

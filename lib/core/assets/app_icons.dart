@@ -31,4 +31,6 @@ class AppIcons {
   static const String camera = "assets/icons/camera.png";
 
   static const String exit = "assets/icons/exit.png";
+
+  static const String save = "assets/icons/sava.png";
 }

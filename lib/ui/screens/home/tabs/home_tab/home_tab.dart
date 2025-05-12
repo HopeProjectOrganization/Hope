@@ -5,7 +5,6 @@ import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/recently_scan.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
 import 'package:hope/ui/shared_widgets/custom_home_button.dart';
-import 'package:hope/ui/shared_widgets/float_button.dart';
 import 'package:hope/ui/shared_widgets/utils/language_button.dart';
 import 'package:hope/ui/shared_widgets/utils/theme_button.dart';
 
@@ -151,11 +150,6 @@ class _HomeTabState extends State<HomeTab> {
                 ),
               ),
             ],
-          ),
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: FloatButton(),
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class CustomTextField extends StatelessWidget {
   late ThemeProvider themeProvider;
 

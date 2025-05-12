@@ -9,6 +9,7 @@ import 'package:hope/ui/shared_widgets/theme_switch.dart';
 import 'package:provider/provider.dart';
 
 //newBranch
+// ignore: must_be_immutable
 class SetupScreen extends StatelessWidget {
   static const String routeName = "/SetupScreen";
 

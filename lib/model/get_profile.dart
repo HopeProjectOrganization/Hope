@@ -59,7 +59,6 @@ class Data {
       username:
           json["username"]?.isNotEmpty == true ? json["username"] : 'No Name',
       name: json["name"]?.isNotEmpty == true ? json["name"] : 'No Name',
-      // تغيير هنا للتحقق من القيمة الفارغة
       phone: json["phone"] ?? '11111111',
       avatarId: json["imageId"] ?? "5",
       isMale: json["isMale"] ?? false,

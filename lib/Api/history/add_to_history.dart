@@ -10,7 +10,7 @@ class AddToHistory {
   }
 
   Future<void> updateHistory(String barcode, String actionType) async {
-    final historyUrl = Uri.parse("http://192.168.78.153:8080/history/add");
+    final historyUrl = Uri.parse("http://192.168.1.38:8080/history/add");
 
     String? token = await getToken();
     if (token == null) {
