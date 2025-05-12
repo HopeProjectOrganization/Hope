@@ -46,8 +46,11 @@ class AppAssets {
   //Places
   static const String hospital = "assets/images/hospital.png";
 
-  //Profile
+  //chat
+  static const String chatbot1 = "assets/images/avatar5.png";
+  static const String chatbot = "assets/images/robot.png";
 
+  //Profile
   static const String user = "assets/images/avatar5.png";
 }
 
