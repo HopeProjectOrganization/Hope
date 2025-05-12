@@ -15,7 +15,7 @@ class Avatar {
     int parsedId = int.tryParse(id) ?? -1;
     return avatars.firstWhere(
       (avatar) => avatar['id'] == parsedId,
-      orElse: () => {'asset': 'assets/avatar/default.png'},
+      orElse: () => {'asset': 'assets/avatar/avatar5.png'},
     )['asset'];
   }
 }

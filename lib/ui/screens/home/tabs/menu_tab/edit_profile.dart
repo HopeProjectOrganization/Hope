@@ -4,6 +4,7 @@ import 'package:hope/Api/profile/profile_service.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/model/avatar.dart';
 import 'package:hope/model/get_profile.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_text_field.dart';
@@ -29,6 +30,9 @@ class _EditProfileState extends State<EditProfile> {
   var userNameController = TextEditingController();
   var emailController = TextEditingController();
   var phoneController = TextEditingController();
+
+  late String selectedAvatarAsset;
+  late String selectedAvatarId;
 
   Data? userProfile;
   bool isLoading = true;
@@ -70,6 +74,8 @@ class _EditProfileState extends State<EditProfile> {
     if (mounted) {
       setState(() {
         userProfile = profileData;
+        selectedAvatarId = userProfile!.avatarId ?? "5";
+        selectedAvatarAsset = Avatar.getAvatarById(selectedAvatarId);
         isLoading = false;
       });
     }
@@ -110,9 +116,9 @@ class _EditProfileState extends State<EditProfile> {
                       child: Stack(
                         alignment: Alignment.bottomRight,
                         children: [
-                          const CircleAvatar(
+                          CircleAvatar(
                             radius: 60,
-                            backgroundImage: AssetImage(AppAssets.user),
+                            backgroundImage: AssetImage(selectedAvatarAsset),
                           ),
                           CircleAvatar(
                             radius: 14,
@@ -201,54 +207,56 @@ class _EditProfileState extends State<EditProfile> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 20),
-                  // Expanded(
-                  //   child: GridView.builder(
-                  //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  //       crossAxisCount: 3,
-                  //       crossAxisSpacing: 10,
-                  //       mainAxisSpacing: 10,
-                  //     ),
-                  //     itemCount: Avatar.avatars.length,
-                  //     itemBuilder: (context, index) {
-                  //       final avatar = Avatar.avatars[index];
-                  //       bool isSelected = avatar['asset'] == selectedAvatarAsset;
-                  //
-                  //       return GestureDetector(
-                  //         onTap: () {
-                  //           setState(() {
-                  //             setStateBottomSheet(() {
-                  //               selectedAvatarAsset = avatar['asset'];
-                  //               selectedAvatarId = avatar['id'];
-                  //             });
-                  //           });
-                  //           Navigator.pop(context);
-                  //         },
-                  //         child: Container(
-                  //           decoration: BoxDecoration(
-                  //             color: isSelected
-                  //                 ? AppColors.purple.withOpacity(0.6)
-                  //                 : Colors.transparent,
-                  //             borderRadius: BorderRadius.circular(10),
-                  //             border: Border.all(
-                  //               color: AppColors.purple,
-                  //               width: 3,
-                  //             ),
-                  //           ),
-                  //           padding: const EdgeInsets.all(5),
-                  //           child: ClipRRect(
-                  //             borderRadius: BorderRadius.circular(8),
-                  //             child: Image.asset(
-                  //               avatar['asset'],
-                  //               fit: BoxFit.cover,
-                  //               width: 70,
-                  //               height: 70,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
+                  Expanded(
+                    child: GridView.builder(
+                      gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: Avatar.avatars.length,
+                      itemBuilder: (context, index) {
+                        final avatar = Avatar.avatars[index];
+                        bool isSelected =
+                            avatar['asset'] == selectedAvatarAsset;
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                            setState(() {
+                              setStateBottomSheet(() {
+                                selectedAvatarAsset = avatar['asset'];
+                                selectedAvatarId = avatar['id'];
+                              });
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppColors.purple.withOpacity(0.6)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: AppColors.purple,
+                                width: 3,
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(5),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                avatar['asset'],
+                                fit: BoxFit.cover,
+                                width: 70,
+                                height: 70,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ],
               ),
             );
