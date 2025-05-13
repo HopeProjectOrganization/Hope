@@ -52,5 +52,9 @@ class AppAssets {
 
   //Profile
   static const String user = "assets/images/avatar5.png";
+
+  static const String recommended = "assets/images/recommended.png";
+  static const String recipes = "assets/images/recipes.png";
+  static const String helpful = "assets/images/helpful.png";
 }
 

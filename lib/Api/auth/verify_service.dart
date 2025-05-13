@@ -5,8 +5,10 @@ import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:http/http.dart' as http;
 
+import '../../main.dart';
+
 class VerifyService {
-  final String baseUrl = 'http://192.168.1.56:8081/api/v1/auth';
+  final String baseUrl = 'http://${MyApp.IP}:8081/api/v1/auth';
 
   Future<void> resendCode(BuildContext context, bool isCodeValid) async {
     if (!isCodeValid) {

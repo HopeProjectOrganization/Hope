@@ -14,6 +14,7 @@ import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/core/providers/locale_provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_theme.dart';
+import 'package:hope/test.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/verify/verification.dart';
@@ -58,6 +59,8 @@ main() async {
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
+  static String IP = "192.168.1.66";
+
   MyApp({super.key});
 
   late ThemeProvider themeProvider;
@@ -110,8 +113,10 @@ class MyApp extends StatelessWidget {
         AdminHighRiskPeople.routeName: (_) => AdminHighRiskPeople(),
         AdminHealthyDiet.routeName: (_) => AdminHealthyDiet(),
         DietCategoryScreen.routeName: (_) => DietCategoryScreen(),
+        //  MealSenceScreen.routeName : (_) => MealSenceScreen(),
+        ProgressScreen.routeName: (_) => ProgressScreen()
       },
-      initialRoute: AdminHomeScreen.routeName,
+      initialRoute: ProgressScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

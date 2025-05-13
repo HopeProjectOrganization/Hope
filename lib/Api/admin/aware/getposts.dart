@@ -1,11 +1,12 @@
 import 'dart:convert';
 
+import 'package:hope/main.dart';
 import 'package:hope/model/article_dm.dart';
 import 'package:http/http.dart' as http;
 
 class NewsService {
   static Future<List<ArticleDM>> fetchNews(String type) async {
-    final String baseUrl = 'http://192.168.78.153:8080/api/news';
+    final String baseUrl = 'http://${MyApp.IP}:8080/api/news';
     final String url = (type.toLowerCase() == 'all')
         ? baseUrl
         : '$baseUrl/${type.toLowerCase()}';
