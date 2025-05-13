@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hope/Admin/aware/hereditary/hereditary_article_item.dart';
+import 'package:hope/main.dart';
 import 'package:hope/model/news_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,10 +29,9 @@ class _AdminNewsListState extends State<AdminHereditaryList> {
     late Uri url;
 
     if (type == 'ALL') {
-      url = Uri.parse('http://192.168.78.153:8080/api/hereditary');
+      url = Uri.parse('http://${MyApp.IP}/api/hereditary');
     } else {
-      url =
-          Uri.parse('http://192.168.78.153:8080/api/hereditary/category/$type');
+      url = Uri.parse('http://${MyApp.IP}/api/hereditary/category/$type');
     }
 
     final response = await http.get(

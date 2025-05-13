@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginService {
-  static String _apiUrl = 'http://${MyApp.IP}:8081/api/v1/auth/authenticate';
+  static String _apiUrl = 'http://${MyApp.IP}/api/v1/auth/authenticate';
 
   Future<void> loginUser(
       BuildContext context, String email, String password) async {

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/Admin/aware/awareness/addNewsScreen.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/main.dart';
 import 'package:hope/model/news_model.dart';
 import 'package:hope/ui/screens/aware/shared_widgets/article/article_screen.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
@@ -27,7 +28,7 @@ class _BuildArticleItemState extends State<BuildArticleItem> {
 
   Future<void> deleteArticle(int id) async {
     setState(() => isDeleting = true);
-    final url = Uri.parse('http://192.168.78.153:8080/api/news/delete/$id');
+    final url = Uri.parse('http://${MyApp.IP}/api/news/delete/$id');
 
     try {
       final response = await http.delete(url);

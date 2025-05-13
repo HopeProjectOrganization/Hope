@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/Admin/utlis/news.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/main.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
@@ -101,8 +102,8 @@ class _AdminNewsEditorScreenState extends State<AdminHighEditorScreen> {
     final isEdit = widget.newsData != null && widget.newsData!['id'] != null;
     final id = widget.newsData?['id'];
     final url = isEdit
-        ? 'http://192.168.78.153:8080/api/highrisk/$id'
-        : 'http://192.168.78.153:8080/api/highrisk';
+        ? 'http://${MyApp.IP}/api/highrisk/$id'
+        : 'http://${MyApp.IP}/api/highrisk';
 
     final response = await (isEdit ? putNews(news, url) : postNews(news, url));
 

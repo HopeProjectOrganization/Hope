@@ -15,9 +15,9 @@ class PlacesScreen extends StatefulWidget {
 
 class _PlacesScreenState extends State<PlacesScreen> {
   String searchQuery = "";
+  late AppLocalizations appLocalizations;
   List<PlaceModel> places = [];
   bool isLoading = true;
-  late AppLocalizations appLocalizations;
 
   @override
   void initState() {

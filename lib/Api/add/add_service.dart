@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:hope/Api/history/add_to_history.dart';
+import 'package:hope/main.dart';
 import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
@@ -24,7 +25,7 @@ class AddService {
     String ingredientsText,
     String productType,
   ) async {
-    final url = Uri.parse("http://192.168.78.153:8080/products/add");
+    final url = Uri.parse("http://${MyApp.IP}/products/add");
 
     String? token = await getToken();
     if (token == null) {
@@ -120,7 +121,7 @@ class AddService {
       String barcode,
       String ingredientsText,
       String productType) async {
-    final url = Uri.parse("http://192.168.78.153:8080/products/add");
+    final url = Uri.parse("http://${MyApp.IP}/products/add");
 
     String? token = await getToken();
     if (token == null) {
@@ -184,7 +185,7 @@ class AddService {
 
   static Future<Map<String, dynamic>?> fetchScanResult(String barcode) async {
     try {
-      var url = Uri.parse("http://192.168.78.153:8080/api/scan/$barcode");
+      var url = Uri.parse("http://${MyApp.IP}/api/scan/$barcode");
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -212,7 +213,7 @@ class AddService {
   }
 
   Future<List<dynamic>?> getAddedProducts() async {
-    final url = Uri.parse("http://192.168.78.153:8080/history/added");
+    final url = Uri.parse("http://${MyApp.IP}/history/added");
 
     String? token = await getToken();
     if (token == null) {

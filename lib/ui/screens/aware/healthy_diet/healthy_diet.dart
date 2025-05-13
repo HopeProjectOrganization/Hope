@@ -1,60 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/providers/theme_provider.dart';
-import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/ui/screens/aware/awareness/news_list.dart';
-import 'package:hope/ui/shared_widgets/custome_tab.dart';
+import 'package:hope/model/category_model.dart';
+import 'package:hope/ui/shared_widgets/category_item_widget.dart';
+import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:provider/provider.dart';
 
-class HealthyDiet extends StatefulWidget {
+class HealthyDiet extends StatelessWidget {
   static const routeName = '/healthyDiet';
 
-  const HealthyDiet({super.key});
-
-  @override
-  State<HealthyDiet> createState() => _HealthyDietState();
-}
-
-class _HealthyDietState extends State<HealthyDiet>
-    with SingleTickerProviderStateMixin {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
-  List<Widget> buildTabs(List<String> types) {
-    return types.map((type) => CustomeTab(text: type)).toList();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  HealthyDiet({super.key});
 
   @override
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
-    return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_outlined,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          toolbarHeight: MediaQuery.of(context).size.height * 0.1,
-          backgroundColor: AppColors.purple,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20))),
-          centerTitle: true,
-          title: const Text(
-            "Healthy Diet",
-            style: TextStyle(color: AppColors.white),
-          ),
+
+    final List<CategoryModel> categories = [
+      CategoryModel(
+          image: AppAssets.places,
+          id: 'RECOMMENDED_FOODS',
+          route: '/RECOMMENDED_FOODS'),
+      CategoryModel(
+          image: AppAssets.awareness, id: 'RECIPES', route: '/RECIPES'),
+      CategoryModel(
+          image: AppAssets.hereditary,
+          id: 'HELPFUL_FOODS',
+          route: '/HELPFUL_FOODS'),
+      CategoryModel(
+          image: AppAssets.alternative, id: 'BAD_FOODS', route: '/BAD_FOODS'),
+    ];
+
+    return CustomScaffold(
+      title: appLocalizations.healthyDiet,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
+                    return Row(
+                      children: [
+                        Expanded(
+                            child: CategoryItemWidget(
+                                title: category.id,
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/dietCategoryScreenUser',
+                                    arguments: category.id,
+                                  );
+                                },
+                                index: index,
+                                image: category.image))
+                      ],
+                    );
+                  },
+                  separatorBuilder: (context, index) => const SizedBox(
+                        height: 10,
+                      ),
+                  itemCount: categories.length),
+            )
+          ],
         ),
-        body: NewsList(type: "healthy diet prevent cancer"));
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.search_outlined),
+          onPressed: () {
+            // Add search functionality here
+          },
+        ),
+      ],
+    );
   }
 }

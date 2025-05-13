@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:hope/main.dart';
 import 'package:http/http.dart' as http;
 
 class ChatApiService {
-  static const String baseUrl = 'http://192.168.78.153:8080/api/chat';
+  static String baseUrl = 'http://${MyApp.IP}/api/chat';
 
   static Future<String> sendPrompt(String prompt) async {
     final response = await http.post(
