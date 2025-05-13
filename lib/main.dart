@@ -1,5 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Admin/aware/awareness/addNewsScreen.dart';
+import 'package:hope/Admin/aware/awareness/news_screen.dart';
+import 'package:hope/Admin/aware/healthy_diet/diet_category_screen.dart';
+import 'package:hope/Admin/aware/healthy_diet/healthy_diet.dart';
+import 'package:hope/Admin/aware/hereditary/addHereditaryScreen.dart';
+import 'package:hope/Admin/aware/hereditary/hereditary.dart';
+import 'package:hope/Admin/aware/high_risk/addHighRiskScreen.dart';
+import 'package:hope/Admin/aware/high_risk/high_risk_people.dart';
+import 'package:hope/Admin/home/home.dart';
+import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/core/providers/locale_provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_theme.dart';
@@ -28,8 +39,9 @@ import 'package:hope/ui/screens/profileDetails/change_password.dart';
 import 'package:hope/ui/screens/profileDetails/saved_list.dart';
 import 'package:provider/provider.dart';
 
-main() {
+main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   runApp(
     MultiProvider(providers: [
@@ -87,8 +99,19 @@ class MyApp extends StatelessWidget {
         EditProfile.routeName: (_) => const EditProfile(),
         ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
         SavedListScreen.routeName: (_) => SavedListScreen(),
+        AdminHomeScreen.routeName: (_) => const AdminHomeScreen(),
+        AdminAwareTab.routeName: (_) => AdminAwareTab(),
+        AdminNewsScreen.routeName: (_) => AdminNewsScreen(),
+        AdminNewsEditorScreen.routeName: (_) => AdminNewsEditorScreen(),
+        AdminHereditary.routeName: (_) => const AdminHereditary(),
+        AdminHereditaryEditorScreen.routeName: (_) =>
+            AdminHereditaryEditorScreen(),
+        AdminHighEditorScreen.routeName: (_) => AdminHighEditorScreen(),
+        AdminHighRiskPeople.routeName: (_) => AdminHighRiskPeople(),
+        AdminHealthyDiet.routeName: (_) => AdminHealthyDiet(),
+        DietCategoryScreen.routeName: (_) => DietCategoryScreen(),
       },
-      initialRoute: SavedListScreen.routeName,
+      initialRoute: AdminHomeScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

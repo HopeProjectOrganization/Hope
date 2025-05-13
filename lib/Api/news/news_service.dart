@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:hope/model/article_dm.dart';
+import 'package:hope/model/news_model.dart';
 import 'package:http/http.dart' as http;
 
 class NewsService {
@@ -8,9 +9,9 @@ class NewsService {
       bool news) async {
     List<ArticleDM> externalArticles = await fetchExternalNews(
         cancerType, apiKey, news);
-    //  List<ArticleDM> localArticles = await fetchLocalNews(cancerType);
-    // return [...localArticles, ...externalArticles];
-    return externalArticles;
+    List<ArticleDM> localArticles = await fetchLocalNews(cancerType);
+    return [...localArticles, ...externalArticles];
+    // return externalArticles;
   }
 
   static Future<List<ArticleDM>> fetchExternalNews(String cancerType,
@@ -46,27 +47,34 @@ class NewsService {
     }
   }
 
-// static Future<List<ArticleDM>> fetchLocalNews(String cancerType) async {
-//   final url = Uri.parse("http://192.168.1.31:8081/api/news/all?category=$cancerType");
-//
-//   final response = await http.get(url);
-//
-//   if (response.statusCode == 200) {
-//     final jsonData = json.decode(response.body);
-//
-//     if (jsonData == null) {
-//       return [];
-//     }
-//
-//     List<ArticleDM> articles = List.from(jsonData).map((data) {
-//       return ArticleDM.fromJson(data);
-//     }).toList();
-//
-//     return articles;
-//   } else {
-//     throw Exception("Failed to load local news");
-//   }
-// }
+  static Future<List<ArticleDM>> fetchLocalNews(String cancerType) async {
+    final url = Uri.parse(
+        "http://192.168.78.153:8080/api/news/all?category=$cancerType");
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+
+      if (jsonData == null) {
+        return [];
+      }
+
+      List<ArticleDM> articles = List.from(jsonData).map((data) {
+        NewsModel model = NewsModel.fromJson(data);
+        return ArticleDM(
+          title: model.title,
+          content: model.content,
+          url: model.imageUrl, // Assuming this is where image goes
+          // باقي الخصائص حسب اللي موجود في ArticleDM
+        );
+      }).toList();
+
+      return articles;
+    } else {
+      throw Exception("Failed to load local news");
+    }
+  }
 //
 // Future<void> addNews(ArticleDM article, String category) async {
 //   final url = Uri.parse("http://192.168.1.31:8081/api/news/add");
