@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ChatApiService {
-  static const String baseUrl = 'http://192.168.78.153:8080/api/chat';
+  static const String baseUrl = 'http://192.168.1.5:8080/api/chat';
 
   static Future<String> sendPrompt(String prompt) async {
     final response = await http.post(

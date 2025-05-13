@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/aware/awareness/addNewsScreen.dart';
 import 'package:hope/Admin/aware/awareness/news_screen.dart';
+import 'package:hope/Admin/aware/healthy_diet/addHealthyScreen.dart';
 import 'package:hope/Admin/aware/healthy_diet/diet_category_screen.dart';
 import 'package:hope/Admin/aware/healthy_diet/healthy_diet.dart';
 import 'package:hope/Admin/aware/hereditary/addHereditaryScreen.dart';
@@ -21,6 +22,7 @@ import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/screens/aware/alternative/alternative_screen.dart';
 import 'package:hope/ui/screens/aware/awareness/newsScreen.dart';
+import 'package:hope/ui/screens/aware/healthy_diet/getHealthyDiet.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/healthy_diet.dart';
 import 'package:hope/ui/screens/aware/hereditary/hereditary.dart';
 import 'package:hope/ui/screens/aware/high_risk/high_risk_people.dart';
@@ -95,7 +97,8 @@ class MyApp extends StatelessWidget {
         PlacesScreen.routeName: (_) => PlacesScreen(),
         NewsArticleScreen.routeName: (_) => const NewsArticleScreen(),
         HighRiskPeople.routeName: (_) => HighRiskPeople(),
-        HealthyDiet.routeName: (_) => const HealthyDiet(),
+        HealthyDiet.routeName: (_) => HealthyDiet(),
+        DietCategoryScreenUser.routeName: (_) => DietCategoryScreenUser(),
         EditProfile.routeName: (_) => const EditProfile(),
         ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
         SavedListScreen.routeName: (_) => SavedListScreen(),
@@ -110,6 +113,7 @@ class MyApp extends StatelessWidget {
         AdminHighRiskPeople.routeName: (_) => AdminHighRiskPeople(),
         AdminHealthyDiet.routeName: (_) => AdminHealthyDiet(),
         DietCategoryScreen.routeName: (_) => DietCategoryScreen(),
+        AdminHealthyEditorScreen.routeName: (_) => AdminHealthyEditorScreen(),
       },
       initialRoute: AdminHomeScreen.routeName,
       theme: AppTheme.lightTheme,

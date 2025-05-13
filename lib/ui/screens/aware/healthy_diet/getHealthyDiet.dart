@@ -3,23 +3,24 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:hope/Admin/aware/healthy_diet/addHealthyScreen.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:http/http.dart' as http;
 
-class DietCategoryScreen extends StatefulWidget {
-  static const routeName = '/dietCategoryScreen';
-  const DietCategoryScreen({super.key});
+class DietCategoryScreenUser extends StatefulWidget {
+  static const routeName = '/dietCategoryScreenUser';
+
+  const DietCategoryScreenUser({super.key});
 
   @override
-  State<DietCategoryScreen> createState() => _DietCategoryScreenState();
+  State<DietCategoryScreenUser> createState() => _DietCategoryScreenState();
 }
 
-class _DietCategoryScreenState extends State<DietCategoryScreen> {
+class _DietCategoryScreenState extends State<DietCategoryScreenUser> {
   late String category;
   List<dynamic> items = [];
   bool isLoading = true;
   String searchQuery = "";
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -61,23 +62,6 @@ class _DietCategoryScreenState extends State<DietCategoryScreen> {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            final result = await Navigator.pushNamed(
-              context,
-              AdminHealthyEditorScreen.routeName,
-              arguments: {"category": category},
-            );
-            if (result == true) {
-              fetchData(); // reload list after adding
-            }
-          },
-          backgroundColor: AppColors.purple,
-          child: const Icon(
-            Icons.add,
-            color: AppColors.lavender,
-          ),
-        ),
         body: Stack(
           children: [
             Column(
@@ -103,6 +87,7 @@ class _DietCategoryScreenState extends State<DietCategoryScreen> {
                               const Icon(Icons.arrow_back, color: Colors.white),
                         ),
                         const SizedBox(height: 12),
+
                         // شريط البحث
                         TextField(
                           onChanged: (value) {
@@ -123,6 +108,7 @@ class _DietCategoryScreenState extends State<DietCategoryScreen> {
                           ),
                         ),
                         const SizedBox(height: 32),
+
                         // نص العنوان
                         const Text(
                           'Discover recipes',

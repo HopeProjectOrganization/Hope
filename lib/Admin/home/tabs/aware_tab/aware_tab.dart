@@ -45,6 +45,8 @@ class AdminAwareTab extends StatelessWidget {
           image: AppAssets.healthyDiet,
           id: appLocalizations.healthyDiet,
           route: '/adminHealthyDiet'),
+      CategoryModel(
+          image: AppAssets.mealSence, id: 'Meal Sence', route: '/mealSence'),
     ];
 
     return CustomScaffold(

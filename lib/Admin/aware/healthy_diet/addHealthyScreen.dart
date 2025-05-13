@@ -1,42 +1,130 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/ui/shared_widgets/custom_button.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 
 class AdminHealthyEditorScreen extends StatefulWidget {
-  Map<String, dynamic>? newsData;
+  static const String routeName = '/adminHealthEditor';
+  final Map<String, dynamic>? newsData;
 
-  static const String routeName = '/adminNewsEditor';
-
-  AdminHealthyEditorScreen({Key? key, this.newsData}) : super(key: key);
+  const AdminHealthyEditorScreen({Key? key, this.newsData}) : super(key: key);
 
   @override
   State<AdminHealthyEditorScreen> createState() =>
-      _AdminNewsEditorScreenState();
+      _AdminHealthyEditorScreenState();
 }
 
-class _AdminNewsEditorScreenState extends State<AdminHealthyEditorScreen> {
+class _AdminHealthyEditorScreenState extends State<AdminHealthyEditorScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  String? _category;
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
 
-  final List<String> categories = [
-    "RECOMMENDED_FOODS",
-    "RECIPES",
-    "HELPFUL_FOODS",
-    "BAD_FOODS",
-  ];
+  File? _pickedImage;
+  String? _existingImageUrl;
+  String? _category;
+  late String _date;
 
   @override
   void initState() {
     super.initState();
-    if (widget.newsData != null) {
-      _titleController.text = widget.newsData!['title'] ?? '';
-      _descriptionController.text = widget.newsData!['description'] ?? '';
-      _category = widget.newsData!['category'];
+    _titleController = TextEditingController();
+    _descriptionController = TextEditingController();
+
+    final now = DateTime.now();
+    _date = "${now.year}-${_twoDigits(now.month)}-${_twoDigits(now.day)}";
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+      if (widget.newsData != null) {
+        _titleController.text = widget.newsData!['title'] ?? '';
+        _descriptionController.text = widget.newsData!['description'] ?? '';
+        _existingImageUrl = widget.newsData!['imageUrl'];
+        _category = widget.newsData!['category'];
+      } else if (args != null) {
+        _category = args['category'] ?? '';
+      }
+    });
+  }
+
+  String _twoDigits(int n) => n.toString().padLeft(2, '0');
+
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _pickedImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<String?> _uploadImageToFirebase(File imageFile) async {
+    try {
+      final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      final ref =
+          FirebaseStorage.instance.ref().child('diet_images/$fileName.jpg');
+      await ref.putFile(imageFile);
+      return await ref.getDownloadURL();
+    } catch (e) {
+      print("Error uploading image: $e");
+      return null;
+    }
+  }
+
+  Future<void> _saveNews() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    String imageUrl = _existingImageUrl ?? '';
+    if (_pickedImage != null) {
+      final uploadedUrl = await _uploadImageToFirebase(_pickedImage!);
+      if (uploadedUrl != null) {
+        imageUrl = uploadedUrl;
+      }
     }
 
-    // Safety check: ensure _category is valid
-    if (!categories.contains(_category)) {
-      _category = null;
+    final newsItem = {
+      'title': _titleController.text,
+      'description': _descriptionController.text,
+      'imageUrl': imageUrl,
+      'category': _category,
+      'date': _date,
+    };
+
+    final url = widget.newsData != null
+        ? 'http://192.168.1.5:8080/api/diet/edit/${widget.newsData!['id']}'
+        : 'http://192.168.1.5:8080/api/diet';
+
+    try {
+      final response = await (widget.newsData != null
+          ? http.put(Uri.parse(url),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode(newsItem))
+          : http.post(Uri.parse(url),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode(newsItem)));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(widget.newsData != null
+              ? 'Article updated successfully!'
+              : 'Article added successfully!'),
+        ));
+        Navigator.pop(context, true);
+      } else {
+        throw Exception('Failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 
@@ -47,36 +135,21 @@ class _AdminNewsEditorScreenState extends State<AdminHealthyEditorScreen> {
     super.dispose();
   }
 
-  void _saveNews() {
-    if (_formKey.currentState!.validate()) {
-      final newsItem = {
-        'title': _titleController.text,
-        'description': _descriptionController.text,
-        'category': _category,
-      };
-
-      // يمكنك هنا إرسال البيانات إلى الخادم أو قاعدة البيانات
-      print("News Saved: $newsItem");
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('News item saved successfully!')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final isEdit = widget.newsData != null;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.newsData == null ? 'Add News' : 'Edit News'),
+        title: Text(isEdit ? 'Edit Diet Article' : 'Add Diet Article'),
+        backgroundColor: AppColors.purple,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: [
-              // Title Field
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(
@@ -87,8 +160,6 @@ class _AdminNewsEditorScreenState extends State<AdminHealthyEditorScreen> {
                     value == null || value.isEmpty ? 'Title is required' : null,
               ),
               const SizedBox(height: 16),
-
-              // Description Field
               TextFormField(
                 controller: _descriptionController,
                 maxLines: 5,
@@ -101,38 +172,87 @@ class _AdminNewsEditorScreenState extends State<AdminHealthyEditorScreen> {
                     : null,
               ),
               const SizedBox(height: 16),
-
-              // Category Dropdown
-              DropdownButtonFormField<String>(
-                value: categories.contains(_category) ? _category : null,
-                items: categories.map((String category) {
-                  return DropdownMenuItem<String>(
-                    value: category,
-                    child: Text(category),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _category = newValue;
-                    });
-                  }
-                },
+              TextFormField(
+                initialValue: _category ?? '',
+                readOnly: true,
                 decoration: const InputDecoration(
                   labelText: "Category",
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please select a category'
-                    : null,
               ),
-              const SizedBox(height: 24),
-
-              // Save Button
-              ElevatedButton(
-                onPressed: _saveNews,
-                child:
-                    Text(widget.newsData == null ? 'Add News' : 'Update News'),
+              const SizedBox(height: 20),
+              Text(
+                'Image',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Card(
+                elevation: 3,
+                color: AppColors.lavender,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: TextButton.icon(
+                          onPressed: _pickImage,
+                          icon:
+                              const Icon(Icons.image, color: Colors.deepPurple),
+                          label: const Text(
+                            'Pick Image from Gallery',
+                            style: TextStyle(color: Colors.deepPurple),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      if (_pickedImage != null)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            _pickedImage!,
+                            height: 150,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      else if (_existingImageUrl != null)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            _existingImageUrl!,
+                            height: 150,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      else
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: SizedBox(
+                            height: 200,
+                            child: Center(
+                              child: Lottie.asset(
+                                'assets/lottie/imagePicker.json',
+                                repeat: true,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              CustomButton(
+                onClick: _saveNews,
+                color: AppColors.purple,
+                title: isEdit ? 'Update Article' : 'Add Article',
               ),
             ],
           ),
