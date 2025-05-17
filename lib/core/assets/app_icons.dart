@@ -33,4 +33,11 @@ class AppIcons {
   static const String exit = "assets/icons/exit.png";
 
   static const String save = "assets/icons/sava.png";
+
+  static const String meal = "assets/icons/restaurant_1996055.png";
+
+  static const String fats = "assets/icons/Fats.png";
+  static const String proteins = "assets/icons/Proteins.png";
+  static const String calories = "assets/icons/Calories.png";
+  static const String carbs = "assets/icons/Carbs.png";
 }

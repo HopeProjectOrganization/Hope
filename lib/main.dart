@@ -15,7 +15,7 @@ import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/core/providers/locale_provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_theme.dart';
-import 'package:hope/test.dart';
+import 'package:hope/model/meal_dm.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/verify/verification.dart';
@@ -27,6 +27,8 @@ import 'package:hope/ui/screens/aware/healthy_diet/healthy_diet.dart';
 import 'package:hope/ui/screens/aware/hereditary/hereditary.dart';
 import 'package:hope/ui/screens/aware/high_risk/high_risk_people.dart';
 import 'package:hope/ui/screens/aware/meal_sence/meal_sence_screen.dart';
+import 'package:hope/ui/screens/aware/meal_sence/my_meals.dart';
+import 'package:hope/ui/screens/aware/meal_sence/recipe_details.dart';
 import 'package:hope/ui/screens/aware/places/places_screen.dart';
 import 'package:hope/ui/screens/aware/shared_widgets/article/article_screen.dart';
 import 'package:hope/ui/screens/home/home.dart';
@@ -41,6 +43,8 @@ import 'package:hope/ui/screens/onBoarding_screens/splash/splash_screen.dart';
 import 'package:hope/ui/screens/profileDetails/change_password.dart';
 import 'package:hope/ui/screens/profileDetails/saved_list.dart';
 import 'package:provider/provider.dart';
+
+import 'ui/screens/aware/meal_sence/meals.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,7 +65,7 @@ main() async {
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  static String IP = "192.168.1.66:8080";
+  static String IP = "192.168.1.66:8081";
   MyApp({super.key});
 
   late ThemeProvider themeProvider;
@@ -101,7 +105,7 @@ class MyApp extends StatelessWidget {
         HighRiskPeople.routeName: (_) => HighRiskPeople(),
         HealthyDiet.routeName: (_) => HealthyDiet(),
         EditProfile.routeName: (_) => const EditProfile(),
-        ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
+        ChangePasswordScreen.routeName: (_) => ChangePasswordScreen(),
         SavedListScreen.routeName: (_) => SavedListScreen(),
         AdminHomeScreen.routeName: (_) => const AdminHomeScreen(),
         AdminAwareTab.routeName: (_) => AdminAwareTab(),
@@ -115,10 +119,47 @@ class MyApp extends StatelessWidget {
         AdminHealthyDiet.routeName: (_) => AdminHealthyDiet(),
         DietCategoryScreen.routeName: (_) => DietCategoryScreen(),
         AdminHealthyEditorScreen.routeName: (_) => AdminHealthyEditorScreen(),
-        MealSenceScreen.routeName: (_) => MealSenceScreen(),
-        ProgressScreen.routeName: (_) => ProgressScreen()
+        RecipeDetails.routeName: (context) {
+          final id = ModalRoute.of(context)!.settings.arguments as int;
+          return RecipeDetails(id: id);
+        },
+        MyMealsScreen.routeName: (context) {
+          final args = ModalRoute.of(context)?.settings.arguments
+              as Map<String, dynamic>?;
+
+          final List<Meal> selectedMeals =
+              args?['selectedMeals'] as List<Meal>? ?? <Meal>[];
+          final String title = args?['title'] as String? ?? '';
+
+          return MyMealsScreen(
+            selectedMeals: selectedMeals,
+            title: title,
+          );
+        },
+        MealSenceScreen.routeName: (context) {
+          final args = ModalRoute.of(context)?.settings.arguments
+              as Map<String, dynamic>?;
+
+          final List<Meal> selectedMeals =
+              args?['selectedMeals'] as List<Meal>? ?? <Meal>[];
+          final String title = args?['title'] as String? ?? '';
+
+          return MealSenceScreen(
+            selectedMeals: selectedMeals,
+            title: title,
+          );
+        },
+        Meals.routeName: (context) {
+          final args = ModalRoute.of(context)?.settings.arguments
+              as Map<String, dynamic>?;
+          final String title = args?['title'] as String? ?? '';
+
+          return Meals(
+            title: title,
+          );
+        },
       },
-      initialRoute: ProgressScreen.routeName,
+      initialRoute: Meals.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

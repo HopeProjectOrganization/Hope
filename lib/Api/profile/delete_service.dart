@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hope/main.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DeleteService {
-  static const String baseUrl = "http://192.168.1.56:8081/api/profile";
+  static String baseUrl = "http://${MyApp.IP}/api/profile";
 
   Future<void> deleteProfile(BuildContext context) async {
     try {

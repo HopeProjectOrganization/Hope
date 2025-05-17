@@ -1,9 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hope/Api/add/add_service.dart';
 import 'package:hope/Api/history/add_to_history.dart';
 import 'package:hope/Api/scan/sharedData.dart';
+import 'package:hope/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
@@ -16,7 +16,7 @@ class ScanService {
   }
 
   Future<Map<String, dynamic>?> searchInLocalAPI(String barcode) async {
-    final url = Uri.parse("http://192.168.78.153:8080/api/scan/$barcode");
+    final url = Uri.parse("http://${MyApp.IP}/api/scan/$barcode");
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

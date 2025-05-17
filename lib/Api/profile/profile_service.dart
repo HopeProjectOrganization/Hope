@@ -1,11 +1,11 @@
 import 'dart:convert';
-
+import 'package:hope/main.dart';
 import 'package:hope/model/get_profile.dart';
 import 'package:http/http.dart' as http;
 
 class GetUserProfile {
   Future<Data?> fetchUserProfile(String token) async {
-    final url = Uri.parse('http://192.168.1.56:8081/api/profile');
+    final url = Uri.parse('http://${MyApp.IP}/api/profile');
 
     try {
       final response = await http.get(
