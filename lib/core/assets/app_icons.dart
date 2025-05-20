@@ -32,7 +32,7 @@ class AppIcons {
 
   static const String exit = "assets/icons/exit.png";
 
-  static const String save = "assets/icons/sava.png";
+  static const String save = "assets/icons/save.png";
 
   static const String meal = "assets/icons/restaurant_1996055.png";
 

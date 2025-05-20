@@ -7,7 +7,7 @@ import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
-  static const String routeName = "/resetpasswordScreen";
+  static const String routeName = "/changepasswordScreen";
 
   const ChangePasswordScreen({super.key});
 

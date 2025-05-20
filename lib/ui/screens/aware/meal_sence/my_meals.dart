@@ -168,7 +168,7 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                         });
                       }
                     },
-                    title: "Add",
+                    title: "Add to ${_title}",
                   ),
                 )
               ],

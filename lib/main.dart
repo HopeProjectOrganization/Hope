@@ -16,6 +16,7 @@ import 'package:hope/core/providers/locale_provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_theme.dart';
 import 'package:hope/model/meal_dm.dart';
+import 'package:hope/test.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/verify/verification.dart';
@@ -26,6 +27,7 @@ import 'package:hope/ui/screens/aware/awareness/newsScreen.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/healthy_diet.dart';
 import 'package:hope/ui/screens/aware/hereditary/hereditary.dart';
 import 'package:hope/ui/screens/aware/high_risk/high_risk_people.dart';
+import 'package:hope/ui/screens/aware/meal_sence/filter_screen.dart';
 import 'package:hope/ui/screens/aware/meal_sence/meal_sence_screen.dart';
 import 'package:hope/ui/screens/aware/meal_sence/my_meals.dart';
 import 'package:hope/ui/screens/aware/meal_sence/recipe_details.dart';
@@ -65,7 +67,7 @@ main() async {
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  static String IP = "192.168.1.66:8081";
+  static String IP = "192.168.1.57:8081";
   MyApp({super.key});
 
   late ThemeProvider themeProvider;
@@ -105,7 +107,7 @@ class MyApp extends StatelessWidget {
         HighRiskPeople.routeName: (_) => HighRiskPeople(),
         HealthyDiet.routeName: (_) => HealthyDiet(),
         EditProfile.routeName: (_) => const EditProfile(),
-        ChangePasswordScreen.routeName: (_) => ChangePasswordScreen(),
+        ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
         SavedListScreen.routeName: (_) => SavedListScreen(),
         AdminHomeScreen.routeName: (_) => const AdminHomeScreen(),
         AdminAwareTab.routeName: (_) => AdminAwareTab(),
@@ -117,8 +119,9 @@ class MyApp extends StatelessWidget {
         AdminHighEditorScreen.routeName: (_) => AdminHighEditorScreen(),
         AdminHighRiskPeople.routeName: (_) => AdminHighRiskPeople(),
         AdminHealthyDiet.routeName: (_) => AdminHealthyDiet(),
-        DietCategoryScreen.routeName: (_) => DietCategoryScreen(),
-        AdminHealthyEditorScreen.routeName: (_) => AdminHealthyEditorScreen(),
+        DietCategoryScreen.routeName: (_) => const DietCategoryScreen(),
+        AdminHealthyEditorScreen.routeName: (_) =>
+            const AdminHealthyEditorScreen(),
         RecipeDetails.routeName: (context) {
           final id = ModalRoute.of(context)!.settings.arguments as int;
           return RecipeDetails(id: id);
@@ -158,8 +161,15 @@ class MyApp extends StatelessWidget {
             title: title,
           );
         },
+        ProgressScreen.routeName: (context) {
+          final args = ModalRoute.of(context)?.settings.arguments
+              as Map<String, dynamic>?;
+          final Meal selectedMeal = args?['meal'] as Meal;
+          return ProgressScreen(meal: selectedMeal);
+        },
+        FilterScreen.routeName: (_) => FilterScreen(),
       },
-      initialRoute: Meals.routeName,
+      initialRoute: HomeScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

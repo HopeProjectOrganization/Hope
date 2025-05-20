@@ -2,6 +2,7 @@ import 'package:hope/model/source_dm.dart';
 
 class ArticleDM {
   ArticleDM({
+    this.id,
     this.source,
     this.author,
     this.title,
@@ -13,6 +14,7 @@ class ArticleDM {
   });
 
   ArticleDM.fromJson(dynamic json) {
+    id = json['id'];
     source = json['source'] != null ? SourceDM.fromJson(json['source']) : null;
     author = json['author'];
     title = json['title'];
@@ -23,6 +25,7 @@ class ArticleDM {
     content = json['content'];
   }
 
+  String? id;
   SourceDM? source;
   String? author;
   String? title;
@@ -37,6 +40,7 @@ class ArticleDM {
     if (source != null) {
       map['source'] = source?.toJson();
     }
+    map['id'] = id;
     map['author'] = author;
     map['title'] = title;
     map['description'] = description;

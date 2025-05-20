@@ -1,10 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/Api/recipes/fetch_recipe.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/meal_dm.dart';
-import 'package:hope/ui/screens/aware/meal_sence/my_meals.dart';
+import 'package:hope/test.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_gradient.dart';
 
@@ -156,15 +155,15 @@ class _RecipeDetailsState extends State<RecipeDetails>
                           ),
                           SizedBox(height: 18),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
-                                child: Text("${meal.categoryName} Category",
-                                    style:
-                                        TextStyle(color: AppColors.lavender)),
-                              ),
+                                  child: Text("${meal.difficulty} ",
+                                      style: TextStyle(color: AppColors.gray))),
+                              Icon(Icons.room_service, color: Colors.grey),
                               SizedBox(width: 4),
-                              Text("${meal.difficulty} ",
-                                  style: TextStyle(color: AppColors.gray)),
+                              Text("${meal.serving} Serving ",
+                                  style: TextStyle(color: Colors.grey))
                             ],
                           ),
                           SizedBox(height: 28),
@@ -226,7 +225,15 @@ class _RecipeDetailsState extends State<RecipeDetails>
                           ),
                           CustomButton(
                             title: "ADD",
-                            onClick: () {},
+                            onClick: () {
+                              Navigator.pushNamed(
+                                context,
+                                ProgressScreen.routeName,
+                                arguments: {
+                                  'meal': meal,
+                                },
+                              );
+                            },
                           )
                         ],
                       ),
@@ -307,7 +314,6 @@ class _RecipeDetailsState extends State<RecipeDetails>
       shrinkWrap: true,
       itemCount: meal.directions.length,
       itemBuilder: (context, index) {
-        print("LENGTHHHH ${meal.directions.length}");
         final step = meal.directions[index];
         return Container(
             margin: EdgeInsets.symmetric(vertical: 8),

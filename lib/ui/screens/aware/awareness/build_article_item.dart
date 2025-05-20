@@ -19,7 +19,7 @@ class BuildArticleItem extends StatelessWidget {
         : article.title ?? '';
     final String description =
         (article.description != null && article.description!.length > 50)
-            ? "${article.description!.substring(0, 35)}..."
+            ? "${article.description!.substring(0, 25)}..."
             : article.description ?? '';
     final String date = formatDate(article.publishedAt);
 

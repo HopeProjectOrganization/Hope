@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hope/main.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
@@ -8,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class RegisterService {
-  static const String _baseUrl = 'http://192.168.78.153:8080/api/v1/auth';
+  static String _baseUrl = 'http://${MyApp.IP}/api/v1/auth';
 
   Future<void> registerUser({
     required BuildContext context,

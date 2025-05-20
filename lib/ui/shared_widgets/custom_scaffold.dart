@@ -18,11 +18,14 @@ class CustomScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDark();
+
     return Scaffold(
-      backgroundColor: backgroundColor ?? AppColors.white,
+      backgroundColor:
+          backgroundColor ?? (isDarkMode ? AppColors.dark : backgroundColor),
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: isDarkMode ? AppColors.dark : AppColors.white,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_outlined, color: AppColors.purple),
           onPressed: () {

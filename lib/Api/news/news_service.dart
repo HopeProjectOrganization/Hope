@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:hope/main.dart';
 import 'package:hope/model/article_dm.dart';
 import 'package:hope/model/news_model.dart';
 import 'package:http/http.dart' as http;
@@ -48,8 +49,7 @@ class NewsService {
   }
 
   static Future<List<ArticleDM>> fetchLocalNews(String cancerType) async {
-    final url = Uri.parse(
-        "http://192.168.78.153:8080/api/news/all?category=$cancerType");
+    final url = Uri.parse("http://${MyApp.IP}/api/news/all?category=$cancerType");
 
     final response = await http.get(url);
 
