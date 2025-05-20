@@ -51,18 +51,31 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
               AppIcons.save,
               color: isSaved ? AppColors.lavender : null,
             ),
-            onPressed: () async {
-              final success = await SavedPost.addToSaved(
-                postId: int.parse(article.id!),
-                postType: 'NEWS',
-              );
-              if (success) {
-                setState(() {
-                  isSaved = true;
-                });
-              }
-            },
-          ),
+              onPressed: () async {
+                if (article.id == null) {
+                  print('Article ID is null. Cannot save.');
+                  return;
+                }
+
+                double? postId;
+                try {
+                  postId = double.parse(article.id!);
+                } catch (e) {
+                  print('Invalid article ID format: ${article.id}');
+                  return;
+                }
+
+                final success = await SavedPost.addToSaved(
+                  postId: postId,
+                  postType: 'NEWS',
+                );
+
+                if (success) {
+                  setState(() {
+                    isSaved = true;
+                  });
+                }
+              }),
         ],
       ),
       body: ListView(

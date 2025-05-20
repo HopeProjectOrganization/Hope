@@ -10,6 +10,8 @@ import 'package:hope/Admin/aware/hereditary/addHereditaryScreen.dart';
 import 'package:hope/Admin/aware/hereditary/hereditary.dart';
 import 'package:hope/Admin/aware/high_risk/addHighRiskScreen.dart';
 import 'package:hope/Admin/aware/high_risk/high_risk_people.dart';
+import 'package:hope/Admin/aware/places/admin_places_edit.dart';
+import 'package:hope/Admin/aware/places/places_screen.dart';
 import 'package:hope/Admin/home/home.dart';
 import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/core/providers/locale_provider.dart';
@@ -67,7 +69,7 @@ main() async {
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  static String IP = "192.168.1.57:8081";
+  static String IP = "192.168.1.4:8081";
   MyApp({super.key});
 
   late ThemeProvider themeProvider;
@@ -167,9 +169,11 @@ class MyApp extends StatelessWidget {
           final Meal selectedMeal = args?['meal'] as Meal;
           return ProgressScreen(meal: selectedMeal);
         },
-        FilterScreen.routeName: (_) => FilterScreen(),
+        FilterScreen.routeName: (_) => const FilterScreen(),
+        PlacesAdminScreen.routeName: (_) => PlacesAdminScreen(),
+        AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen()
       },
-      initialRoute: HomeScreen.routeName,
+      initialRoute: MealSenceScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:hope/main.dart';
 import 'package:hope/model/get_profile.dart';
 import 'package:http/http.dart' as http;
@@ -17,15 +18,12 @@ class GetUserProfile {
       );
 
       if (response.statusCode == 200) {
-        print("Raw response: ${response.body}");
         final Map<String, dynamic> jsonMap = json.decode(response.body);
         return Data.fromJson(jsonMap);
       } else {
-        print("Failed to fetch profile. Status code: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-      print("Error fetching profile: $e");
       return null;
     }
   }

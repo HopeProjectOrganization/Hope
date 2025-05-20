@@ -90,7 +90,6 @@ class _MealSenceScreenState extends State<MealSenceScreen> {
       screenWidth: screenWidth,
     );
 
-    _scrollController.jumpTo(offset);
   }
 
   List<DateTime> getWeekDates() {
