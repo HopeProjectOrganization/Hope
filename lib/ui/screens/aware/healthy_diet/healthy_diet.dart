@@ -5,6 +5,7 @@ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/model/category_model.dart';
 import 'package:hope/ui/shared_widgets/category_item_widget.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
+import 'package:hope/ui/shared_widgets/utils/healthy_diet_category.dart';
 import 'package:provider/provider.dart';
 
 class HealthyDiet extends StatelessWidget {
@@ -21,18 +22,11 @@ class HealthyDiet extends StatelessWidget {
     appLocalizations = AppLocalizations.of(context)!;
 
     final List<CategoryModel> categories = [
+      CategoryModel(image: AppAssets.recipes, id: 'Recipes', route: '/RECIPES'),
       CategoryModel(
-          image: AppAssets.places,
-          id: 'RECOMMENDED_FOODS',
-          route: '/RECOMMENDED_FOODS'),
+          image: AppAssets.recommended, id: 'Vegan Recipes', route: '/Vegan'),
       CategoryModel(
-          image: AppAssets.awareness, id: 'RECIPES', route: '/RECIPES'),
-      CategoryModel(
-          image: AppAssets.hereditary,
-          id: 'HELPFUL_FOODS',
-          route: '/HELPFUL_FOODS'),
-      CategoryModel(
-          image: AppAssets.alternative, id: 'BAD_FOODS', route: '/BAD_FOODS'),
+          image: AppAssets.exer1, id: 'Exercises', route: '/Exercises'),
     ];
 
     return CustomScaffold(
@@ -49,12 +43,12 @@ class HealthyDiet extends StatelessWidget {
                     return Row(
                       children: [
                         Expanded(
-                            child: CategoryItemWidget(
+                            child: HealthyDietCategory(
                                 title: category.id,
                                 onTap: () {
                                   Navigator.pushNamed(
                                     context,
-                                    '/dietCategoryScreenUser',
+                                    category.route,
                                     arguments: category.id,
                                   );
                                 },

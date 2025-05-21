@@ -57,5 +57,12 @@ class AppAssets {
   static const String recommended = "assets/images/recommended.png";
   static const String recipes = "assets/images/recipes.png";
   static const String helpful = "assets/images/helpful.png";
+
+  static const String ex1 = "assets/images/ex1.png";
+  static const String ex2 = "assets/images/ex2.png";
+  static const String ex3 = "assets/images/ex3.png";
+  static const String ex4 = "assets/images/ex4.png";
+
+  static const String exer1 = "assets/images/exer1.png";
 }
 

@@ -1,0 +1,242 @@
+import 'package:flutter/material.dart';
+import 'package:hope/Api/healthy_diet/vegan.dart';
+import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/model/vegan_details.dart';
+
+class RecipeDetailsScreen extends StatelessWidget {
+  final String recipeId;
+
+  const RecipeDetailsScreen({super.key, required this.recipeId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.purple,
+        // لون الموف الغامق
+        title: const Text('Recipe Details'),
+        centerTitle: true,
+        elevation: 4,
+        shadowColor: AppColors.lavender.withOpacity(0.5),
+      ),
+      body: FutureBuilder<VeganRecipeDetail>(
+        future: VeganService.fetchRecipeDetail(recipeId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('No details found.'));
+          }
+
+          final recipe = snapshot.data!;
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(40),
+                    bottomRight: Radius.circular(40),
+                  ),
+                  child: Image.network(
+                    recipe.image,
+                    width: double.infinity,
+                    height: 260,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        recipe.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                          color: AppColors.dark,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 8,
+                        children: [
+                          Chip(
+                            label: Text(recipe.difficulty,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600)),
+                            backgroundColor:
+                                AppColors.lavender.withOpacity(0.1),
+                            avatar: const Icon(Icons.fitness_center,
+                                size: 15, color: AppColors.purple),
+                          ),
+                          Chip(
+                            label: Text(recipe.portion,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600)),
+                            backgroundColor:
+                                AppColors.lavender.withOpacity(0.1),
+                            avatar: const Icon(Icons.people,
+                                size: 15, color: AppColors.purple),
+                          ),
+                          Chip(
+                            label: Text(recipe.time,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600)),
+                            backgroundColor:
+                                AppColors.lavender.withOpacity(0.1),
+                            avatar: const Icon(Icons.timer,
+                                size: 15, color: AppColors.purple),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        recipe.description,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          height: 1.4,
+                          color: AppColors.dark,
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // Ingredients Section
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.lavender.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.restaurant_menu,
+                                    color: AppColors.purple),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'Ingredients',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22,
+                                    color: AppColors.purple,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            ...recipe.ingredients.map(
+                              (ingredient) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 6),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Icon(Icons.circle,
+                                        size: 12,
+                                        color:
+                                            AppColors.purple.withOpacity(0.7)),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        ingredient,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          height: 1.4,
+                                          color: AppColors.dark,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // Preparation Steps Section
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.lavender.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.format_list_numbered,
+                                    color: AppColors.purple),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'Preparation Steps',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22,
+                                    color: AppColors.purple,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            ...recipe.steps.asMap().entries.map(
+                                  (entry) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 15,
+                                          backgroundColor: AppColors.purple,
+                                          child: Text(
+                                            '${entry.key + 1}',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(
+                                            entry.value,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              height: 1.4,
+                                              color: AppColors.dark,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
