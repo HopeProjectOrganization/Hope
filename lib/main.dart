@@ -26,7 +26,10 @@ import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
 import 'package:hope/ui/screens/aware/alternative/alternative_screen.dart';
 import 'package:hope/ui/screens/aware/awareness/newsScreen.dart';
+import 'package:hope/ui/screens/aware/healthy_diet/exercises_screen.dart';
+import 'package:hope/ui/screens/aware/healthy_diet/getHealthyDiet.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/healthy_diet.dart';
+import 'package:hope/ui/screens/aware/healthy_diet/vegan_screen.dart';
 import 'package:hope/ui/screens/aware/hereditary/hereditary.dart';
 import 'package:hope/ui/screens/aware/high_risk/high_risk_people.dart';
 import 'package:hope/ui/screens/aware/meal_sence/filter_screen.dart';
@@ -69,7 +72,7 @@ main() async {
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  static String IP = "192.168.1.4:8081";
+  static String IP = "192.168.78.153:8080";
   MyApp({super.key});
 
   late ThemeProvider themeProvider;
@@ -124,6 +127,9 @@ class MyApp extends StatelessWidget {
         DietCategoryScreen.routeName: (_) => const DietCategoryScreen(),
         AdminHealthyEditorScreen.routeName: (_) =>
             const AdminHealthyEditorScreen(),
+        Recipes.routeName: (_) => Recipes(),
+        BodyPartScreen.routeName: (_) => BodyPartScreen(),
+        VeganScreen.routeName: (_) => VeganScreen(),
         RecipeDetails.routeName: (context) {
           final id = ModalRoute.of(context)!.settings.arguments as int;
           return RecipeDetails(id: id);
@@ -173,7 +179,7 @@ class MyApp extends StatelessWidget {
         PlacesAdminScreen.routeName: (_) => PlacesAdminScreen(),
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen()
       },
-      initialRoute: MealSenceScreen.routeName,
+      initialRoute: HomeScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

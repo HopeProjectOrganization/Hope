@@ -91,9 +91,16 @@ class _AdminHealthyEditorScreenState extends State<AdminHealthyEditorScreen> {
       }
     }
 
+    // ✨ تنظيف الـ title والـ description
+    String cleanedTitle = _titleController.text.trim();
+    String cleanedDescription = _descriptionController.text
+        .replaceAll(RegExp(r'\n\s*\n+'), '\n\n') // إزالة الأسطر الفاضية الزايدة
+        .replaceAll(RegExp(r'[ \t]{2,}'), ' ') // إزالة المسافات الزايدة
+        .trim();
+
     final newsItem = {
-      'title': _titleController.text,
-      'description': _descriptionController.text,
+      'title': cleanedTitle,
+      'description': cleanedDescription,
       'imageUrl': imageUrl,
       'category': _category,
       'date': _date,

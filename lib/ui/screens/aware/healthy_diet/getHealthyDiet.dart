@@ -1,238 +1,381 @@
-// file: diet_category_screen.dart
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/ui/screens/aware/healthy_diet/meal_details.dart';
 import 'package:http/http.dart' as http;
 
-class DietCategoryScreenUser extends StatefulWidget {
-  static const routeName = '/dietCategoryScreenUser';
-
-  const DietCategoryScreenUser({super.key});
+class Recipes extends StatefulWidget {
+  static const routeName = '/RECIPES';
 
   @override
-  State<DietCategoryScreenUser> createState() => _DietCategoryScreenState();
+  State<Recipes> createState() => _RecipesState();
 }
 
-class _DietCategoryScreenState extends State<DietCategoryScreenUser> {
-  late String category;
-  List<dynamic> items = [];
-  bool isLoading = true;
-  String searchQuery = "";
+class _RecipesState extends State<Recipes> {
+  List<dynamic> allMeals = [];
+  List<dynamic> categories = [];
+  bool isLoadingAll = true;
+  bool isLoadingCategories = true;
+  String searchText = '';
+  int selectedTabIndex = 0;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    category = ModalRoute.of(context)!.settings.arguments as String;
-    fetchData();
+  void initState() {
+    super.initState();
+    fetchAllMeals();
+    fetchCategories();
   }
 
-  Future<void> fetchData() async {
+  Future<void> fetchAllMeals() async {
     final url =
-        Uri.parse('http://192.168.1.5:8080/api/diet/category/$category');
-    print("Selected category: $category");
-
+        Uri.parse('https://www.themealdb.com/api/json/v1/1/search.php?s=');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
         setState(() {
-          items = jsonDecode(response.body);
-          isLoading = false;
+          allMeals = decoded['meals'] ?? [];
+          isLoadingAll = false;
         });
       } else {
-        throw Exception('Failed to load data');
+        throw Exception('Failed to load meals');
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+      setState(() => isLoadingAll = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  Future<void> fetchCategories() async {
+    final url =
+        Uri.parse('https://www.themealdb.com/api/json/v1/1/categories.php');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        setState(() {
+          categories = decoded['categories'] ?? [];
+          isLoadingCategories = false;
+        });
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (e) {
+      setState(() => isLoadingCategories = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredItems = items.where((item) {
-      final title = item['title']?.toLowerCase() ?? '';
-      final description = item['description']?.toLowerCase() ?? '';
-      return title.contains(searchQuery) || description.contains(searchQuery);
+    final filteredMeals = allMeals.where((item) {
+      final title = item['strMeal']?.toString().toLowerCase() ?? '';
+      return title.contains(searchText.toLowerCase());
     }).toList();
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Column(
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Recipes')),
+      body: Column(
+        children: [
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
               children: [
-                SafeArea(
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 16),
-                    decoration: const BoxDecoration(
-                      color: AppColors.purple,
-                      borderRadius: BorderRadius.vertical(
-                        bottom: Radius.circular(24),
-                      ),
-                    ),
+                buildTab('All', 0),
+                const SizedBox(width: 8),
+                buildTab('By Category', 1),
+              ],
+            ),
+          ),
+          if (selectedTabIndex == 0)
+            isLoadingAll
+                ? const Center(child: CircularProgressIndicator())
+                : Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // رجوع للخلف
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child:
-                              const Icon(Icons.arrow_back, color: Colors.white),
-                        ),
-                        const SizedBox(height: 12),
-
-                        // شريط البحث
-                        TextField(
-                          onChanged: (value) {
-                            setState(() {
-                              searchQuery = value.toLowerCase();
-                            });
-                          },
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            filled: true,
-                            // <== دي لازم
-                            fillColor: AppColors.white,
-                            // <== ودي تحدد اللون
-                            hintText: 'Search here',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon:
-                                Icon(Icons.search, color: AppColors.purple),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: TextField(
+                            onChanged: (value) =>
+                                setState(() => searchText = value),
+                            decoration: InputDecoration(
+                              hintText: 'Search meals...',
+                              prefixIcon: const Icon(Icons.search),
+                              filled: true,
+                              fillColor: AppColors.white,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 16),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 32),
-
-                        // نص العنوان
-                        const Text(
-                          'Discover recipes',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30,
+                        Expanded(
+                          child: GridView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.75,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                            ),
+                            itemCount: filteredMeals.length,
+                            itemBuilder: (context, index) {
+                              final item = filteredMeals[index];
+                              return buildMealCard(
+                                item['strMeal'],
+                                item['strArea'] ?? '',
+                                item['strMealThumb'],
+                                () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => RecipeDetailScreen(
+                                          mealId: item['idMeal']),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ),
-                        const SizedBox(height: 26),
                       ],
                     ),
                   ),
-                ),
-                Expanded(
-                  child: isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : filteredItems.isEmpty
-                          ? const Center(child: Text('No data found.'))
-                          : ListView.builder(
-                              itemCount: filteredItems.length,
-                              itemBuilder: (context, index) {
-                                final item = filteredItems[index];
-                                return Card(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  elevation: 4,
-                                  child: SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.15,
-                                    child: Row(
-                                      children: [
-                                        // Left side
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 12, horizontal: 12),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                const Icon(Icons.star_border,
-                                                    size: 20,
-                                                    color: Colors.black54),
-                                                const SizedBox(height: 8),
-                                                Text(
-                                                  item['title'] ??
-                                                      'Green Salad',
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  '${item['description']}',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: AppColors.dark,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-
-                                        // Right side: half circular image
-                                        ClipRRect(
-                                          borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(100),
-                                            bottomLeft: Radius.circular(100),
-                                          ),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            widthFactor: 0.5,
-                                            child: Image.network(
-                                              item['imageUrl'] ??
-                                                  'https://example.com/your-image.jpg',
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.6,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.15,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (context, error,
-                                                      stackTrace) =>
-                                                  Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.6,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.15,
-                                                color: Colors.grey[300],
-                                                child: const Icon(
-                                                    Icons.broken_image,
-                                                    size: 40),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
+          if (selectedTabIndex == 1)
+            isLoadingCategories
+                ? const Center(child: CircularProgressIndicator())
+                : Expanded(
+                    child: GridView.builder(
+                      padding: const EdgeInsets.all(16),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 1,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                      ),
+                      itemCount: categories.length,
+                      itemBuilder: (context, index) {
+                        final category = categories[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => MealsByCategoryScreen(
+                                    category['strCategory']),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
                             ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.network(
+                                  category['strCategoryThumb'],
+                                  height: 110,
+                                  width: 110,
+                                  errorBuilder: (_, __, ___) =>
+                                      const Icon(Icons.broken_image, size: 40),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  category['strCategory'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildTab(String text, int index) {
+    final isSelected = selectedTabIndex == index;
+    return GestureDetector(
+      onTap: () => setState(() => selectedTabIndex = index),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (index == 0 ? AppColors.lavender : AppColors.lavender)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isSelected
+                ? (index == 0 ? AppColors.purple : AppColors.purple)
+                : Colors.grey,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildMealCard(
+      String title, String area, String imageUrl, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20)),
+              child: Image.network(
+                imageUrl,
+                height: 150,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  height: 150,
+                  color: Colors.grey[300],
+                  child: const Icon(Icons.broken_image, size: 40),
                 ),
-              ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (area.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        'Area: $area',
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class MealsByCategoryScreen extends StatefulWidget {
+  final String category;
+
+  MealsByCategoryScreen(this.category);
+
+  @override
+  State<MealsByCategoryScreen> createState() => _MealsByCategoryScreenState();
+}
+
+class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
+  List<dynamic> meals = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchMealsByCategory();
+  }
+
+  Future<void> fetchMealsByCategory() async {
+    final url = Uri.parse(
+        'https://www.themealdb.com/api/json/v1/1/filter.php?c=${widget.category}');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        setState(() {
+          meals = decoded['meals'] ?? [];
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load meals');
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Category: ${widget.category}'),
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : GridView.builder(
+              padding: const EdgeInsets.all(12),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: .7,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: meals.length,
+              itemBuilder: (context, index) {
+                final meal = meals[index];
+                return _RecipesState().buildMealCard(
+                  meal['strMeal'],
+                  '',
+                  meal['strMealThumb'],
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            RecipeDetailScreen(mealId: meal['idMeal']),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
     );
   }
 }
