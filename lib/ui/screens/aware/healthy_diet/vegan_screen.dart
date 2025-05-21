@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/healthy_diet/vegan.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/model/vegan.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/vegan_details.dart';
 import 'package:hope/ui/shared_widgets/vegan_card.dart';
+import 'package:provider/provider.dart';
 
 class VeganScreen extends StatefulWidget {
   const VeganScreen({super.key});
@@ -15,6 +18,8 @@ class VeganScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<VeganScreen> {
   late Future<List<VeganRecipe>> futureRecipes;
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -24,9 +29,12 @@ class _HomeScreenState extends State<VeganScreen> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vegan Recipes'),
+        title: Text(appLocalizations.veganRecipes),
         centerTitle: true,
       ),
       body: FutureBuilder<List<VeganRecipe>>(
@@ -37,7 +45,7 @@ class _HomeScreenState extends State<VeganScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No recipes found'));
+            return Center(child: Text(appLocalizations.noRecipesFound));
           } else {
             return ListView.builder(
               padding: const EdgeInsets.all(16),

@@ -47,7 +47,9 @@ class AwareTab extends StatelessWidget {
           id: appLocalizations.healthyDiet,
           route: '/healthyDiet'),
       CategoryModel(
-          image: AppAssets.mealSence, id: "Meal Sence", route: '/mealSence'),
+          image: AppAssets.mealSence,
+          id: appLocalizations.mealSense,
+          route: '/mealSence'),
     ];
 
     return CustomScaffold(

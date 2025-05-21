@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/recipes/fetch_recipe.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -32,6 +33,9 @@ class CategoryCard extends StatefulWidget {
 }
 
 class _CategoryCardState extends State<CategoryCard> {
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
+
   List<Meal> _mealsFromApi = [];
   bool _isLoading = false;
   DateTime selectedDate = DateTime.now();
@@ -127,9 +131,11 @@ class _CategoryCardState extends State<CategoryCard> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     final nutrition = _calculateNutritionForMealType(widget.category);
     final mealsToShow = _mealsFromApi;
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDark();
     final filteredMeals =
         widget.meals.where((meal) => widget.category == widget.title).toList();
@@ -253,10 +259,10 @@ class _CategoryCardState extends State<CategoryCard> {
                     );
                   },
                 )
-              : const Center(
-                  child: Text(
-                    "No meals yet.",
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                  : Center(
+                      child: Text(
+                        appLocalizations.noMealsYet,
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
                   ),
                 )
         ],

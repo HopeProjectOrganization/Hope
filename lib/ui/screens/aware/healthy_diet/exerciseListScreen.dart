@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/exercises.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/exerciseDetailScreen.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class ExerciseListScreen extends StatefulWidget {
   final String bodyPart;
@@ -17,6 +20,9 @@ class ExerciseListScreen extends StatefulWidget {
 
 class _ExerciseListScreenState extends State<ExerciseListScreen> {
   late Future<List<Exercise>> futureExercises;
+
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -43,9 +49,14 @@ class _ExerciseListScreenState extends State<ExerciseListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(title: Text("${widget.bodyPart.toUpperCase()} Exercises")),
+      appBar: AppBar(
+          title: Text(
+              "${widget.bodyPart.toUpperCase()} ${appLocalizations.exercises}")),
       body: FutureBuilder<List<Exercise>>(
         future: futureExercises,
         builder: (context, snapshot) {

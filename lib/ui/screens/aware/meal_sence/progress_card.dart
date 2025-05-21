@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_icons.dart';
+import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/meal_dm.dart';
+import 'package:provider/provider.dart';
 
 class ProgressCard extends StatefulWidget {
   final List<Meal> meals;
@@ -16,6 +20,8 @@ class ProgressCard extends StatefulWidget {
 
 class _ProgressCardState extends State<ProgressCard> {
   List<Meal> meals = [];
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   late double currentCalories;
 
@@ -32,6 +38,9 @@ class _ProgressCardState extends State<ProgressCard> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     double targetFat = 70;
     double targetProtein = 100;
     double targetCarbs = 250;
@@ -45,7 +54,7 @@ class _ProgressCardState extends State<ProgressCard> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: themeProvider.isDark() ? AppColors.gray : AppColors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
@@ -58,11 +67,11 @@ class _ProgressCardState extends State<ProgressCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Today's Progress",
+                appLocalizations.todayProgress,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ],
@@ -87,8 +96,8 @@ class _ProgressCardState extends State<ProgressCard> {
                         fontSize: 22,
                         color: Colors.black),
                   ),
-                  const Text(
-                    "Calories",
+                  Text(
+                    appLocalizations.calories,
                     style: TextStyle(color: Colors.grey),
                   ),
                 ],
@@ -98,12 +107,12 @@ class _ProgressCardState extends State<ProgressCard> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildProgressCircle(
-                        "Fat", totalFat, targetFat, Colors.orange),
-                    _buildProgressCircle(
-                        "Pro", totalProtein, targetProtein, Colors.blue),
-                    _buildProgressCircle(
-                        "Carb", totalCarbs, targetCarbs, Colors.purple),
+                    _buildProgressCircle(appLocalizations.fat, totalFat,
+                        targetFat, Colors.orange),
+                    _buildProgressCircle(appLocalizations.protein, totalProtein,
+                        targetProtein, Colors.blue),
+                    _buildProgressCircle(appLocalizations.carbs, totalCarbs,
+                        targetCarbs, Colors.purple),
                   ],
                 ),
               ),
@@ -146,9 +155,10 @@ class _ProgressCardState extends State<ProgressCard> {
         Stack(
           alignment: Alignment.center,
           children: [
-            SizedBox(
-              width: 50,
-              height: 50,
+            Container(
+              margin: EdgeInsets.all(4),
+              width: 40,
+              height: 40,
               child: CircularProgressIndicator(
                 value: progress,
                 backgroundColor: color.withOpacity(0.2),
@@ -163,7 +173,7 @@ class _ProgressCardState extends State<ProgressCard> {
           ],
         ),
         const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 14)),
+        Text(label, style: const TextStyle(fontSize: 12)),
         Text("${value.toStringAsFixed(0)} / ${target.toStringAsFixed(0)}",
             style: const TextStyle(fontSize: 12, color: Colors.grey)),
       ],

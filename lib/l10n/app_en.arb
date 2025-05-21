@@ -107,7 +107,56 @@
   "dark": "Dark",
   "light": "Light",
   "ar": "AR",
-  "en": "EN"
+  "en": "EN",
+  "noMealsYet": "No meals yet.",
+  "mealSense": "Meal Sense",
+  "breakfast": "Breakfast",
+  "lunch": "Lunch",
+  "dinner": "Dinner",
+  "meals": "Meals",
+  "noMealsFound": "No meals found.",
+  "calories": "Calories",
+  "protein": "Protein",
+  "fat": "Fat",
+  "carbs": "Carbs",
+  "myMealsFor": "My Meals for",
+  "totalCalories": "Total Calories :",
+  "details": "Details",
+  "addTo": "Add to",
+  "todayProgress": "Today's Progress",
+  "min": "Min",
+  "serving": "Serving",
+  "instructions": "Instructions",
+  "select": "Select",
+  "byCategory": "By Category",
+  "muscles": "Muscles : ",
+  "howToDoIt": "How To Do It",
+  "steps": "Steps",
+  "step": "Step",
+  "exercises": "Exercises",
+  "chooseYourTrain": "Choose your train",
+  "recipes": "Recipes",
+  "category": "Category: ",
+  "recipeDetails": "Recipe Details",
+  "startCooking": "Start Cooking",
+  "couldNotLaunchVideo": "Could not launch video",
+  "previous": "Previous",
+  "next": "Next",
+  "finish": "Finish",
+  "noDetailsFound": "No details found.",
+  "preparationSteps": "Preparation Steps",
+  "veganRecipes": "Vegan Recipes",
+  "noRecipesFound": "No recipes found",
+  "viewMore": "View more",
+  "beauty": "Beauty",
+  "food": "Food",
+  "typeOfProduct": "Type of product :"
+
+
+
+
+
+
 
 
 

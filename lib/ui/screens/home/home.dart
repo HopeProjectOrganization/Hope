@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           heroTag: 'scan-main-button',
                           backgroundColor: AppColors.purple,
                           shape: CircleBorder(
-                            side: BorderSide(color: AppColors.white, width: 5),
+                            side: BorderSide(color: color, width: 5),
                           ),
                           onPressed: () {
                             startScan();

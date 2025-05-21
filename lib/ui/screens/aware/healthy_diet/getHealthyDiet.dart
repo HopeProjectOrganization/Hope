@@ -1,9 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/meal_details.dart';
+import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class Recipes extends StatefulWidget {
   static const routeName = '/RECIPES';
@@ -13,6 +17,9 @@ class Recipes extends StatefulWidget {
 }
 
 class _RecipesState extends State<Recipes> {
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
+
   List<dynamic> allMeals = [];
   List<dynamic> categories = [];
   bool isLoadingAll = true;
@@ -73,13 +80,16 @@ class _RecipesState extends State<Recipes> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     final filteredMeals = allMeals.where((item) {
       final title = item['strMeal']?.toString().toLowerCase() ?? '';
       return title.contains(searchText.toLowerCase());
     }).toList();
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Recipes')),
+    return CustomScaffold(
+      title: appLocalizations.recipes,
       body: Column(
         children: [
           const SizedBox(height: 16),
@@ -87,9 +97,9 @@ class _RecipesState extends State<Recipes> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                buildTab('All', 0),
+                buildTab(appLocalizations.all, 0),
                 const SizedBox(width: 8),
-                buildTab('By Category', 1),
+                buildTab(appLocalizations.byCategory, 1),
               ],
             ),
           ),
@@ -105,7 +115,7 @@ class _RecipesState extends State<Recipes> {
                             onChanged: (value) =>
                                 setState(() => searchText = value),
                             decoration: InputDecoration(
-                              hintText: 'Search meals...',
+                              hintText: appLocalizations.search,
                               prefixIcon: const Icon(Icons.search),
                               filled: true,
                               fillColor: AppColors.white,
@@ -312,6 +322,8 @@ class MealsByCategoryScreen extends StatefulWidget {
 class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
   List<dynamic> meals = [];
   bool isLoading = true;
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -343,10 +355,11 @@ class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Category: ${widget.category}'),
-      ),
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
+    return CustomScaffold(
+      title: '${appLocalizations.category} ${widget.category}',
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : GridView.builder(

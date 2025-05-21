@@ -67,7 +67,6 @@ class _CustomDropDownState extends State<CustomDropDown> {
       },
       decoration: InputDecoration(
         labelText: widget.labelText ?? appLocalizations.typeOfCancer,
-        // هنا نقوم بعرض الـ label
         labelStyle: Theme.of(context).primaryTextTheme.titleMedium,
         border: const OutlineInputBorder(),
       ),

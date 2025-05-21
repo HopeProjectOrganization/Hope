@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/user/user_meals.dart';
 import 'package:hope/core/assets/app_icons.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/ui/screens/aware/meal_sence/meal_sence_screen.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
+import 'package:provider/provider.dart';
 
 class MyMealsScreen extends StatefulWidget {
   static const routeName = '/my';
@@ -25,6 +28,8 @@ class MyMealsScreen extends StatefulWidget {
 class _MyMealsScreenState extends State<MyMealsScreen> {
   late List<Meal> _selectedMeals;
   late String _title = widget.title;
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -34,8 +39,10 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
     return CustomScaffold(
-      title: "My Meals for",
+      title: appLocalizations.myMealsFor,
       backgroundColor: const Color(0xFFF6F6F6),
       body: SafeArea(
         child: Center(
@@ -65,7 +72,7 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "Total Calories : ${_selectedMeals.isEmpty ? 0 : _selectedMeals.fold(0.0, (total, meal) => total + meal.calories).toInt()}",
+                          "${appLocalizations.totalCalories} ${_selectedMeals.isEmpty ? 0 : _selectedMeals.fold(0.0, (total, meal) => total + meal.calories).toInt()}",
                           style: const TextStyle(color: Colors.grey),
                         ),
                       ],
@@ -75,14 +82,14 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                 const SizedBox(height: 20),
 
                 // Meals Title
-                const Text("Meals",
+                Text(appLocalizations.meals,
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
 
                 _selectedMeals.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Text(
-                          "No meals yet.",
+                          appLocalizations.noMealsYet,
                           style: TextStyle(color: Colors.grey, fontSize: 16),
                         ),
                       )
@@ -135,16 +142,18 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 20),
-                                const Text("Details",
+                                Text(appLocalizations.details,
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
                                 const SizedBox(height: 10),
+                                _buildDetailRow(appLocalizations.calories,
+                                    meal.calories.toString()),
+                                _buildDetailRow(appLocalizations.protein,
+                                    meal.protein.toString()),
                                 _buildDetailRow(
-                                    "Calories", meal.calories.toString()),
-                                _buildDetailRow(
-                                    "Protein", meal.protein.toString()),
-                                _buildDetailRow("Fat", meal.fat.toString()),
-                                _buildDetailRow("Carbs", meal.carbs.toString()),
+                                    appLocalizations.fat, meal.fat.toString()),
+                                _buildDetailRow(appLocalizations.carbs,
+                                    meal.carbs.toString()),
                                 const SizedBox(height: 20),
                               ],
                             );
@@ -185,7 +194,7 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                       }
 
                     },
-                    title: "Add to ${_title}",
+                    title: "${appLocalizations.addTo} ${_title}",
                   ),
                 )
               ],

@@ -3,7 +3,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/model/category_model.dart';
-import 'package:hope/ui/shared_widgets/category_item_widget.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:hope/ui/shared_widgets/utils/healthy_diet_category.dart';
 import 'package:provider/provider.dart';
@@ -22,11 +21,18 @@ class HealthyDiet extends StatelessWidget {
     appLocalizations = AppLocalizations.of(context)!;
 
     final List<CategoryModel> categories = [
-      CategoryModel(image: AppAssets.recipes, id: 'Recipes', route: '/RECIPES'),
       CategoryModel(
-          image: AppAssets.recommended, id: 'Vegan Recipes', route: '/Vegan'),
+          image: AppAssets.recipes,
+          id: appLocalizations.recipes,
+          route: '/RECIPES'),
       CategoryModel(
-          image: AppAssets.exer1, id: 'Exercises', route: '/Exercises'),
+          image: AppAssets.recommended,
+          id: appLocalizations.veganRecipes,
+          route: '/Vegan'),
+      CategoryModel(
+          image: AppAssets.exer1,
+          id: appLocalizations.exercises,
+          route: '/Exercises'),
     ];
 
     return CustomScaffold(

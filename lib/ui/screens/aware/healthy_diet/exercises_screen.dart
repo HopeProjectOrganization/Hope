@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/exerciseListScreen.dart';
+import 'package:provider/provider.dart';
 
 class BodyPartScreen extends StatelessWidget {
   static const routeName = '/Exercises';
@@ -36,9 +39,13 @@ class BodyPartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
+
+    late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(title: const Text("Choose your train")),
+      appBar: AppBar(title: Text(appLocalizations.chooseYourTrain)),
       body: ListView.builder(
         itemCount: bodyParts.length,
         itemBuilder: (context, index) {
@@ -90,9 +97,9 @@ class BodyPartScreen extends StatelessWidget {
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: const [
+                            children: [
                               Text(
-                                "View more",
+                                appLocalizations.viewMore,
                                 style: TextStyle(
                                   color: AppColors.purple,
                                   fontWeight: FontWeight.w500,

@@ -1,5 +1,7 @@
 import 'dart:convert';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
@@ -20,6 +22,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Map<String, dynamic>? mealDetails;
   bool isLoading = true;
   int servings = 1;
+
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -90,6 +95,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
@@ -102,7 +110,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            'Recipe Details',
+            appLocalizations.recipeDetails,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           centerTitle: true,
@@ -149,7 +157,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: CustomButton(
-                          title: "Start Cooking",
+                          title: appLocalizations.startCooking,
                           onClick: () => Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -186,6 +194,8 @@ class RecipeStepsScreen extends StatefulWidget {
 class _RecipeStepsScreenState extends State<RecipeStepsScreen> {
   late List<String> steps;
   int currentStep = 0;
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -233,6 +243,9 @@ class _RecipeStepsScreenState extends State<RecipeStepsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     final String? youtubeUrl = widget.youtubeUrl;
     final String? videoId =
         youtubeUrl != null ? Uri.parse(youtubeUrl).queryParameters['v'] : null;
@@ -268,7 +281,7 @@ class _RecipeStepsScreenState extends State<RecipeStepsScreen> {
                   children: [
                     Center(
                       child: Text(
-                        "Step ${currentStep + 1}",
+                        "${appLocalizations.step} ${currentStep + 1}",
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -293,7 +306,7 @@ class _RecipeStepsScreenState extends State<RecipeStepsScreen> {
                       children: [
                         if (currentStep > 0)
                           buildCustomButton(
-                            text: "Previous",
+                            text: appLocalizations.previous,
                             icon: Icons.arrow_back_ios,
                             color: Colors.grey[100],
                             onPressed: () => setState(() => currentStep--),
@@ -302,8 +315,8 @@ class _RecipeStepsScreenState extends State<RecipeStepsScreen> {
                           const SizedBox(width: 140),
                         buildCustomButton(
                           text: currentStep < steps.length - 1
-                              ? "Next"
-                              : "Finish",
+                              ? appLocalizations.next
+                              : appLocalizations.finish,
                           icon: currentStep < steps.length - 1
                               ? Icons.arrow_forward_ios
                               : Icons.check,

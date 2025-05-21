@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/healthy_diet/vegan.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/vegan_details.dart';
+import 'package:provider/provider.dart';
 
 class RecipeDetailsScreen extends StatelessWidget {
   final String recipeId;
@@ -10,11 +13,14 @@ class RecipeDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
+
+    late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.purple,
         // لون الموف الغامق
-        title: const Text('Recipe Details'),
+        title: Text(appLocalizations.recipeDetails),
         centerTitle: true,
         elevation: 4,
         shadowColor: AppColors.lavender.withOpacity(0.5),
@@ -27,7 +33,7 @@ class RecipeDetailsScreen extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
-            return const Center(child: Text('No details found.'));
+            return Center(child: Text(appLocalizations.noDetailsFound));
           }
 
           final recipe = snapshot.data!;
@@ -123,8 +129,8 @@ class RecipeDetailsScreen extends StatelessWidget {
                                 Icon(Icons.restaurant_menu,
                                     color: AppColors.purple),
                                 const SizedBox(width: 8),
-                                const Text(
-                                  'Ingredients',
+                                Text(
+                                  appLocalizations.ingredients,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 22,
@@ -181,8 +187,8 @@ class RecipeDetailsScreen extends StatelessWidget {
                                 Icon(Icons.format_list_numbered,
                                     color: AppColors.purple),
                                 const SizedBox(width: 8),
-                                const Text(
-                                  'Preparation Steps',
+                                Text(
+                                  appLocalizations.preparationSteps,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 22,

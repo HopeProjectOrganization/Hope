@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/exercises.dart';
+import 'package:provider/provider.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {
   final Exercise exercise;
@@ -9,6 +12,10 @@ class ExerciseDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
+
+    late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(),
@@ -49,7 +56,7 @@ class ExerciseDetailScreen extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "Muscles : ",
+                    appLocalizations.muscles,
                     style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -68,10 +75,11 @@ class ExerciseDetailScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("How To Do It",
+                    Text(appLocalizations.howToDoIt,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
-                    Text("${exercise.instructions.length} Steps",
+                    Text(
+                        "${exercise.instructions.length} ${appLocalizations.steps}",
                         style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
@@ -111,7 +119,7 @@ class ExerciseDetailScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  _getStepTitle(index),
+                                  _getStepTitle(index, appLocalizations.step),
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),
@@ -139,10 +147,10 @@ class ExerciseDetailScreen extends StatelessWidget {
     );
   }
 
-  String _getStepTitle(int index) {
+  String _getStepTitle(int index, String step) {
     switch (index) {
       default:
-        return "Step $index";
+        return "$step $index";
     }
   }
 }

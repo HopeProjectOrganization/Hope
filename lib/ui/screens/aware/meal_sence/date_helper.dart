@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:provider/provider.dart';
 
 class DateHelper {
   static String getMonthName(int month) {
@@ -68,6 +71,8 @@ class MyCalendarWidget extends StatefulWidget {
 }
 
 class MyCalendarWidgetState extends State<MyCalendarWidget> {
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
   late DateTime selectedDate;
   final ScrollController _scrollController = ScrollController();
 
@@ -189,6 +194,9 @@ class MyCalendarWidgetState extends State<MyCalendarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     return Column(
       children: [
         _buildMonthYearHeader(),

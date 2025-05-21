@@ -1,5 +1,7 @@
 import 'dart:async';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/Api/recipes/fetch_recipe.dart';
 import 'package:hope/core/assets/app_icons.dart';
@@ -21,6 +23,9 @@ class Meals extends StatefulWidget {
 }
 
 class _MealsState extends State<Meals> {
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
+
   late Future<List<Meal>> mealsFuture;
   Map<int, bool> selectedMeals = {};
   int selectedMealsCount = 0;
@@ -57,20 +62,16 @@ class _MealsState extends State<Meals> {
   }
 
   void applyFilters() async {
-    // نص البحث الحالي
     final query = searchController.text.trim().toLowerCase();
 
-    // نبدأ من كل الوجبات
     List<Meal> tempList = List.from(allMeals);
 
-    // فلترة حسب الفئات إذا تم اختيار أي فئة
     if (selectedCategories.isNotEmpty) {
       tempList = tempList.where((meal) {
         return selectedCategories.contains(meal.categoryName);
       }).toList();
     }
 
-    // فلترة حسب البحث النصي (بحث داخلي على الاسم أو يمكن تعديل ليشمل خصائص أخرى)
     if (query.isNotEmpty) {
       tempList = tempList.where((meal) {
         return meal.name.toLowerCase().contains(query);
@@ -91,6 +92,9 @@ class _MealsState extends State<Meals> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     return CustomScaffold(
         actions: [
           Stack(
@@ -138,7 +142,7 @@ class _MealsState extends State<Meals> {
             ],
           ),
         ],
-        title: "Meals",
+        title: appLocalizations.meals,
         backgroundColor: Color(0xFFF8F8FF),
         body: SafeArea(
             child: Column(children: [
@@ -153,7 +157,7 @@ class _MealsState extends State<Meals> {
                     onChanged: onSearchChanged,
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.search_outlined),
-                      hintText: 'Search',
+                      hintText: appLocalizations.search,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -201,8 +205,8 @@ class _MealsState extends State<Meals> {
               ),
               Expanded(
                 child: displayedMeals.isEmpty
-                    ? Center(child: Text("No meals found."))
-                    : ListView.builder(
+                ? Center(child: Text(appLocalizations.noMealsFound))
+                : ListView.builder(
                     padding: const EdgeInsets.all(20),
                     itemCount: displayedMeals.length,
                     itemBuilder: (context, index) {
@@ -291,20 +295,20 @@ class _MealsState extends State<Meals> {
                                         MainAxisAlignment.spaceAround,
                                     children: [
                                       _buildNutritionIcon(
-                                          "Calories",
+                                          appLocalizations.calories,
                                           meal.calories.toStringAsFixed(1) +
                                               "g",
                                           AppIcons.calories),
                                       _buildNutritionIcon(
-                                          "Protein",
+                                          appLocalizations.protein,
                                           meal.protein.toStringAsFixed(1) + "g",
                                           AppIcons.proteins),
                                       _buildNutritionIcon(
-                                          "Fat",
+                                          appLocalizations.fat,
                                           meal.fat.toStringAsFixed(1) + "g",
                                           AppIcons.fats),
                                       _buildNutritionIcon(
-                                          "Carbs",
+                                          appLocalizations.carbs,
                                           meal.carbs.toStringAsFixed(1) + "g",
                                           AppIcons.carbs),
                                     ],

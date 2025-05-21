@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:provider/provider.dart';
 
 class CustomTabSelector extends StatefulWidget {
   final Function(int index) onTabSelected;
@@ -16,9 +19,15 @@ class CustomTabSelector extends StatefulWidget {
 }
 
 class _CustomTabSelectorState extends State<CustomTabSelector> {
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
+
   @override
   Widget build(BuildContext context) {
-    final tabs = ['All', 'By Category'];
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
+    final tabs = [appLocalizations.all, appLocalizations.byCategory];
     final colors = [Colors.purple.shade100, Colors.blue.shade100];
     final textColors = [AppColors.purple, Colors.blue];
 

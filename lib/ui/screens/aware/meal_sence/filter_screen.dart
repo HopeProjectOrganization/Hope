@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hope/Api/recipes/fetch_recipe.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/Api/recipes/fetch_recipe.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
-import 'package:provider/provider.dart';
 
 class FilterScreen extends StatefulWidget {
   static const routeName = '/filterScreen';
@@ -19,6 +20,8 @@ class _FilterScreenState extends State<FilterScreen> {
   List<Category> categories = [];
   Set<String> selectedCategories = {};
   bool isLoading = true;
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
   String? error;
 
   @override
@@ -45,12 +48,14 @@ class _FilterScreenState extends State<FilterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     if (error != null) return Center(child: Text(error!));
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDark();
 
     return CustomScaffold(
-      title: "Select",
+      title: appLocalizations.select,
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -132,7 +137,7 @@ class _FilterScreenState extends State<FilterScreen> {
             ),
             const SizedBox(height: 12),
             CustomButton(
-              title: "Done",
+              title: appLocalizations.done,
               onClick: () {
                 Navigator.pop(context, selectedCategories.toList());
               },

@@ -83,7 +83,13 @@ class CategoryItemWidget extends StatelessWidget {
                   child: FittedBox(
                     child: Row(
                       children: [
-                        Text(appLocalizations.viewAll),
+                        Text(
+                          appLocalizations.viewAll,
+                          style: TextStyle(
+                              color: themeProvider.isDark()
+                                  ? AppColors.white
+                                  : AppColors.purple),
+                        ),
                         const SizedBox(
                           width: 10,
                         ),

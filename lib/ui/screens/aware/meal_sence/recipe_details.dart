@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/recipes/fetch_recipe.dart';
 import 'package:hope/core/assets/app_icons.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/test.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_gradient.dart';
+import 'package:provider/provider.dart';
 
 class RecipeDetails extends StatefulWidget {
   static const routeName = '/recipe';
@@ -23,6 +26,9 @@ class _RecipeDetailsState extends State<RecipeDetails>
   late TabController _tabController;
   bool isDescriptionExpanded = false;
   bool isPressed = false;
+
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -56,6 +62,8 @@ class _RecipeDetailsState extends State<RecipeDetails>
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder<Meal>(
@@ -149,7 +157,8 @@ class _RecipeDetailsState extends State<RecipeDetails>
                               ),
                               Icon(Icons.access_time, color: Colors.grey),
                               SizedBox(width: 4),
-                              Text("${meal.prepTimeInMinutes} Min",
+                              Text(
+                                  "${meal.prepTimeInMinutes} ${appLocalizations.min}",
                                   style: TextStyle(color: Colors.grey)),
                             ],
                           ),
@@ -162,7 +171,8 @@ class _RecipeDetailsState extends State<RecipeDetails>
                                       style: TextStyle(color: AppColors.gray))),
                               Icon(Icons.room_service, color: Colors.grey),
                               SizedBox(width: 4),
-                              Text("${meal.serving} Serving ",
+                              Text(
+                                  "${meal.serving} ${appLocalizations.serving} ",
                                   style: TextStyle(color: Colors.grey))
                             ],
                           ),
@@ -170,14 +180,20 @@ class _RecipeDetailsState extends State<RecipeDetails>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _nutrientCard("Carbs", "${meal.carbs}g",
+                              _nutrientCard(
+                                  appLocalizations.carbs,
+                                  "${meal.carbs}g",
                                   AppIcons.carbs, Colors.blue),
-                              _nutrientCard("Protein", "${meal.protein}g",
+                              _nutrientCard(
+                                  appLocalizations.protein,
+                                  "${meal.protein}g",
                                   AppIcons.proteins, Colors.green),
-                              _nutrientCard("Calories", "${meal.calories} Kcal",
+                              _nutrientCard(
+                                  appLocalizations.calories,
+                                  "${meal.calories} Kcal",
                                   AppIcons.calories, Colors.red),
-                              _nutrientCard("Fat", "${meal.fat}g",
-                                  AppIcons.fats, Colors.orange),
+                              _nutrientCard(appLocalizations.fat,
+                                  "${meal.fat}g", AppIcons.fats, Colors.orange),
                             ],
                           ),
                           SizedBox(height: 20),
@@ -203,8 +219,8 @@ class _RecipeDetailsState extends State<RecipeDetails>
                                     labelColor: AppColors.white,
                                     unselectedLabelColor: AppColors.purple,
                                     tabs: [
-                                      Tab(text: "Ingredients"),
-                                      Tab(text: "Instructions"),
+                                      Tab(text: appLocalizations.ingredients),
+                                      Tab(text: appLocalizations.instructions),
                                     ],
                                   ),
                                 ),
@@ -224,7 +240,7 @@ class _RecipeDetailsState extends State<RecipeDetails>
                             ),
                           ),
                           CustomButton(
-                            title: "ADD",
+                            title: appLocalizations.add,
                             onClick: () {
                               Navigator.pushNamed(
                                 context,

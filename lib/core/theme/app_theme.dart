@@ -167,7 +167,9 @@ class AppTheme {
           iconTheme: IconThemeData(color: AppColors.dark)),
       primaryColor: AppColors.purple,
       textTheme: const TextTheme(
-        bodyLarge: TextStyle(
+      titleMedium: TextStyle(
+          color: AppColors.gray, fontSize: 26, fontWeight: FontWeight.bold),
+      bodyLarge: TextStyle(
             color: AppColors.white,
             fontSize: 16,
             fontWeight: FontWeight.w500),
@@ -189,15 +191,15 @@ class AppTheme {
       ),
       primaryTextTheme: const TextTheme(
         titleMedium: TextStyle(
-            color: AppColors.white, fontSize: 16, fontWeight: FontWeight.w500),
-        titleSmall: TextStyle(
+          color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
+      titleSmall: TextStyle(
           color: AppColors.white, fontSize: 16, fontWeight: FontWeight.w500),
     ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.purple,
-          foregroundColor: AppColors.white,
-          padding: const EdgeInsets.all(16),
+        foregroundColor: AppColors.dark,
+        padding: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

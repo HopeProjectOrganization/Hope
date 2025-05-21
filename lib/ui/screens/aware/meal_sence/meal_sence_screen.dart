@@ -6,6 +6,7 @@ import 'package:hope/ui/screens/aware/meal_sence/category_card.dart';
 import 'package:hope/ui/screens/aware/meal_sence/date_helper.dart';
 import 'package:hope/ui/screens/aware/meal_sence/progress_card.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class MealSenceScreen extends StatefulWidget {
@@ -22,6 +23,9 @@ class MealSenceScreen extends StatefulWidget {
 }
 
 class _MealSenceScreenState extends State<MealSenceScreen> {
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
+
   DateTime selectedDate = DateTime.now();
   List<Meal> meals = [];
   late String _title = widget.title;
@@ -101,11 +105,12 @@ class _MealSenceScreenState extends State<MealSenceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+    themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDark();
     return CustomScaffold(
       backgroundColor: isDarkMode ? AppColors.dark : Color(0xFFF9FAFC),
-      title: "Meal Sence",
+      title: appLocalizations.mealSense,
       body: ListView(
         children: [
           Column(
@@ -129,7 +134,7 @@ class _MealSenceScreenState extends State<MealSenceScreen> {
                 meals: meals,
               ),
               CategoryCard(
-                  title: 'Breakfast',
+                  title: appLocalizations.breakfast,
                   category: _title,
                   kcalColor: Colors.green,
                   meals: meals,
@@ -139,7 +144,7 @@ class _MealSenceScreenState extends State<MealSenceScreen> {
                     });
                   }),
               CategoryCard(
-                  title: 'Lunch',
+                  title: appLocalizations.lunch,
                   category: _title,
                   kcalColor: Colors.orange,
                   meals: meals,
@@ -149,7 +154,7 @@ class _MealSenceScreenState extends State<MealSenceScreen> {
                     });
                   }),
               CategoryCard(
-                  title: 'Dinner',
+                  title: appLocalizations.dinner,
                   category: _title,
                   kcalColor: Colors.blue,
                   meals: meals,
