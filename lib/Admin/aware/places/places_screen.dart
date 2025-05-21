@@ -26,7 +26,6 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
     super.initState();
     fetchAllPlaces();
   }
-
   void deletePlace(int id) async {
     final response = await http.delete(
       Uri.parse('http://192.168.1.4:8081/Places/$id'),

@@ -37,7 +37,7 @@ class _MealsState extends State<Meals> {
   @override
   void initState() {
     super.initState();
-    mealsFuture = fetchMeal();
+    mealsFuture = fetchMeals();
     mealsFuture.then((meals) {
       setState(() {
         allMeals = meals;
@@ -180,29 +180,29 @@ class _MealsState extends State<Meals> {
                           );
 
                           if (result != null &&
-                              result is List<String> &&
-                              result.isNotEmpty) {
-                            setState(() {
-                              selectedCategories = result;
-                            });
-                            applyFilters();
-                          } else {
-                            // لو رجع من غير اختيار فئات، نرجع للتصفية بدون فئات فقط البحث
-                            setState(() {
-                              selectedCategories = [];
-                            });
-                            applyFilters();
-                          }
-                        },
-                      ),
-                    )),
-              ],
-            ),
-          ),
-          Expanded(
-            child: displayedMeals.isEmpty
-                ? Center(child: Text("No meals found."))
-                : ListView.builder(
+                                  result is List<String> &&
+                                  result.isNotEmpty) {
+                                setState(() {
+                                  selectedCategories = result;
+                                });
+                                applyFilters();
+                              } else {
+                                // لو رجع من غير اختيار فئات، نرجع للتصفية بدون فئات فقط البحث
+                                setState(() {
+                                  selectedCategories = [];
+                                });
+                                applyFilters();
+                              }
+                            },
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: displayedMeals.isEmpty
+                    ? Center(child: Text("No meals found."))
+                    : ListView.builder(
                     padding: const EdgeInsets.all(20),
                     itemCount: displayedMeals.length,
                     itemBuilder: (context, index) {

@@ -19,7 +19,6 @@ Future<List<PlaceModel>> fetchPlaces(int id) async {
     throw Exception('Failed to load place');
   }
 }
-
 Future<List<PlaceModel>> fetchAllPlacesFromApi() async {
   final response = await http.get(Uri.parse('http://${MyApp.IP}/Places/all'));
 

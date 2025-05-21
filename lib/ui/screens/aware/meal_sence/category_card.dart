@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hope/Api/recipes/fetch_recipe.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/main.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/ui/screens/aware/meal_sence/meals.dart';
 import 'package:hope/ui/screens/aware/meal_sence/recipe_details.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class CategoryCard extends StatefulWidget {
@@ -27,6 +32,10 @@ class CategoryCard extends StatefulWidget {
 }
 
 class _CategoryCardState extends State<CategoryCard> {
+  List<Meal> _mealsFromApi = [];
+  bool _isLoading = false;
+  DateTime selectedDate = DateTime.now();
+
   Map<String, double> _calculateNutritionForMealType(String mealType) {
     double totalCalories = 0;
     double totalFat = 0;
@@ -54,10 +63,74 @@ class _CategoryCardState extends State<CategoryCard> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    fetchMealsFromApi();
+  }
+
+  Future<void> fetchMealsFromApi() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final formattedDate = selectedDate.toIso8601String().split('T').first;
+      final url = Uri.parse(
+          'http://${MyApp.IP}/api/user-meals?userId=19&date=$formattedDate&category=${widget.title.toLowerCase()}');
+
+      print("📅 Date: $formattedDate");
+      print("📂 Category: ${widget.title}");
+      print("🌐 Full URL: $url");
+
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonMap = json.decode(response.body);
+
+        if (jsonMap.containsKey('mealIds')) {
+          final List<dynamic> mealIds = jsonMap['mealIds'];
+
+          // استدعاء بيانات كل وجبة بالتفصيل عن طريق الـ IDs
+          List<Meal> mealsList = [];
+          for (var id in mealIds) {
+            final meal = await fetchMealById(int.parse(id));
+            if (meal != null) mealsList.add(meal);
+          }
+
+          setState(() {
+            _mealsFromApi = mealsList;
+            _isLoading = false;
+          });
+        } else {
+          setState(() {
+            _mealsFromApi = [];
+            _isLoading = false;
+          });
+          print('❗ Unexpected response format: missing "mealIds" key');
+        }
+      } else {
+        setState(() {
+          _mealsFromApi = [];
+          _isLoading = false;
+        });
+        print('❌ Failed to load meals: ${response.statusCode}');
+        print('❗ Response body: ${response.body}');
+      }
+    } catch (e) {
+      setState(() {
+        _mealsFromApi = [];
+        _isLoading = false;
+      });
+      print('❌ Error fetching meals: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final nutrition = _calculateNutritionForMealType(widget.category);
+    final mealsToShow = _mealsFromApi;
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDark();
-    final nutrition = _calculateNutritionForMealType(widget.title);
     final filteredMeals =
         widget.meals.where((meal) => widget.category == widget.title).toList();
 
@@ -121,14 +194,16 @@ class _CategoryCardState extends State<CategoryCard> {
             ],
           ),
           const SizedBox(height: 12),
-          filteredMeals.isNotEmpty
-              ? ListView.builder(
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : mealsToShow.isNotEmpty
+                  ? ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filteredMeals.length,
-                  itemBuilder: (context, index) {
-                    final meal = filteredMeals[index];
-                    return Padding(
+                      itemCount: mealsToShow.length,
+                      itemBuilder: (context, index) {
+                        final meal = mealsToShow[index];
+                        return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: GestureDetector(
                         onTap: () {
@@ -166,8 +241,8 @@ class _CategoryCardState extends State<CategoryCard> {
                             GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  widget.meals.remove(meal);
-                                  widget.onMealsChanged?.call(widget.meals);
+                                      _mealsFromApi.remove(meal);
+                                      widget.onMealsChanged?.call(widget.meals);
                                 });
                               },
                               child: Icon(Icons.close, color: AppColors.gray),
