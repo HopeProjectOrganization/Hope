@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/aware/places/admin_places_edit.dart';
-import 'package:hope/Api/places/fetch_places.dart';
+import 'package:hope/Api/places/places_service.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/places_dm.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class PlacesAdminScreen extends StatefulWidget {
@@ -21,27 +20,12 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
   List<PlaceModel> places = [];
   bool isLoading = true;
 
+  final PlacesApiService apiService = PlacesApiService();
+
   @override
   void initState() {
     super.initState();
     fetchAllPlaces();
-  }
-  void deletePlace(int id) async {
-    final response = await http.delete(
-      Uri.parse('http://192.168.1.4:8081/Places/$id'),
-    );
-    print('Delete response status: ${response.statusCode}');
-    if (response.statusCode == 204) {
-      setState(() {
-        places.removeWhere((place) => place.id == id);
-      });
-      print('Place removed. Remaining count: ${places.length}');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hospital deleted successfully')),
-      );
-    } else {
-      print('Failed to delete: ${response.statusCode}');
-    }
   }
 
   void fetchAllPlaces() async {
@@ -50,17 +34,30 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
     });
 
     try {
-      final fetchedPlaces = await fetchAllPlacesFromApi();
+      final fetchedPlaces = await apiService.fetchAllPlaces();
       setState(() {
         places = fetchedPlaces;
         isLoading = false;
       });
-      print("Fetched places count: ${places.length}");
     } catch (e) {
       setState(() {
         isLoading = false;
       });
       print("Error fetching places: $e");
+    }
+  }
+
+  void deletePlace(int id) async {
+    try {
+      await apiService.deletePlace(id);
+      setState(() {
+        places.removeWhere((place) => place.id == id);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hospital deleted successfully')),
+      );
+    } catch (e) {
+      print('Failed to delete: $e');
     }
   }
 
@@ -89,7 +86,6 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Search Bar
             TextField(
               onChanged: (value) {
                 setState(() {
@@ -105,7 +101,6 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Body content
             Expanded(
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -126,8 +121,7 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
-                                      child: (place.image == null ||
-                                              place.image.isEmpty)
+                                      child: (place.image.isEmpty)
                                           ? Image.asset(
                                               AppAssets.hospital,
                                               width: 100,
@@ -154,15 +148,13 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          (place.website == null ||
-                                                  place.website.isEmpty)
+                                          place.website.isEmpty
                                               ? Container()
                                               : GestureDetector(
                                                   onTap: () async {
                                                     final url = place.website;
-                                                    if (url.isNotEmpty &&
-                                                        await canLaunchUrl(
-                                                            Uri.parse(url))) {
+                                                    if (await canLaunchUrl(
+                                                        Uri.parse(url))) {
                                                       await launchUrl(
                                                           Uri.parse(url),
                                                           mode: LaunchMode
@@ -202,7 +194,6 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
                                 ),
                               ),
                             ),
-                            // زر الحذف العلوي
                             Positioned(
                               top: 0,
                               right: 0,
@@ -226,10 +217,6 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
                                           onPressed: () {
                                             Navigator.of(ctx).pop();
                                             deletePlace(place.id);
-                                            setState(() {
-                                              places.removeWhere(
-                                                  (p) => p.id == place.id);
-                                            });
                                           },
                                           child: const Text('Delete'),
                                         ),
@@ -259,10 +246,7 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
           }
         },
         backgroundColor: AppColors.purple,
-        child: const Icon(
-          Icons.add,
-          color: AppColors.lavender,
-        ),
+        child: const Icon(Icons.add, color: AppColors.lavender),
       ),
     );
   }

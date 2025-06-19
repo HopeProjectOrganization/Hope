@@ -34,6 +34,18 @@ class PlaceModel {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'hospitalName': name,
+      'hospitalNumber': phone,
+      'hospitalAddress': address,
+      'hospitalLocation': location,
+      'hospitalWebsite': website,
+      'logo': image,
+    };
+  }
+
   @override
   String toString() {
     return 'PlaceModel(name: $name, phone: $phone)';

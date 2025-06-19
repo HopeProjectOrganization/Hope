@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:hope/Api/history/add_to_history.dart';
+import 'package:hope/Api/history/history_service.dart';
 import 'package:hope/main.dart';
 import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
@@ -69,8 +70,7 @@ class AddService {
         if (responseData['id'] != null) {
           print("Product added successfully!");
 
-          final addToHistory = AddToHistory();
-          await addToHistory.updateHistory(barcode, "ADDED");
+          await HistoryApiService.addToHistory(barcode, "ADDED");
 
           showMessage(
             context,

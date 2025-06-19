@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/places/fetch_places.dart';
+import 'package:hope/Api/places/places_service.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -21,6 +21,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
   bool isLoading = true;
   late AppLocalizations appLocalizations;
   late ThemeProvider themeProvider;
+  final PlacesApiService apiService = PlacesApiService();
 
   @override
   void initState() {
@@ -29,16 +30,22 @@ class _PlacesScreenState extends State<PlacesScreen> {
   }
 
   void fetchAllPlaces() async {
-    List<PlaceModel> fetchedPlaces = []; // تهيئة المتغير كقائمة فارغة
-    for (int id = 1; id <= 7; id++) {
-      final place = await fetchPlaces(id);
-      fetchedPlaces.addAll(place);
-    }
     setState(() {
-      places = fetchedPlaces;
-      isLoading = false;
+      isLoading = true;
     });
-    print("Fetched places count: ${places.length}");
+
+    try {
+      final fetchedPlaces = await apiService.fetchAllPlaces();
+      setState(() {
+        places = fetchedPlaces;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error fetching places: $e");
+    }
   }
 
   @override

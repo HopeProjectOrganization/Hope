@@ -133,6 +133,22 @@ class Meal {
           : Nutrients.empty(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'image': image,
+      'prepareTime': prepareTime,
+      'cookTime': cookTime,
+      'servings': servings,
+      'tags': tags,
+      'ingredients': ingredients.map((i) => i.toJson()).toList(),
+      'steps': steps,
+      'nutrients': nutrients.toJson(),
+    };
+  }
 }
 
 class Ingredient {
@@ -152,6 +168,13 @@ class Ingredient {
 
   factory Ingredient.empty() {
     return Ingredient(name: '', servingSize: ServingSize.empty());
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'servingSize': servingSize.toJson(),
+    };
   }
 }
 
@@ -182,6 +205,16 @@ class ServingSize {
 
   factory ServingSize.empty() {
     return ServingSize(units: '', desc: '', qty: 0, grams: 0, scale: 1.0);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'units': units,
+      'desc': desc,
+      'qty': qty,
+      'grams': grams,
+      'scale': scale,
+    };
   }
 }
 
@@ -214,5 +247,14 @@ class Nutrients {
       protein: 0,
       fat: 0,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'caloriesKCal': calories,
+      'netCarbs': netCarbs,
+      'protein': protein,
+      'fat': fat,
+    };
   }
 }

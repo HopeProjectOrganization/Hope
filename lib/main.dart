@@ -18,7 +18,6 @@ import 'package:hope/core/providers/locale_provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_theme.dart';
 import 'package:hope/model/meal_dm.dart';
-import 'package:hope/test.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/verify/verification.dart';
@@ -168,12 +167,12 @@ class MyApp extends StatelessWidget {
             title: title,
           );
         },
-        ProgressScreen.routeName: (context) {
-          final args = ModalRoute.of(context)?.settings.arguments
-              as Map<String, dynamic>?;
-          final Meal selectedMeal = args?['meal'] as Meal;
-          return ProgressScreen(meal: selectedMeal);
-        },
+        // ProgressScreen.routeName: (context) {
+        //   final args = ModalRoute.of(context)?.settings.arguments
+        //       as Map<String, dynamic>?;
+        //   final Meal selectedMeal = args?['meal'] as Meal;
+        //   return ProgressScreen(meal: selectedMeal);
+        // },
         //  FilterScreen.routeName: (_) => const FilterScreen(),
         PlacesAdminScreen.routeName: (_) => PlacesAdminScreen(),
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen()

@@ -1,7 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hope/Api/add/add_service.dart';
-import 'package:hope/Api/history/add_to_history.dart';
+import 'package:hope/Api/history/history_service.dart';
 import 'package:hope/Api/scan/sharedData.dart';
 import 'package:hope/main.dart';
 import 'package:http/http.dart' as http;
@@ -42,7 +43,7 @@ class ScanService {
         await AddService.addProductAfterScan(
             context, productName, barcode, ingredients, "Food");
 
-        await AddToHistory().updateHistory(barcode, 'SCANNED');
+        await HistoryApiService.addToHistory(barcode, 'SCANNED');
 
         return product;
       }
@@ -72,7 +73,7 @@ class ScanService {
             context, productName, barcode, ingredients, "Beauty");
 
         // تحديث التاريخ بعد إضافة المنتج
-        await AddToHistory().updateHistory(barcode, 'SCANNED');
+        await HistoryApiService.addToHistory(barcode, 'SCANNED');
 
         return product;
       }
@@ -108,7 +109,7 @@ class ScanService {
           'barcode': local['barcode'] ?? barcode,
           'highRiskIngredients': local['highRiskIngredients'] ?? [],
         };
-        await AddToHistory().updateHistory(barcode, 'SCANNED');
+        await HistoryApiService.addToHistory(barcode, 'SCANNED');
         ScanDataService().scannedProduct = product;
         ScanDataService().highRiskIngredients = product['highRiskIngredients'];
         return {
@@ -132,7 +133,7 @@ class ScanService {
           'barcode': food['code'] ?? barcode,
           'highRiskIngredients': analyzed?['highRiskIngredients'] ?? [],
         };
-        await AddToHistory().updateHistory(barcode, 'SCANNED');
+        await HistoryApiService.addToHistory(barcode, 'SCANNED');
 
         return {
           'message': message,
@@ -161,7 +162,7 @@ class ScanService {
             'highRiskIngredients': analyzed?['highRiskIngredients'] ?? [],
           };
 
-          await AddToHistory().updateHistory(barcode, 'SCANNED');
+          await HistoryApiService.addToHistory(barcode, 'SCANNED');
 
           return {
             'message': message,

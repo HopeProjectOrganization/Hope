@@ -104,7 +104,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
             ),
             const SizedBox(height: 20),
             CustomTextField(
-              hint: widget.userProfile.email ?? "No email",
+              hint: widget.userProfile.email,
               prefixIcon: const ImageIcon(AssetImage(AppIcons.emailIcon)),
               controller: emailController,
             ),

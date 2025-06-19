@@ -54,7 +54,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
       article = args['article'];
       category = args['category'];
       isInitialized = true;
-      checkIfFavorite(article.articleId!);
+      checkIfFavorite(article.articleId);
     }
 
     final String image =
@@ -62,8 +62,8 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
             ? article.imageUrl!
             : 'https://via.placeholder.com/300x200.png?text=No+Image';
 
-    final String title = (article.title != null && article.title!.length > 80)
-        ? "${article.title!.substring(0, 50)}..."
+    final String title = (article.title != null && article.title.length > 80)
+        ? "${article.title.substring(0, 50)}..."
         : article.title ?? 'No Title';
 
     final String date = formatDate(article.pubDate);
@@ -99,7 +99,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
 
               try {
                 await FavoriteApiService.saveFavorite(
-                  article.articleId!,
+                  article.articleId,
                   category,
                   'post',
                 );
@@ -137,7 +137,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8)),
                 ),
-                onPressed: () => launchUrl(Uri.parse(article.link!)),
+                onPressed: () => launchUrl(Uri.parse(article.link)),
                 icon: const Icon(Icons.open_in_new, color: AppColors.white),
                 label: const Text("Read Full Article",
                     style: TextStyle(color: AppColors.white)),
@@ -170,7 +170,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
                               ),
                             ),
                           Text(
-                            article.sourceName!,
+                            article.sourceName,
                             style: const TextStyle(
                               color: AppColors.gray,
                               fontWeight: FontWeight.w600,
@@ -181,9 +181,9 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
                     if (article.sourceUrl != null) ...[
                       const SizedBox(height: 8),
                       InkWell(
-                        onTap: () => launchUrl(Uri.parse(article.sourceUrl!)),
+                        onTap: () => launchUrl(Uri.parse(article.sourceUrl)),
                         child: Text(
-                          article.sourceUrl!,
+                          article.sourceUrl,
                           style: const TextStyle(
                             color: AppColors.purple,
                             decoration: TextDecoration.underline,
@@ -198,7 +198,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
                                 size: 18, color: AppColors.gray),
                             onPressed: () {
                               Clipboard.setData(
-                                  ClipboardData(text: article.sourceUrl!));
+                                  ClipboardData(text: article.sourceUrl));
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text("Source link copied")),
