@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
+import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
@@ -20,7 +21,7 @@ class ResetpasswordScreen extends StatefulWidget {
 class ResetpasswordScreenState extends State<ResetpasswordScreen> {
   late AppLocalizations appLocalizations;
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController PasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
@@ -86,7 +87,7 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
   }
 
   String? _validatePasswords() {
-    String newPassword = _newPasswordController.text;
+    String newPassword = PasswordController.text;
     String confirmPassword = _confirmPasswordController.text;
 
     if (newPassword.isEmpty || confirmPassword.isEmpty) {
@@ -104,7 +105,7 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
   }
 
   String? _validateEmptyFields() {
-    if (_newPasswordController.text.isEmpty ||
+    if (PasswordController.text.isEmpty ||
         _confirmPasswordController.text.isEmpty) {
       setState(() {
         _emptyFieldError = appLocalizations.pleaseFillOutBothFields;
@@ -142,38 +143,7 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
             ),
             const SizedBox(height: 16),
             // New Password Field
-            TextFormField(
-              controller: _newPasswordController,
-              style: Theme.of(context).textTheme.bodyLarge,
-              cursorColor: Theme.of(context).primaryColor,
-              obscureText: _obscureNewPassword,
-              decoration: InputDecoration(
-                hintText: appLocalizations.newPass,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureNewPassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureNewPassword = !_obscureNewPassword;
-                    });
-                  },
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                errorText: _emptyFieldError,
-                errorStyle: const TextStyle(color: Colors.red),
-              ),
-            ),
+            buildPasswordTextField(context),
             const SizedBox(height: 16),
             // Confirm Password Field
             TextFormField(
@@ -227,7 +197,7 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
                 if (_emptyFieldError == null && _passwordMatchError == null) {
                   // showLoading(context);
                   try {
-                    await resetPassword(_newPasswordController.text,
+                    await resetPassword(PasswordController.text,
                         _confirmPasswordController.text);
                     showMessage(
                       context,
@@ -249,6 +219,139 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  bool _obscurePassword = true;
+  List<String> passwordHints = [];
+  int passwordStrength = 0;
+
+  List<String> getPasswordErrors(String password) {
+    List<String> errors = [];
+    passwordStrength = 0;
+
+    if (password.length >= 8) {
+      errors.add("✅ At least 8 characters");
+      passwordStrength++;
+    } else {
+      errors.add("❌ At least 8 characters");
+    }
+
+    if (RegExp(r'[A-Z]').hasMatch(password)) {
+      errors.add("✅ Has uppercase letter");
+      passwordStrength++;
+    } else {
+      errors.add("❌ At least one uppercase letter");
+    }
+
+    if (RegExp(r'[a-z]').hasMatch(password)) {
+      errors.add("✅ Has lowercase letter");
+      passwordStrength++;
+    } else {
+      errors.add("❌ At least one lowercase letter");
+    }
+
+    if (RegExp(r'\d').hasMatch(password)) {
+      errors.add("✅ Has number");
+      passwordStrength++;
+    } else {
+      errors.add("❌ At least one number");
+    }
+
+    if (RegExp(r'[!@#\$&*~]').hasMatch(password)) {
+      errors.add("✅ Has special character");
+      passwordStrength++;
+    } else {
+      errors.add("❌ At least one special character (!@#\$&*~)");
+    }
+
+    return errors;
+  }
+
+  Widget buildPasswordTextField(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextFormField(
+          controller: PasswordController,
+          obscureText: _obscurePassword,
+          onChanged: (value) {
+            setState(() {
+              passwordHints = getPasswordErrors(value);
+            });
+          },
+          decoration: InputDecoration(
+            hintText: 'Password',
+            prefixIcon: const Icon(Icons.lock_outline),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+              ),
+              onPressed: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (PasswordController.text.isNotEmpty)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: passwordStrength / 5,
+              minHeight: 8,
+              backgroundColor: Colors.grey.shade300,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                passwordStrength <= 2
+                    ? AppColors.red
+                    : passwordStrength == 3 || passwordStrength == 4
+                        ? Colors.orange
+                        : Colors.green,
+              ),
+            ),
+          ),
+        if (PasswordController.text.isNotEmpty) const SizedBox(height: 12),
+        if (PasswordController.text.isNotEmpty)
+          if (passwordHints.isNotEmpty)
+            Card(
+              elevation: 2,
+              color: Colors.grey.shade200,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: passwordHints.map((hint) {
+                    final isValid = hint.startsWith("✅");
+                    return Row(
+                      children: [
+                        Icon(
+                          isValid ? Icons.check_circle : Icons.cancel,
+                          size: 18,
+                          color: isValid ? Colors.green : AppColors.red,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          hint.replaceFirst("✅ ", "").replaceFirst("❌ ", ""),
+                          style: TextStyle(
+                            color: isValid ? Colors.green : AppColors.red,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+      ],
     );
   }
 }

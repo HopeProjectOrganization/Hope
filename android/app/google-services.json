@@ -12,7 +12,12 @@
           "package_name": "com.example.hope"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "37011975447-debopjecg5phiu5fu0lpm8bfk4fq99t8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCg-HZ_e8c9kixqzbNbm_rnIIA3PECNvbo"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "37011975447-debopjecg5phiu5fu0lpm8bfk4fq99t8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

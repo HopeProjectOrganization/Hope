@@ -6,7 +6,9 @@ import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
+import 'package:hope/ui/screens/auth/login/login_with_google.dart';
 import 'package:hope/ui/screens/auth/register/register.dart';
+import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_text_field.dart';
 import 'package:hope/ui/shared_widgets/language_switch.dart';
@@ -192,7 +194,29 @@ class _LoginScreenState extends State<LoginScreen> {
 
   FilledButton buildGoogleSignInButton(BuildContext context) {
     return FilledButton(
-      onPressed: () {},
+      onPressed: () async {
+        final provider = GoogleSignInProvider();
+        try {
+          final userCredential = await provider.signInWithGoogle();
+
+          if (userCredential != null) {
+            print("Logged in as ${userCredential.user?.displayName}");
+            // هنا مثلاً اعمل تنقل أو حدث ال state لتوجيه المستخدم للشاشة الرئيسية
+            Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+          } else {
+            // المستخدم ألغى تسجيل الدخول أو حدث خطأ
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text('Google sign-in was cancelled or failed.')),
+            );
+          }
+        } catch (e) {
+          // خطأ عام غير متوقع
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error during Google sign-in: $e')),
+          );
+        }
+      },
       style: FilledButton.styleFrom(
         backgroundColor: Colors.transparent,
         foregroundColor: Theme.of(context).primaryColor,
@@ -202,23 +226,24 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
       child: SizedBox(
-          width: double.infinity,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                flex: 1,
-                child: Brand(Brands.google),
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Brand(Brands.google),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 3,
+              child: Text(
+                appLocalizations.googleLogin,
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                flex: 3,
-                child: Text(
-                  appLocalizations.googleLogin,
-                ),
-              ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

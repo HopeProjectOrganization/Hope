@@ -72,7 +72,7 @@ main() async {
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  static String IP = "192.168.78.153:8080";
+  static String IP = "192.168.1.5:8080";
   MyApp({super.key});
 
   late ThemeProvider themeProvider;
@@ -179,7 +179,7 @@ class MyApp extends StatelessWidget {
         PlacesAdminScreen.routeName: (_) => PlacesAdminScreen(),
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen()
       },
-      initialRoute: HomeScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

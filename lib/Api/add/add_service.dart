@@ -39,7 +39,7 @@ class AddService {
       "Authorization": "Bearer $token",
     };
 
-    final ingredientsList = extractIngredients(ingredientsText);
+    final ingredientsList = extractIngredients(ingredientsText, productType);
 
     final body = {
       "productName": productName,
@@ -135,7 +135,7 @@ class AddService {
       "Authorization": "Bearer $token",
     };
 
-    final ingredientsList = extractIngredients(ingredientsText);
+    final ingredientsList = extractIngredients(ingredientsText, productType);
 
     final body = {
       "productName": productName,
@@ -198,18 +198,20 @@ class AddService {
     }
   }
 
-  static List<Map<String, dynamic>> extractIngredients(String text) {
-    final List<Map<String, dynamic>> ingredients = [];
-
-    final ingredientNames = text.split(RegExp(r'[,-]'));
-    for (var name in ingredientNames) {
-      final ingredient = {
-        "ingredientName": name.trim(),
-      };
-      ingredients.add(ingredient);
-    }
-
-    return ingredients;
+  static String extractIngredients(String text, String productType) {
+    //TextRecognitionService text = TextRecognitionService();
+    // final List<Map<String, dynamic>> ingredients = [];
+    //   final ingredientNames = text.split(RegExp(r'[,-]'));
+    //   for (var name in ingredientNames) {
+    //     final ingredient = {
+    //       "ingredientName": name.trim(),
+    //     };
+    //     ingredients.add(ingredient);
+    //  }
+    // } if (productType == 'FOOD'){
+    //
+    // }
+    return '';
   }
 
   Future<List<dynamic>?> getAddedProducts() async {
