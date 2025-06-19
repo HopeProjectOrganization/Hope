@@ -88,7 +88,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                       ),
                       const CircleAvatar(
                         radius: 14,
-                        backgroundColor: AppColors.purple,
+                        backgroundColor: AppColors.yellow,
                         child:
                             Icon(Icons.edit, size: 16, color: AppColors.white),
                       ),

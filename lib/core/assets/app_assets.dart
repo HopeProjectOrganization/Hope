@@ -11,6 +11,8 @@ class AppAssets {
   static const String addOnBoardingDark = "assets/images/addOnBoardingDark.png";
   static const String awareOnBoarding = "assets/images/awareOnBoarding.png";
   static const String chatbotOnBoarding = "assets/images/chatbotOnBoarding.png";
+  static const String meals = "assets/images/meals.png";
+  static const String healthy = "assets/images/healthy.png";
 
   //Authentication
   static const String register = "assets/images/register.png";

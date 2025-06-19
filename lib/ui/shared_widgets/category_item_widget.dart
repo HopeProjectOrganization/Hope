@@ -30,12 +30,24 @@ class CategoryItemWidget extends StatelessWidget {
     appLocalizations =
         AppLocalizations.of(context) ?? AppLocalizations.of(context)!;
     return Container(
-      margin: const EdgeInsets.all(15),
+      margin: const EdgeInsets.all(8),
       height: MediaQuery.of(context).size.height * 0.23,
-      decoration: const BoxDecoration(
-          color: AppColors.lavender,
+      decoration: BoxDecoration(
+          color: themeProvider.isDark() ? AppColors.dark : AppColors.white,
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: AppColors.gray.withOpacity(0.7), // لون الشادو
+          //     spreadRadius: 2, // مدى انتشار الشادو
+          //     blurRadius: 5,   // نعومة الشادو
+          //     offset: Offset(0, 3), // اتجاه الشادو (أفقي, عمودي)
+          //   ),
+          // ],
+          border: Border.all(
+            color: AppColors.purple, // لون البوردر
+            width: 2.0, // سمك البوردر
+          ),
           borderRadius: BorderRadius.all(Radius.circular(15))),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(10),
       child: GestureDetector(
         onTap: onTap,
         child: Stack(
@@ -55,13 +67,7 @@ class CategoryItemWidget extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
-                        fontSize: 40,
-                        height: 1,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.dark),
-                  ),
-                )
+                        style: Theme.of(context).textTheme.titleLarge))
               ],
             ),
             Positioned(
@@ -73,36 +79,45 @@ class CategoryItemWidget extends StatelessWidget {
                     ? null
                     : 10,
                 child: Container(
-                  padding: const EdgeInsets.all(5),
+                  padding: EdgeInsets.all(0),
                   decoration: BoxDecoration(
+                      // boxShadow: [
+                      //   BoxShadow(
+                      //     color: AppColors.purple.withOpacity(0.7), // لون الشادو
+                      //     spreadRadius: 2, // مدى انتشار الشادو
+                      //     blurRadius: 5,   // نعومة الشادو
+                      //     offset: Offset(0, 3), // اتجاه الشادو (أفقي, عمودي)
+                      //   ),
+                      // ],
                       borderRadius: BorderRadius.circular(24),
-                      color: (themeProvider.isDark()
-                              ? AppColors.dark
-                              : AppColors.white)
-                          .withOpacity(.5)),
+                      border: Border.all(color: AppColors.purple, width: 1),
+                      color: AppColors.lavender),
                   child: FittedBox(
                     child: Row(
                       children: [
-                        Text(
-                          appLocalizations.viewAll,
-                          style: TextStyle(
-                              color: themeProvider.isDark()
-                                  ? AppColors.white
-                                  : AppColors.purple),
+                        Container(
+                          child: CircleAvatar(
+                              backgroundColor: AppColors.yellow,
+                              radius: 20,
+                              child: Container(
+                                padding: EdgeInsets.only(left: 12),
+                                child: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: themeProvider.isDark()
+                                      ? AppColors.white
+                                      : AppColors.dark,
+                                ),
+                              )),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(24)),
+                              border: Border.all(color: AppColors.dark)),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        CircleAvatar(
-                            backgroundColor: themeProvider.isDark()
-                                ? AppColors.dark
-                                : AppColors.white,
-                            child: Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: themeProvider.isDark()
-                                  ? AppColors.white
-                                  : AppColors.dark,
-                            ))
+                        Padding(
+                          padding: EdgeInsets.all(6),
+                          child: Text(appLocalizations.viewAll,
+                              style: Theme.of(context).textTheme.labelMedium),
+                        )
                       ],
                     ),
                   ),

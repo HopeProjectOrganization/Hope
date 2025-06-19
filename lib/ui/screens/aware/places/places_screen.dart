@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/places/fetch_places.dart';
 import 'package:hope/core/assets/app_assets.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/places_dm.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PlacesScreen extends StatefulWidget {
@@ -18,6 +20,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
   List<PlaceModel> places = [];
   bool isLoading = true;
   late AppLocalizations appLocalizations;
+  late ThemeProvider themeProvider;
 
   @override
   void initState() {
@@ -41,6 +44,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
   @override
   Widget build(BuildContext context) {
     appLocalizations = AppLocalizations.of(context)!;
+    themeProvider = Provider.of<ThemeProvider>(context);
 
     final filteredPlaces = places.where((place) {
       return place.name.toLowerCase().contains(searchQuery);
@@ -88,9 +92,9 @@ class _PlacesScreenState extends State<PlacesScreen> {
                       itemBuilder: (context, index) {
                         final place = filteredPlaces[index];
                         return Card(
-                          color: AppColors.lavender,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                          color: AppColors.cloudi,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
@@ -120,11 +124,9 @@ class _PlacesScreenState extends State<PlacesScreen> {
                               children: [
                                 Text(
                                         place.name,
-                                        style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall),
                                       (place.website == null ||
                                               place.website.isEmpty)
                                           ? Container()
@@ -192,12 +194,17 @@ class _PlacesScreenState extends State<PlacesScreen> {
 
   Widget buildRow(IconData icon, String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: AppColors.dark),
+          Icon(icon,
+              size: 16,
+              color: themeProvider.isDark() ? AppColors.white : AppColors.dark),
           const SizedBox(width: 5),
-          Expanded(child: Text(text)),
+          Expanded(
+              child: Text(
+            text,
+          )),
         ],
       ),
     );

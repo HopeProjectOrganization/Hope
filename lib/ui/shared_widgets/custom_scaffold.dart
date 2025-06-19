@@ -27,7 +27,8 @@ class CustomScaffold extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: isDarkMode ? AppColors.dark : AppColors.white,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_outlined, color: AppColors.purple),
+          icon: Icon(Icons.arrow_back_outlined,
+              color: isDarkMode ? AppColors.white : AppColors.dark),
           onPressed: () {
             Navigator.of(context).pop();
           },

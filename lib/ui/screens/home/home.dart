@@ -53,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> tabs = [
     const HomeTab(),
     const AddTab(),
+    const Placeholder(), // عشان نحافظ على الـ index == 2 للزر سكان (مش هيظهر)
     AwareTab(),
     MenuTab(),
   ];
@@ -75,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
     themeProvider = Provider.of<ThemeProvider>(context);
 
     Color color = themeProvider.isDark() ? AppColors.dark : AppColors.white;
+    Color iconColor = themeProvider.isDark() ? AppColors.white : AppColors.dark;
 
     appLocalizations = AppLocalizations.of(context)!;
 
@@ -99,16 +101,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             bottom: MediaQuery.of(context).size.height * 0.04),
                         child: FloatingActionButton(
                           heroTag: 'scan-main-button',
-                          backgroundColor: AppColors.purple,
+                          backgroundColor: color,
                           shape: CircleBorder(
-                            side: BorderSide(color: color, width: 5),
+                            side: BorderSide(color: AppColors.purple, width: 5),
                           ),
                           onPressed: () {
                             startScan();
                           },
                           child: ImageIcon(
                             const AssetImage(AppIcons.scanIcon),
-                            color: color,
+                            color: iconColor,
                           ),
                         ),
                       ),
@@ -123,9 +125,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
           bottomNavigationBar: BottomNavigationBar(
             onTap: (index) {
-              setState(() {
-                currentIndex = index;
-              });
+              if (index == 2) {
+                startScan(); // زر السكان، لا يغير التاب
+              } else {
+                setState(() {
+                  currentIndex = index;
+                });
+              }
             },
             currentIndex: currentIndex,
             type: BottomNavigationBarType.fixed,
@@ -149,6 +155,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               BottomNavigationBarItem(
+                icon: const Opacity(
+                  opacity: 0,
+                  child: Icon(Icons.ac_unit), // أي أيقونة مؤقتة
+                ),
+                label: "Scan",
+                activeIcon: const Opacity(
+                  opacity: 0,
+                  child: Icon(Icons.ac_unit), // أي أيقونة مؤقتة
+                ),
+              ),
+              BottomNavigationBarItem(
                 icon: const ImageIcon(
                   AssetImage(AppIcons.awareIcon),
                 ),
@@ -159,11 +176,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               BottomNavigationBarItem(
                 icon: const ImageIcon(
-                  AssetImage(AppIcons.menuIcon),
+                  AssetImage(AppIcons.userIcon),
                 ),
                 label: appLocalizations.menu,
                 activeIcon: const ImageIcon(
-                  AssetImage(AppIcons.menuFilled),
+                  AssetImage(AppIcons.userIcon),
                 ),
               ),
             ],

@@ -1,5 +1,6 @@
 class Exercise {
-  final String id;
+  final int? id;
+  final String excersiesId;
   final String name;
   final String gifUrl;
   final String bodyPart;
@@ -9,7 +10,8 @@ class Exercise {
   final List<String> instructions;
 
   Exercise({
-    required this.id,
+    this.id,
+    required this.excersiesId,
     required this.name,
     required this.gifUrl,
     required this.bodyPart,
@@ -25,10 +27,25 @@ class Exercise {
       name: json['name'],
       gifUrl: json['gifUrl'],
       bodyPart: json['bodyPart'],
+      excersiesId: json['excersiesId'],
       target: json['target'],
       equipment: json['equipment'],
       secondaryMuscles: List<String>.from(json['secondaryMuscles'] ?? []),
       instructions: List<String>.from(json['instructions'] ?? []),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) 'id': id,
+      'excersiesId': excersiesId,
+      'bodyPart': bodyPart,
+      'equipment': equipment,
+      'gifUrl': gifUrl,
+      'name': name,
+      'target': target,
+      'secondaryMuscles': secondaryMuscles,
+      'instructions': instructions,
+    };
   }
 }

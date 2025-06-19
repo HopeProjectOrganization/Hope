@@ -304,7 +304,7 @@ class _SuggestedReplacementsScreenState
           ),
         ),
         centerTitle: true,
-        title: Text("Healthy Alternatives",
+        title: const Text("Healthy Alternatives",
             style: TextStyle(color: AppColors.white)),
         bottom: TabBar(
           controller: _tabController,
@@ -316,18 +316,18 @@ class _SuggestedReplacementsScreenState
         ),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : TabBarView(
               controller: _tabController,
               children: categories.map((cat) {
                 final replacements = allReplacements[cat];
                 if (replacements == null) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (replacements.isEmpty) {
-                  return Center(child: Text("No alternatives available"));
+                  return const Center(child: Text("No alternatives available"));
                 }
                 return ListView(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   children: replacements.map(buildReplacementRow).toList(),
                 );
               }).toList(),

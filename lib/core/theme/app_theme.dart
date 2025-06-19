@@ -42,28 +42,31 @@ class AppTheme {
       titleMedium: TextStyle(
           color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
     ),
-    bottomAppBarTheme: BottomAppBarTheme(color: AppColors.purple, elevation: 5),
-      iconTheme: IconThemeData(color: AppColors.white),
-      textTheme: const TextTheme(
-        titleMedium: TextStyle(
-            color: AppColors.white, fontSize: 26, fontWeight: FontWeight.bold),
-        titleSmall: TextStyle(
-          color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
+    bottomAppBarTheme: BottomAppBarTheme(color: AppColors.dark, elevation: 5),
+    iconTheme: IconThemeData(color: AppColors.white),
+    textTheme: const TextTheme(
       titleLarge: TextStyle(
-            color: AppColors.dark, fontSize: 32, fontWeight: FontWeight.bold),
-        bodyLarge: TextStyle(
+          fontSize: 40,
+          height: 1,
+          fontWeight: FontWeight.bold,
+          color: AppColors.dark),
+      titleMedium: TextStyle(
+          color: AppColors.white, fontSize: 26, fontWeight: FontWeight.bold),
+        titleSmall: TextStyle(
+          color: AppColors.dark, fontSize: 16, fontWeight: FontWeight.bold),
+      bodyLarge: TextStyle(
           color: AppColors.dark, fontSize: 16, fontWeight: FontWeight.w500),
       bodyMedium: TextStyle(
           color: AppColors.purple, fontSize: 14, fontWeight: FontWeight.w500),
       bodySmall: TextStyle(
           color: AppColors.dark, fontSize: 12, fontWeight: FontWeight.w500),
       labelLarge: TextStyle(
-          color: AppColors.purple, fontSize: 22, fontWeight: FontWeight.bold),
+          color: AppColors.dark, fontSize: 24, fontWeight: FontWeight.bold),
       labelMedium: TextStyle(
-          color: AppColors.purple, fontSize: 20, fontWeight: FontWeight.bold),
+          color: AppColors.dark, fontSize: 20, fontWeight: FontWeight.bold),
       labelSmall: TextStyle(
-          color: AppColors.purple, fontSize: 16, fontWeight: FontWeight.bold),
-      ),
+          color: AppColors.dark, fontSize: 16, fontWeight: FontWeight.bold),
+    ),
     dividerTheme: const DividerThemeData(
       color: AppColors.purple,
     ),
@@ -79,7 +82,7 @@ class AppTheme {
     ),
     textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-            foregroundColor: AppColors.purple,
+            foregroundColor: AppColors.white,
             textStyle: const TextStyle(
                 color: AppColors.purple,
                 decoration: TextDecoration.underline,
@@ -112,13 +115,13 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.red, width: 1),
         )),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.purple,
-        selectedItemColor: AppColors.white,
-        selectedLabelStyle: TextStyle(
-          color: AppColors.white,
-        ),
-        unselectedItemColor: AppColors.white,
+      backgroundColor: AppColors.white,
+      selectedItemColor: AppColors.purple,
+      selectedLabelStyle: TextStyle(
+        color: AppColors.purple,
       ),
+      unselectedItemColor: AppColors.dark,
+    ),
     // floatingActionButtonTheme: FloatingActionButtonThemeData(
     //   backgroundColor: AppColors.purple,
     //   shape: CircleBorder(
@@ -167,6 +170,11 @@ class AppTheme {
           iconTheme: IconThemeData(color: AppColors.dark)),
       primaryColor: AppColors.purple,
       textTheme: const TextTheme(
+      titleLarge: TextStyle(
+          color: AppColors.white,
+          fontSize: 40,
+          fontWeight: FontWeight.bold,
+          height: 1),
       titleMedium: TextStyle(
           color: AppColors.gray, fontSize: 26, fontWeight: FontWeight.bold),
       bodyLarge: TextStyle(
@@ -181,15 +189,15 @@ class AppTheme {
             fontSize: 12,
             fontWeight: FontWeight.w500),
         titleSmall: TextStyle(
-          color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
+          color: AppColors.white, fontSize: 16, fontWeight: FontWeight.w500),
       labelLarge: TextStyle(
-            color: AppColors.purple, fontSize: 22, fontWeight: FontWeight.bold),
-        labelMedium: TextStyle(
-            color: AppColors.purple, fontSize: 20, fontWeight: FontWeight.bold),
-        labelSmall: TextStyle(
-            color: AppColors.purple, fontSize: 16, fontWeight: FontWeight.bold),
-      ),
-      primaryTextTheme: const TextTheme(
+          color: AppColors.white, fontSize: 24, fontWeight: FontWeight.bold),
+      labelMedium: TextStyle(
+          color: AppColors.white, fontSize: 20, fontWeight: FontWeight.bold),
+      labelSmall: TextStyle(
+          color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),
+    ),
+    primaryTextTheme: const TextTheme(
         titleMedium: TextStyle(
           color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
       titleSmall: TextStyle(
@@ -243,13 +251,13 @@ class AppTheme {
         ),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.purple,
-        selectedItemColor: AppColors.dark,
-        selectedLabelStyle: TextStyle(
-          color: AppColors.dark,
+      backgroundColor: AppColors.dark,
+      selectedItemColor: AppColors.purple,
+      selectedLabelStyle: TextStyle(
+        color: AppColors.dark,
         ),
-        unselectedItemColor: AppColors.dark,
-      ),
+      unselectedItemColor: AppColors.white,
+    ),
     // floatingActionButtonTheme: FloatingActionButtonThemeData(
     //   backgroundColor: AppColors.purple,
     //   shape: CircleBorder(

@@ -29,7 +29,9 @@ class LoginService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
-        final token = data['token'];
+        final token =
+            "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYXNzZWxAZ21haWwuY29tIiwiaWF0IjoxNzQ5NTE0MDIzLCJleHAiOjE3NDk3NzMyMjN9.JmBqv4Ry36qd2AVhGbaU9dYYjgBaNEdANIWBg-qffcA";
+        //    final token = data['token'];
         print("TOKEEEEEEEEN : $token");
 
         if (token != null) {

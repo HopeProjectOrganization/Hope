@@ -9,6 +9,7 @@ import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 
+// ignore: must_be_immutable
 class AdminNewsEditorScreen extends StatefulWidget {
   Map<String, dynamic>? newsData;
 
@@ -29,7 +30,6 @@ class _AdminNewsEditorScreenState extends State<AdminNewsEditorScreen> {
   File? _pickedImage;
   String? _existingImageUrl;
 
-  bool _isInitialized = false;
 
   @override
   void initState() {
@@ -67,7 +67,6 @@ class _AdminNewsEditorScreenState extends State<AdminNewsEditorScreen> {
       final fileName = DateTime.now().millisecondsSinceEpoch.toString();
       final ref =
           FirebaseStorage.instance.ref().child('news_images/$fileName.jpg');
-      final uploadTask = await ref.putFile(imageFile);
       final downloadUrl = await ref.getDownloadURL();
       print("Image uploaded successfully: $downloadUrl");
       return downloadUrl;

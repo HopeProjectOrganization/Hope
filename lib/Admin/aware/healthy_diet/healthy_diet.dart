@@ -8,6 +8,7 @@ import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:hope/ui/shared_widgets/utils/healthy_diet_category.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class AdminHealthyDiet extends StatelessWidget {
   static const routeName = '/adminHealthyDiet';
 

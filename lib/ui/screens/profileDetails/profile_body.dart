@@ -15,6 +15,7 @@ import 'package:hope/ui/screens/profileDetails/profile_item.dart';
 import 'package:hope/ui/screens/profileDetails/saved_list.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class ProfileBody extends StatefulWidget {
@@ -55,6 +56,7 @@ class _ProfileBodyState extends State<ProfileBody> {
 
   @override
   Widget build(BuildContext context) {
+    late ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
     if (widget.userProfile == null) {
       return const Center(
         child: Text("Failed to load profile"),
@@ -65,6 +67,10 @@ class _ProfileBodyState extends State<ProfileBody> {
       child: Column(
         children: [
           Center(
+              child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(60)),
+                border: Border.all(color: AppColors.yellow, width: 2)),
             child: CircleAvatar(
               radius: 60,
               child: Image.asset(
@@ -74,7 +80,7 @@ class _ProfileBodyState extends State<ProfileBody> {
                 fit: BoxFit.contain,
               ),
             ),
-          ),
+          )),
           const SizedBox(height: 20),
           Center(
             child: Text(
@@ -131,14 +137,12 @@ class _ProfileBodyState extends State<ProfileBody> {
               color: AppColors.purple,
             ),
             title: widget.appLocalizations.theme,
-            context: context,
           ),
           CustomItem(
               localeProvider: widget.localeProvider,
               themeProvider: widget.themeProvider,
               iconData: Icons.language,
               title: widget.appLocalizations.language,
-              context: context,
               language: true),
           const Spacer(),
           CustomButton(

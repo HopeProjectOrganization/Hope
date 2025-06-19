@@ -3,7 +3,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/aware/awareness/news_list.dart';
-import 'package:hope/ui/shared_widgets/custome_tab.dart';
 import 'package:provider/provider.dart';
 
 class NewsScreen extends StatefulWidget {
@@ -13,15 +12,10 @@ class NewsScreen extends StatefulWidget {
   _NewsScreenState createState() => _NewsScreenState();
 }
 
-class _NewsScreenState extends State<NewsScreen>
-    with SingleTickerProviderStateMixin {
+class _NewsScreenState extends State<NewsScreen> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
-  late TabController _tabController;
-  final String apiKey =
-      //"b3559d03ae7d44b883b82f7368ef3b3a";
-      "a11077e149254297aeed5b0a443616a1";
   final List<String> cancerTypes = [
     "All",
     "Breast",
@@ -48,60 +42,155 @@ class _NewsScreenState extends State<NewsScreen>
     "Multiple Myeloma",
     "Oral"
   ];
+
   String selectedCancerType = "All";
-
-  List<Widget> buildTabs(List<String> types) {
-    return types.map((type) => CustomeTab(text: type)).toList();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: cancerTypes.length, vsync: this);
-    _tabController.addListener(() {
-      setState(() {
-        selectedCancerType = cancerTypes[_tabController.index];
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_outlined,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          icon: const Icon(Icons.arrow_back_outlined),
+          onPressed: () => Navigator.of(context).pop(),
         ),
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
+          )
+        ],
         toolbarHeight: MediaQuery.of(context).size.height * 0.1,
         backgroundColor: AppColors.purple,
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20))),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
+        ),
         centerTitle: true,
         title: Text(
           "News",
           style: TextStyle(color: AppColors.white),
         ),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorSize: TabBarIndicatorSize.label,
-          isScrollable: true,
-          labelPadding: const EdgeInsets.symmetric(horizontal: 7),
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          tabs: buildTabs(cancerTypes),
+      ),
+      drawer: Drawer(
+        width: MediaQuery.of(context).size.width * 0.6,
+        backgroundColor: Color(0xffd5eaff),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Color(0xffd5eaff)),
+              child: Text(
+                "Select News Filter",
+                style: TextStyle(color: AppColors.dark, fontSize: 25),
+              ),
+            ),
+            buildCategorySection("Cancer Types", [
+              "Breast",
+              "Lung",
+              "Prostate",
+              "Colorectal",
+              "Skin",
+              "Ovarian",
+              "Pancreatic",
+              "Leukemia",
+              "Lymphoma",
+              "Brain",
+              "Liver",
+              "Stomach",
+              "Esophageal",
+              "Bladder",
+              "Kidney",
+              "Thyroid",
+              "Bone",
+              "Testicular",
+              "Endometrial",
+              "Cervical",
+              "Gallbladder",
+              "Multiple Myeloma",
+              "Oral",
+            ]),
+            buildCategorySection("Hereditary Cancer", [
+              "Hereditary Breast",
+              "Hereditary Colorectal",
+              "Hereditary Ovarian",
+              "Hereditary Prostate",
+              "Hereditary Pancreatic",
+            ]),
+            buildCategorySection("High Risk People", [
+              "Smokers",
+              "Obese People",
+              "Family History",
+              "Elderly",
+              "Radiation Exposure",
+              "Chronic Inflammation",
+              "Unhealthy Diet",
+            ]),
+          ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: cancerTypes.map((type) => NewsList(type: type)).toList(),
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            color: AppColors.lavender.withOpacity(0.2),
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              "$selectedCancerType",
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+          Expanded(child: NewsList(type: selectedCancerType)),
+        ],
+      ),
+    );
+  }
+
+  Widget buildCategorySection(String title, List<String> items) {
+    return Theme(
+      data: ThemeData().copyWith(
+        dividerColor: Colors.transparent,
+        unselectedWidgetColor: AppColors.white,
+        textTheme:
+            const TextTheme(bodyMedium: TextStyle(color: AppColors.white)),
+      ),
+      child: ExpansionTile(
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        iconColor: AppColors.yellow,
+        collapsedIconColor: AppColors.yellow,
+        children: items.map((type) {
+          return ListTile(
+            title: Text(
+              type,
+              style: TextStyle(
+                color: selectedCancerType == type
+                    ? AppColors.yellow
+                    : themeProvider.isDark()
+                        ? AppColors.dark
+                        : AppColors.white,
+                fontWeight: selectedCancerType == type
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+              ),
+            ),
+            selected: selectedCancerType == type,
+            onTap: () {
+              setState(() {
+                selectedCancerType = type;
+              });
+              Navigator.pop(context);
+            },
+          );
+        }).toList(),
       ),
     );
   }

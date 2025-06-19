@@ -72,7 +72,7 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "${appLocalizations.totalCalories} ${_selectedMeals.isEmpty ? 0 : _selectedMeals.fold(0.0, (total, meal) => total + meal.calories).toInt()}",
+                          "${appLocalizations.totalCalories} ${_selectedMeals.isEmpty ? 0 : _selectedMeals.fold(0.0, (total, meal) => total + meal.nutrients.calories).toInt()}",
                           style: const TextStyle(color: Colors.grey),
                         ),
                       ],
@@ -109,7 +109,7 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: Image.network(
-                                        meal.imageUrl,
+                                        meal.image,
                                         width: 60,
                                         height: 60,
                                         fit: BoxFit.cover,
@@ -124,9 +124,9 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                                           Text(meal.name,
                                               style: const TextStyle(
                                                   fontWeight: FontWeight.bold)),
-                                          Text(meal.categoryName,
-                                              style: const TextStyle(
-                                                  color: Colors.grey)),
+                                          // Text(meal.categoryName,
+                                          //     style: const TextStyle(
+                                          //         color: Colors.grey)),
                                         ],
                                       ),
                                     ),
@@ -147,13 +147,13 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                                         TextStyle(fontWeight: FontWeight.bold)),
                                 const SizedBox(height: 10),
                                 _buildDetailRow(appLocalizations.calories,
-                                    meal.calories.toString()),
+                                    meal.nutrients.calories.toString()),
                                 _buildDetailRow(appLocalizations.protein,
-                                    meal.protein.toString()),
-                                _buildDetailRow(
-                                    appLocalizations.fat, meal.fat.toString()),
+                                    meal.nutrients.protein.toString()),
+                                _buildDetailRow(appLocalizations.fat,
+                                    meal.nutrients.fat.toString()),
                                 _buildDetailRow(appLocalizations.carbs,
-                                    meal.carbs.toString()),
+                                    meal.nutrients.netCarbs.toString()),
                                 const SizedBox(height: 20),
                               ],
                             );

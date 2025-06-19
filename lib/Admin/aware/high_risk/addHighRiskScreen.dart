@@ -9,6 +9,7 @@ import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 
+// ignore: must_be_immutable
 class AdminHighEditorScreen extends StatefulWidget {
   Map<String, dynamic>? newsData;
 
@@ -29,7 +30,6 @@ class _AdminNewsEditorScreenState extends State<AdminHighEditorScreen> {
   File? _pickedImage;
   String? _existingImageUrl;
 
-  bool _isInitialized = false;
 
   @override
   void initState() {

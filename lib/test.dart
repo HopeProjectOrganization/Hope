@@ -3,7 +3,7 @@ import 'package:hope/model/meal_dm.dart'; // تأكد من import الموديل
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class ProgressScreen extends StatelessWidget {
-  static const routeName = '/test';
+  static const routeName = '/testst';
 
   final Meal meal;
 
@@ -11,13 +11,15 @@ class ProgressScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // نحسب القيم الغذائية كنسبة مئوية من إجمالي المغذيات
-    final totalMacros =
-        (meal.fat ?? 0) + (meal.protein ?? 0) + (meal.carbs ?? 0);
-    double fatPercent = totalMacros == 0 ? 0 : (meal.fat ?? 0) / totalMacros;
+    final totalMacros = (meal.nutrients.fat ?? 0) +
+        (meal.nutrients.protein ?? 0) +
+        (meal.nutrients.netCarbs ?? 0);
+    double fatPercent =
+        totalMacros == 0 ? 0 : (meal.nutrients.fat ?? 0) / totalMacros;
     double proteinPercent =
-        totalMacros == 0 ? 0 : (meal.protein ?? 0) / totalMacros;
-    double carbPercent = totalMacros == 0 ? 0 : (meal.carbs ?? 0) / totalMacros;
+        totalMacros == 0 ? 0 : (meal.nutrients.protein ?? 0) / totalMacros;
+    double carbPercent =
+        totalMacros == 0 ? 0 : (meal.nutrients.netCarbs ?? 0) / totalMacros;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -40,11 +42,11 @@ class ProgressScreen extends StatelessWidget {
                   CircularPercentIndicator(
                     radius: 100,
                     lineWidth: 15.0,
-                    percent: (meal.calories ?? 0) / 2000 > 1
+                    percent: (meal.nutrients.calories ?? 0) / 2000 > 1
                         ? 1
-                        : (meal.calories ?? 0) / 2000,
+                        : (meal.nutrients.calories ?? 0) / 2000,
                     center: Text(
-                      "${meal.calories?.toInt() ?? 0} cal",
+                      "${meal.nutrients.calories?.toInt() ?? 0} cal",
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),

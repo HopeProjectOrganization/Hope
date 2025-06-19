@@ -1,16 +1,16 @@
 import 'dart:async';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
-import 'package:hope/core/providers/theme_provider.dart';
+
 import 'package:flutter/material.dart';
-import 'package:hope/Api/recipes/fetch_recipe.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Api/recipes/recipe_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/model/meal_dm.dart';
-import 'package:hope/ui/screens/aware/meal_sence/filter_screen.dart';
+import 'package:hope/model/meal_dm.dart'; // يحتوي Recipe
 import 'package:hope/ui/screens/aware/meal_sence/my_meals.dart';
 import 'package:hope/ui/screens/aware/meal_sence/recipe_details.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
+import 'package:provider/provider.dart';
 
 class Meals extends StatefulWidget {
   static const routeName = '/mmmmeals';
@@ -25,9 +25,10 @@ class Meals extends StatefulWidget {
 class _MealsState extends State<Meals> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
+  bool _isLoading = false;
 
   late Future<List<Meal>> mealsFuture;
-  Map<int, bool> selectedMeals = {};
+  Map<String, bool> selectedMeals = {};
   int selectedMealsCount = 0;
   List<Meal> selectedMealList = [];
   late String _title = widget.title;
@@ -39,14 +40,27 @@ class _MealsState extends State<Meals> {
 
   Timer? _debounce;
 
+  final MealApiService api = MealApiService();
+
   @override
   void initState() {
     super.initState();
-    mealsFuture = fetchMeals();
-    mealsFuture.then((meals) {
+    _isLoading = true;
+
+    api.fetchMeals().then((meals) {
+      print("Loaded meals count: ${meals.length}");
+    });
+
+    api.fetchMeals().then((meals) {
       setState(() {
         allMeals = meals;
         displayedMeals = meals;
+        _isLoading = false;
+      });
+    }).catchError((error) {
+      print("❌ Error loading meals from API: $error");
+      setState(() {
+        _isLoading = false;
       });
     });
   }
@@ -61,33 +75,27 @@ class _MealsState extends State<Meals> {
     }
   }
 
-  void applyFilters() async {
+  void applyFilters() {
     final query = searchController.text.trim().toLowerCase();
-
-    List<Meal> tempList = List.from(allMeals);
+    List<Meal> temp = List.from(allMeals);
 
     if (selectedCategories.isNotEmpty) {
-      tempList = tempList.where((meal) {
-        return selectedCategories.contains(meal.categoryName);
-      }).toList();
+      temp = temp
+          .where((r) => selectedCategories.any((tag) => r.tags.contains(tag)))
+          .toList();
     }
-
     if (query.isNotEmpty) {
-      tempList = tempList.where((meal) {
-        return meal.name.toLowerCase().contains(query);
-      }).toList();
+      temp = temp.where((r) => r.name.toLowerCase().contains(query)).toList();
     }
 
     setState(() {
-      displayedMeals = tempList;
+      displayedMeals = temp;
     });
   }
 
   void onSearchChanged(String query) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      applyFilters();
-    });
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), applyFilters);
   }
 
   @override
@@ -96,232 +104,240 @@ class _MealsState extends State<Meals> {
     appLocalizations = AppLocalizations.of(context)!;
 
     return CustomScaffold(
-        actions: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: ImageIcon(
-                  AssetImage(AppIcons.meal),
-                  color: AppColors.purple,
-                  size: 45,
+      actions: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            IconButton(
+              icon: ImageIcon(AssetImage(AppIcons.meal),
+                  color: AppColors.purple, size: 45),
+              onPressed: () {
+                Navigator.pushNamed(context, MyMealsScreen.routeName,
+                    arguments: {
+                      'selectedMeals': selectedMealList,
+                      'title': _title
+                    });
+              },
+            ),
+            if (selectedMealsCount > 0)
+              Positioned(
+                right: 8,
+                top: 26,
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration:
+                      BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                  constraints: BoxConstraints(minWidth: 20, minHeight: 20),
+                  child: Center(
+                      child: Text('$selectedMealsCount',
+                          style: TextStyle(color: Colors.white, fontSize: 12))),
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(context, MyMealsScreen.routeName,
-                      arguments: {
-                        'selectedMeals': selectedMealList,
-                        'title': _title
-                      });
-                },
               ),
-              if (selectedMealsCount > 0)
-                Positioned(
-                  right: 8,
-                  top: 26,
-                  child: Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    constraints: BoxConstraints(
-                      minWidth: 20,
-                      minHeight: 20,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$selectedMealsCount',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
-        title: appLocalizations.meals,
-        backgroundColor: Color(0xFFF8F8FF),
-        body: SafeArea(
-            child: Column(children: [
-          Container(
-            margin: EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: TextField(
-                    controller: searchController,
-                    onChanged: onSearchChanged,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.search_outlined),
-                      hintText: appLocalizations.search,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                    flex: 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.purple,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.filter_list_outlined,
-                            color: Colors.white),
-                        onPressed: () async {
-                          final result = await Navigator.pushNamed(
-                            context,
-                            FilterScreen.routeName,
-                          );
-
-                          if (result != null &&
-                                  result is List<String> &&
-                                  result.isNotEmpty) {
-                                setState(() {
-                                  selectedCategories = result;
-                                });
-                                applyFilters();
-                              } else {
-                                // لو رجع من غير اختيار فئات، نرجع للتصفية بدون فئات فقط البحث
-                                setState(() {
-                                  selectedCategories = [];
-                                });
-                                applyFilters();
-                              }
-                            },
+          ],
+        ),
+      ],
+      title: appLocalizations.meals,
+      backgroundColor: Color(0xFFF8F8FF),
+      body: SafeArea(
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: TextField(
+                            controller: searchController,
+                            onChanged: onSearchChanged,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.search_outlined),
+                              hintText: appLocalizations.search,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 12),
+                            ),
                           ),
-                        )),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: displayedMeals.isEmpty
-                ? Center(child: Text(appLocalizations.noMealsFound))
-                : ListView.builder(
-                    padding: const EdgeInsets.all(20),
-                    itemCount: displayedMeals.length,
-                    itemBuilder: (context, index) {
-                      final meal = displayedMeals[index];
-                      final isSelected = selectedMeals[meal.id] ?? false;
-
-                      return InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(context, RecipeDetails.routeName,
-                              arguments: meal.id);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          flex: 1,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 8,
-                                  color: Colors.grey.withOpacity(0.2),
-                                  offset: Offset(0, 4),
-                                )
-                              ],
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        meal.name.length > 20
-                                            ? meal.name.substring(0, 20) + '...'
-                                            : meal.name,
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Spacer(),
-                                      IconButton(
-                                        icon: Icon(
-                                          isSelected ? Icons.check : Icons.add,
-                                          color: AppColors.purple,
-                                          size: 25,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            selectedMeals[meal.id] =
-                                                !isSelected;
-                                            if (selectedMeals[meal.id]!) {
-                                              selectedMealList.add(meal);
-                                              selectedMealsCount++;
-                                            } else {
-                                              selectedMealList.removeWhere(
-                                                  (m) => m.id == meal.id);
-                                              selectedMealsCount--;
-                                            }
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 12),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: meal.imageUrl != null &&
-                                            meal.imageUrl.isNotEmpty
-                                        ? Image.network(meal.imageUrl,
-                                            height: 180,
-                                            width: double.infinity,
-                                            fit: BoxFit.cover)
-                                        : Container(
-                                            height: 180,
-                                            color: Colors.grey[200],
-                                            child: Center(
-                                                child: Icon(Icons.fastfood,
-                                                    size: 40,
-                                                    color: Colors.grey)),
-                                          ),
-                                  ),
-                                  SizedBox(height: 16),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      _buildNutritionIcon(
-                                          appLocalizations.calories,
-                                          meal.calories.toStringAsFixed(1) +
-                                              "g",
-                                          AppIcons.calories),
-                                      _buildNutritionIcon(
-                                          appLocalizations.protein,
-                                          meal.protein.toStringAsFixed(1) + "g",
-                                          AppIcons.proteins),
-                                      _buildNutritionIcon(
-                                          appLocalizations.fat,
-                                          meal.fat.toStringAsFixed(1) + "g",
-                                          AppIcons.fats),
-                                      _buildNutritionIcon(
-                                          appLocalizations.carbs,
-                                          meal.carbs.toStringAsFixed(1) + "g",
-                                          AppIcons.carbs),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                color: AppColors.purple,
+                                borderRadius: BorderRadius.circular(12)),
+                            child: IconButton(
+                              icon: const Icon(Icons.filter_list_outlined,
+                                  color: Colors.white),
+                              onPressed: () async {
+                                // final result = await Navigator.pushNamed(context, FilterScreen.routeName);
+                                setState(() {
+                                  // selectedCategories = (result is List<String>) ? result : [];
+                                });
+                                applyFilters();
+                              },
                             ),
                           ),
                         ),
-                      );
-                    }),
-          ),
-        ])));
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                      child: displayedMeals.isEmpty
+                          ? Center(child: Text(appLocalizations.noMealsFound))
+                          : ListView.builder(
+                              padding: const EdgeInsets.all(20),
+                              itemCount: displayedMeals.length,
+                              itemBuilder: (context, index) {
+                                final meal = displayedMeals[index];
+                                final sel = selectedMeals[meal.id] ?? false;
+
+                                return InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, RecipeDetails.routeName,
+                            arguments: meal.id);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(blurRadius: 8,
+                                  color: Colors.grey.withOpacity(0.2),
+                                              offset: Offset(0, 4))
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                              Row(children: [
+                                                Expanded(
+                                                    child: Text(
+                                                        meal.name.length > 20
+                                                            ? meal.name
+                                                                    .substring(
+                                                                        0, 20) +
+                                                                '...'
+                                                            : meal.name,
+                                                        style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold))),
+                                                IconButton(
+                                                  icon: Icon(
+                                                      sel
+                                                          ? Icons.check
+                                                          : Icons.add,
+                                                      color: AppColors.purple,
+                                                      size: 25),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      selectedMeals[meal.id] =
+                                                          !sel;
+                                                      if (selectedMeals[
+                                                          meal.id]!) {
+                                                        selectedMealList
+                                                            .add(meal);
+                                                        selectedMealsCount++;
+                                                      } else {
+                                                        selectedMealList
+                                                            .removeWhere((m) =>
+                                                                m.id ==
+                                                                meal.id);
+                                                        selectedMealsCount--;
+                                                      }
+                                                    });
+                                                  },
+                                                )
+                                              ]),
+                                              SizedBox(height: 12),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                                child: meal.image.isNotEmpty
+                                                    ? Image.network(
+                                                        meal.image,
+                                                        height: 180,
+                                                        width: double.infinity,
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder:
+                                                            (c, e, s) =>
+                                                                Container(
+                                                          height: 180,
+                                                          color:
+                                                              Colors.grey[300],
+                                                          child: Icon(
+                                                              Icons
+                                                                  .broken_image,
+                                                              size: 40),
+                                                        ),
+                                                      )
+                                                    : Container(
+                                                        height: 180,
+                                                        color: Colors.grey[200],
+                                                        child: Center(
+                                                            child: Icon(
+                                                                Icons.fastfood,
+                                                                size: 40,
+                                                                color: Colors
+                                                                    .grey)),
+                                                      ),
+                                              ),
+                                  SizedBox(height: 16),
+                                              Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    _buildNutritionIcon(
+                                                        appLocalizations
+                                                            .calories,
+                                                        meal.nutrients.calories
+                                                                .toStringAsFixed(
+                                                                    1) +
+                                                            "kcal",
+                                                        AppIcons.calories),
+                                                    _buildNutritionIcon(
+                                                        appLocalizations
+                                                            .protein,
+                                                        meal.nutrients.protein
+                                                                .toStringAsFixed(
+                                                                    1) +
+                                                            "g",
+                                                        AppIcons.proteins),
+                                                    _buildNutritionIcon(
+                                                        appLocalizations.fat,
+                                                        meal.nutrients.fat
+                                                                .toStringAsFixed(
+                                                                    1) +
+                                                            "g",
+                                                        AppIcons.fats),
+                                                    _buildNutritionIcon(
+                                                        appLocalizations.carbs,
+                                                        meal.nutrients.netCarbs
+                                                                .toStringAsFixed(
+                                                                    1) +
+                                                            "g",
+                                                        AppIcons.carbs),
+                                                  ]),
+                                            ]),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            )),
+                ],
+              ),
+      ),
+    );
   }
 
   Widget _buildNutritionIcon(String title, String value, String iconPath) {
@@ -333,12 +349,11 @@ class _MealsState extends State<Meals> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(28),
             child: Image.asset(
-              color: AppColors.dark,
-              iconPath,
-              fit: BoxFit.fitHeight,
-              width: 30,
-              height: 30,
-            ),
+                color: AppColors.dark,
+                iconPath,
+                fit: BoxFit.fitHeight,
+                width: 30,
+                height: 30),
           ),
         ),
         SizedBox(height: 6),

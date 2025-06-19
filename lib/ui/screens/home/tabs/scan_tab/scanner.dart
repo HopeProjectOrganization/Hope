@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hope/Api/scan/scan_service.dart';
+import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +24,7 @@ class BarcodeScannerService {
 
     hideLoading(context);
 
-    if (result != null) {
+    if (result != null && result.containsKey('product')) {
       print("✅ Scanned data is not null, navigating...");
 
       final productName = result['product']?['productName'] ??
@@ -52,7 +53,13 @@ class BarcodeScannerService {
         },
       );
     } else {
+      final message = result?['message'] ?? "Scan was cancelled or failed";
+
       onResult("Error: No result from scanning");
+      Navigator.pushReplacementNamed(
+          context, HomeScreen.routeName); // يرجع للشاشة السابقة
+
+      onResult(message); // اختياري لو حابب ترجع النتيجة لشيء خارجي
     }
   }
 
