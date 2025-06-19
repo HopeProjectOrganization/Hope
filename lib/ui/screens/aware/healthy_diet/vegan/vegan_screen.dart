@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/healthy_diet/vegan.dart';
+import 'package:hope/Api/healthy_diet/vegan_service.dart';
 import 'package:hope/core/providers/theme_provider.dart';
-import 'package:hope/model/vegan.dart';
-import 'package:hope/ui/screens/aware/healthy_diet/vegan_details.dart';
+import 'package:hope/model/vegan_details.dart';
+import 'package:hope/ui/screens/aware/healthy_diet/vegan/vegan_details.dart';
 import 'package:hope/ui/shared_widgets/vegan_card.dart';
 import 'package:provider/provider.dart';
 
@@ -17,14 +17,14 @@ class VeganScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<VeganScreen> {
-  late Future<List<VeganRecipe>> futureRecipes;
+  late Future<List<VeganRecipeModel>> futureRecipes;
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
   @override
   void initState() {
     super.initState();
-    futureRecipes = VeganService.fetchRecipes();
+    futureRecipes = VeganRecipeService.getAllRecipes();
   }
 
   @override
@@ -37,7 +37,7 @@ class _HomeScreenState extends State<VeganScreen> {
         title: Text(appLocalizations.veganRecipes),
         centerTitle: true,
       ),
-      body: FutureBuilder<List<VeganRecipe>>(
+      body: FutureBuilder<List<VeganRecipeModel>>(
         future: futureRecipes,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -59,7 +59,7 @@ class _HomeScreenState extends State<VeganScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            RecipeDetailsScreen(recipeId: recipe.id),
+                            RecipeDetailsScreen(id: recipe.id),
                       ),
                     );
                   },

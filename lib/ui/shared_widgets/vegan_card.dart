@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/model/vegan.dart';
+import 'package:hope/model/vegan_details.dart';
 import 'package:hope/ui/shared_widgets/halfCircleClipper.dart';
 
 class VeganCard extends StatelessWidget {
-  final VeganRecipe recipe;
+  final VeganRecipeModel recipe;
   final VoidCallback onTap;
 
   const VeganCard({super.key, required this.recipe, required this.onTap});

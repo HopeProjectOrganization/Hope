@@ -1,19 +1,22 @@
 class VeganRecipe {
-  final String id, title, difficulty, image;
+  final int id;
+  final String veganId;
+  final String title;
+  final String image;
 
   VeganRecipe({
     required this.id,
+    required this.veganId,
     required this.title,
-    required this.difficulty,
     required this.image,
   });
 
   factory VeganRecipe.fromJson(Map<String, dynamic> json) {
     return VeganRecipe(
-      id: json['id'].toString(),
-      title: json['title'] ?? '',
-      difficulty: json['difficulty'] ?? '',
-      image: json['image'] ?? '',
+      id: json['id'],
+      veganId: json['veganId'],
+      title: json['title'],
+      image: json['image'],
     );
   }
 }

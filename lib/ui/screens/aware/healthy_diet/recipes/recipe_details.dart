@@ -1,12 +1,11 @@
-import 'dart:convert';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
-import 'package:hope/core/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Api/healthy_diet/healthy_recipe.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
@@ -21,8 +20,6 @@ class RecipeDetailScreen extends StatefulWidget {
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Map<String, dynamic>? mealDetails;
   bool isLoading = true;
-  int servings = 1;
-
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
@@ -33,19 +30,12 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   Future<void> fetchMealDetails() async {
-    final url = Uri.parse(
-        'https://www.themealdb.com/api/json/v1/1/lookup.php?i=${widget.mealId}');
     try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          mealDetails = data['meals']?[0];
-          isLoading = false;
-        });
-      } else {
-        throw Exception('Failed to load meal details');
-      }
+      final data = await MealService.getMealDetailsById(widget.mealId);
+      setState(() {
+        mealDetails = data;
+        isLoading = false;
+      });
     } catch (e) {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -56,11 +46,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   Widget buildIngredientsList() {
     List<Widget> ingredientWidgets = [];
-
     for (int i = 1; i <= 20; i++) {
       final ingredient = mealDetails?['strIngredient$i'];
       final measure = mealDetails?['strMeasure$i'];
-
       if (ingredient != null && ingredient.toString().trim().isNotEmpty) {
         ingredientWidgets.add(
           Card(
@@ -76,20 +64,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     style: TextStyle(
                         color: AppColors.purple, fontWeight: FontWeight.bold)),
               ),
-              title: Text(
-                ingredient,
-                style: const TextStyle(fontSize: 18),
-              ),
-              trailing: Text(
-                measure ?? '',
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-              ),
+              title: Text(ingredient, style: const TextStyle(fontSize: 18)),
+              trailing: Text(measure ?? '',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600])),
             ),
           ),
         );
       }
     }
-
     return Column(children: ingredientWidgets);
   }
 
@@ -99,26 +81,21 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-        backgroundColor: Colors.grey[100],
-        appBar: AppBar(
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: AppColors.purple,
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text(
-            appLocalizations.recipeDetails,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          centerTitle: true,
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.purple),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        body: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SafeArea(
-                child: Column(children: [
+        title: Text(appLocalizations.recipeDetails,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        centerTitle: true,
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: Column(children: [
                 Expanded(
                   child: ListView(
                     padding: EdgeInsets.zero,
@@ -141,10 +118,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         child: Text(
                           mealDetails?['strMeal'] ?? '',
                           style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -173,7 +149,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     ],
                   ),
                 ),
-              ])));
+              ]),
+            ),
+    );
   }
 }
 
@@ -181,11 +159,8 @@ class RecipeStepsScreen extends StatefulWidget {
   final String instructions;
   final String? youtubeUrl;
 
-  const RecipeStepsScreen({
-    super.key,
-    required this.instructions,
-    this.youtubeUrl,
-  });
+  const RecipeStepsScreen(
+      {super.key, required this.instructions, this.youtubeUrl});
 
   @override
   State<RecipeStepsScreen> createState() => _RecipeStepsScreenState();
@@ -233,10 +208,7 @@ class _RecipeStepsScreenState extends State<RecipeStepsScreen> {
         elevation: 4,
       ),
       icon: icon != null ? Icon(icon, size: 20) : const SizedBox.shrink(),
-      label: Text(
-        text,
-        style: const TextStyle(fontSize: 18),
-      ),
+      label: Text(text, style: const TextStyle(fontSize: 18)),
       onPressed: onPressed,
     );
   }
@@ -283,9 +255,7 @@ class _RecipeStepsScreenState extends State<RecipeStepsScreen> {
                       child: Text(
                         "${appLocalizations.step} ${currentStep + 1}",
                         style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -294,10 +264,8 @@ class _RecipeStepsScreenState extends State<RecipeStepsScreen> {
                     const SizedBox(height: 24),
                     Expanded(
                       child: SingleChildScrollView(
-                        child: Text(
-                          steps[currentStep],
-                          style: const TextStyle(fontSize: 24),
-                        ),
+                        child: Text(steps[currentStep],
+                            style: const TextStyle(fontSize: 24)),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -346,11 +314,9 @@ class StepIndicators extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
 
-  const StepIndicators({
-    Key? key,
-    required this.currentStep,
-    required this.totalSteps,
-  }) : super(key: key);
+  const StepIndicators(
+      {Key? key, required this.currentStep, required this.totalSteps})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

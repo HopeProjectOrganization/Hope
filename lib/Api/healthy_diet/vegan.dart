@@ -25,7 +25,7 @@ class VeganService {
     }
   }
 
-  static Future<VeganRecipeDetail> fetchRecipeDetail(String id) async {
+  static Future<VeganRecipeModel> fetchRecipeDetail(String id) async {
     final url = Uri.parse('https://$_host/$id');
     final res = await http.get(url, headers: {
       'x-rapidapi-key': _apiKey,
@@ -34,7 +34,7 @@ class VeganService {
 
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body);
-      return VeganRecipeDetail.fromJson(data);
+      return VeganRecipeModel.fromJson(data);
     } else {
       throw Exception('Failed to load recipe detail');
     }

@@ -1,10 +1,20 @@
-class VeganRecipeDetail {
-  final String id, title, difficulty, portion, time, description, image;
-  final List<String> ingredients;
-  final List<String> steps;
 
-  VeganRecipeDetail({
+
+class VeganRecipeModel {
+  final int id;
+  final String veganId;
+  final String title;
+  final String difficulty;
+  final String portion;
+  final String time;
+  final String description;
+  final String image;
+  final List<String> ingredients;
+  final List<StepModel> steps;
+
+  VeganRecipeModel({
     required this.id,
+    required this.veganId,
     required this.title,
     required this.difficulty,
     required this.portion,
@@ -15,25 +25,55 @@ class VeganRecipeDetail {
     required this.steps,
   });
 
-  factory VeganRecipeDetail.fromJson(Map<String, dynamic> json) {
-    List<String> steps = [];
-    if (json['method'] != null && json['method'] is List) {
-      steps = (json['method'] as List).map((stepMap) {
-        if (stepMap is Map) return stepMap.values.first.toString();
-        return '';
-      }).toList();
-    }
-
-    return VeganRecipeDetail(
-      id: json['id'].toString(),
-      title: json['title'] ?? '',
-      difficulty: json['difficulty'] ?? '',
-      portion: json['portion'] ?? '',
-      time: json['time'] ?? '',
-      description: json['description'] ?? '',
-      image: json['image'] ?? '',
-      ingredients: List<String>.from(json['ingredients'] ?? []),
-      steps: steps,
+  factory VeganRecipeModel.fromJson(Map<String, dynamic> json) {
+    return VeganRecipeModel(
+      id: json['id'],
+      veganId: json['veganId'],
+      title: json['title'],
+      difficulty: json['difficulty'],
+      portion: json['portion'],
+      time: json['time'],
+      description: json['description'],
+      image: json['image'],
+      ingredients: List<String>.from(json['ingredients']),
+      steps: List<StepModel>.from(
+          json['method'].map((e) => StepModel.fromJson(e))),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'veganId': veganId,
+      'title': title,
+      'difficulty': difficulty,
+      'portion': portion,
+      'time': time,
+      'description': description,
+      'image': image,
+      'ingredients': ingredients,
+      'method': steps.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+class StepModel {
+  final String stepTitle;
+  final String stepDescription;
+
+  StepModel({required this.stepTitle, required this.stepDescription});
+
+  factory StepModel.fromJson(Map<String, dynamic> json) {
+    return StepModel(
+      stepTitle: json['stepTitle'],
+      stepDescription: json['stepDescription'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'stepTitle': stepTitle,
+      'stepDescription': stepDescription,
+    };
   }
 }
