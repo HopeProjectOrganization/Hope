@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class VeganService {
   static const String _apiKey =
-      'cee3c198b5msh06fb61b0d1e747fp11e9cfjsn1b083226fe05';
+      'aa2ecc09b9mshf3cdf8257a44f12p1323d0jsn3d495e055b5e';
   static const String _host = 'the-vegan-recipes-db.p.rapidapi.com';
 
   static Future<List<VeganRecipe>> fetchRecipes() async {

@@ -73,7 +73,7 @@ class _HomeTabState extends State<HomeTab> {
                                 ),
                                 SizedBox(height: 10),
                                 Text(
-                                  'Hope',
+                                  'Cura Scan',
                                   style: TextStyle(
                                     color: AppColors.white,
                                     fontWeight: FontWeight.bold,

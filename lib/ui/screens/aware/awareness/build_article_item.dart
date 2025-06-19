@@ -1,32 +1,42 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/model/article_dm.dart';
+import 'package:hope/model/article.dart';
 import 'package:hope/ui/screens/aware/shared_widgets/article/article_screen.dart';
 import 'package:hope/ui/shared_widgets/utils/formate_date.dart';
 
 class BuildArticleItem extends StatelessWidget {
   const BuildArticleItem({
-    super.key, required this.article});
+    super.key,
+    required this.article,
+    required this.selectedCancerType,
+  });
 
-  final ArticleDM article;
+  final Article article;
+  final String selectedCancerType;
 
   @override
   Widget build(BuildContext context) {
-    final String image = article.urlToImage ?? '';
+    final String image = article.imageUrl ?? '';
     final String title = (article.title != null && article.title!.length > 70)
-        ? "${article.title!.substring(0, 70)}..."
+        ? "${article.title!.substring(0, 50)}..."
         : article.title ?? '';
     final String description =
         (article.description != null && article.description!.length > 50)
             ? "${article.description!.substring(0, 25)}..."
             : article.description ?? '';
-    final String date = formatDate(article.publishedAt);
+    final String date = formatDate(article.pubDate);
 
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, NewsArticleScreen.routeName,
-            arguments: article);
+        Navigator.pushNamed(
+          context,
+          NewsArticleScreen.routeName,
+          arguments: {
+            'article': article,
+            'category': selectedCancerType,
+          },
+        );
       },
       child: Card(
         shape: RoundedRectangleBorder(
@@ -44,19 +54,31 @@ class BuildArticleItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     child:
                         //Image.asset(AppAssets.result ,)
-                        CachedNetworkImage(
-                      imageUrl: image,
+                        image.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: image,
                       height: 200,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      errorWidget: (context, url, error) => Icon(
-                        Icons.image_not_supported,
+                                errorWidget: (context, url, error) =>
+                                    const Icon(
+                                  Icons.image_not_supported,
                         size: 100,
                       ),
-                      placeholder: (context, url) => Center(
-                        child: CircularProgressIndicator(),
+                                placeholder: (context, url) => const Center(
+                                  child: CircularProgressIndicator(),
                       ),
-                    ),
+                              )
+                            : Container(
+                                height: 200,
+                                width: double.infinity,
+                                color: AppColors.gray.withOpacity(0.2),
+                                child: const Icon(
+                                  Icons.image_not_supported,
+                                  size: 100,
+                                  color: AppColors.gray,
+                                ),
+                              ),
                   )),
               SizedBox(
                 height: 20,
@@ -71,12 +93,8 @@ class BuildArticleItem extends StatelessWidget {
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            description,
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
                           Text(
                             date,
                             style: Theme.of(context).textTheme.titleSmall,

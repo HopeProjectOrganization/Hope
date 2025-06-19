@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hope/Api/news/news_service.dart';
-import 'package:hope/model/article_dm.dart';
+import 'package:hope/Api/news/cancer.dart';
+import 'package:hope/model/article.dart';
 import 'package:hope/ui/screens/aware/awareness/build_article_item.dart';
 
 class NewsList extends StatelessWidget {
@@ -15,8 +15,8 @@ class NewsList extends StatelessWidget {
 
     //  "a11077e149254297aeed5b0a443616a1";
 
-    return FutureBuilder<List<ArticleDM>>(
-      future: NewsService.fetchNews(type, apiKey, news),
+    return FutureBuilder<List<Article>>(
+      future: CancerNewsApi.fetchNews(type),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -34,10 +34,13 @@ class NewsList extends StatelessWidget {
     );
   }
 
-  Widget buildListView(List<ArticleDM> articles) => ListView.separated(
-    itemBuilder: (context, index) {
-          ArticleDM article = articles[index];
-          return BuildArticleItem(article: article);
+  Widget buildListView(List<Article> articles) => ListView.separated(
+        itemBuilder: (context, index) {
+          Article article = articles[index];
+          return BuildArticleItem(
+            article: article,
+            selectedCancerType: type,
+          );
         },
     separatorBuilder: (context, index) =>
         SizedBox(

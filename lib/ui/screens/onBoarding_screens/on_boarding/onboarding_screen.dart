@@ -51,6 +51,16 @@ class OnBoardingScreenState extends State<OnBoardingScreen> {
         "title": appLocalizations.onBoardingTitle4,
         "description": appLocalizations.onBoardingDescription4
       },
+      {
+        "image": AppAssets.healthy,
+        "title": appLocalizations.healthyDiet,
+        "description": appLocalizations.onBoardingDescription5
+      },
+      {
+        "image": AppAssets.meals,
+        "title": appLocalizations.mealSense,
+        "description": appLocalizations.onBoardingDescription6
+      },
     ];
 
     return SafeArea(
@@ -157,7 +167,7 @@ class OnBoardingScreenState extends State<OnBoardingScreen> {
             ),
             TextButton(
                 onPressed: () {
-                  if (currentIndex < 3) {
+                  if (currentIndex < onboardingData.length) {
                     pageController.nextPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,

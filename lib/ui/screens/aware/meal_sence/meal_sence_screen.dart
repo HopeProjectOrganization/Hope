@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/meal_dm.dart';
@@ -6,7 +7,6 @@ import 'package:hope/ui/screens/aware/meal_sence/category_card.dart';
 import 'package:hope/ui/screens/aware/meal_sence/date_helper.dart';
 import 'package:hope/ui/screens/aware/meal_sence/progress_card.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class MealSenceScreen extends StatefulWidget {
@@ -62,10 +62,10 @@ class _MealSenceScreenState extends State<MealSenceScreen> {
 
     for (final meal in meals) {
       if (_title == mealType) {
-        totalCalories += meal.calories;
-        totalFat += meal.fat;
-        totalProtein += meal.protein;
-        totalCarbs += meal.carbs;
+        totalCalories += meal.nutrients.calories;
+        totalFat += meal.nutrients.fat;
+        totalProtein += meal.nutrients.protein;
+        totalCarbs += meal.nutrients.netCarbs;
       }
     }
 

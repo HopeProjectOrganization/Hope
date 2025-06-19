@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Api/healthy_diet/exercises_service.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/exercises.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/exerciseDetailScreen.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class ExerciseListScreen extends StatefulWidget {
@@ -27,25 +25,10 @@ class _ExerciseListScreenState extends State<ExerciseListScreen> {
   @override
   void initState() {
     super.initState();
-    futureExercises = fetchExercisesByBodyPart(widget.bodyPart);
+    ExerciseApiService apiService = ExerciseApiService();
+    futureExercises = apiService.fetchExercisesByBodyPart(widget.bodyPart);
   }
 
-  Future<List<Exercise>> fetchExercisesByBodyPart(String bodyPart) async {
-    final String url =
-        'https://exercisedb.p.rapidapi.com/exercises/bodyPart/$bodyPart?limit=20';
-    const Map<String, String> headers = {
-      'x-rapidapi-key': 'cee3c198b5msh06fb61b0d1e747fp11e9cfjsn1b083226fe05',
-      'x-rapidapi-host': 'exercisedb.p.rapidapi.com',
-    };
-
-    final response = await http.get(Uri.parse(url), headers: headers);
-    if (response.statusCode == 200) {
-      List data = jsonDecode(response.body);
-      return data.map((e) => Exercise.fromJson(e)).toList();
-    } else {
-      throw Exception('Failed to load exercises');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

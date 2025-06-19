@@ -53,12 +53,12 @@ class CustomTextField extends StatelessWidget {
                       ? AppColors.red
                       : themeProvider.isDark()
                           ? AppColors.purple
-                          : AppColors.gray),
+                          : AppColors.dark),
               borderRadius: BorderRadius.circular(16),
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
-                  color: error != null ? AppColors.red : AppColors.gray),
+                  color: error != null ? AppColors.red : AppColors.purple),
               borderRadius: BorderRadius.circular(16),
             ),
             errorText: error,

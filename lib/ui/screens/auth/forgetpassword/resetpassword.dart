@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
+import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class ResetpasswordScreen extends StatefulWidget {
   static const String routeName = "/resetpasswordScreen";
@@ -23,6 +26,7 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  late ThemeProvider themeProvider;
 
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
@@ -119,6 +123,7 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
@@ -154,7 +159,9 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
                     _obscureNewPassword
                         ? Icons.visibility_off
                         : Icons.visibility,
-                    color: Colors.grey,
+                    color: themeProvider.isDark()
+                        ? AppColors.white
+                        : AppColors.dark,
                   ),
                   onPressed: () {
                     setState(() {
@@ -188,7 +195,9 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
                     _obscureConfirmPassword
                         ? Icons.visibility_off
                         : Icons.visibility,
-                    color: Colors.grey,
+                    color: themeProvider.isDark()
+                        ? AppColors.white
+                        : AppColors.dark,
                   ),
                   onPressed: () {
                     setState(() {

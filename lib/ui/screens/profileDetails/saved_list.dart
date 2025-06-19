@@ -21,10 +21,12 @@ class _SavedListScreenState extends State<SavedListScreen> {
     Task(type: "Awareness", title: "Finalize Presentation"),
     Task(type: "Healthy diet", title: "Book Flights To Seattle"),
     Task(type: "High risk people", title: "Buy Travel Insurance"),
+    Task(type: "Awareness", title: "Campaign Planning"),
   ];
 
+  String? selectedType; // null = All
 
-  int selectedDateIndex = 2;
+  List<String> get types => tasks.map((e) => e.type).toSet().toList();
 
   @override
   Widget build(BuildContext context) {
@@ -35,61 +37,96 @@ class _SavedListScreenState extends State<SavedListScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.purple,
           title: const Text("Saved List", style: TextStyle(color: AppColors.white)),
-          bottom: const TabBar(
-            indicatorPadding: EdgeInsets.symmetric(horizontal: -10, vertical: 5),
-            tabs: [
-              Tab(text: "Posts"),
-              Tab(text: "Recipes"),
-              Tab(text: "all"),
+        ),
+        drawer: Drawer(
+          child: Column(
+            children: [
+              const DrawerHeader(
+                child: Text("Filter by Type", style: TextStyle(fontSize: 20)),
+              ),
+              ListTile(
+                title: const Text("All"),
+                onTap: () {
+                  setState(() {
+                    selectedType = null;
+                    Navigator.pop(context);
+                  });
+                },
+              ),
+              ...types.map((type) => ListTile(
+                    title: Text(type),
+                    onTap: () {
+                      setState(() {
+                        selectedType = type;
+                        Navigator.pop(context);
+                      });
+                    },
+                  )),
             ],
           ),
         ),
         body: Column(
           children: [
-            const SizedBox(height: 10),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _buildTaskListView(),
-                  _buildTaskListView(),
-                  _buildTaskListView(),
-                ],
+            if (selectedType != null)
+              Container(
+                width: double.infinity,
+                color: AppColors.lavender.withOpacity(0.2),
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Filtered by: $selectedType"),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          selectedType = null;
+                        });
+                      },
+                      child: const Text("Clear Filter"),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            const SizedBox(height: 10),
+            Expanded(child: _buildGroupedTasksView()),
           ],
         ),
-
       ),
     );
   }
 
-  Widget _buildTaskListView() {
+  Widget _buildGroupedTasksView() {
+    final List<Task> filteredTasks = selectedType == null
+        ? tasks
+        : tasks.where((task) => task.type == selectedType).toList();
+
+    // Group tasks
+    Map<String, List<Task>> groupedTasks = {};
+    for (var task in filteredTasks) {
+      groupedTasks.putIfAbsent(task.type, () => []).add(task);
+    }
+
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      children: [
-        _buildSection("Today", tasks.sublist(0, 2)),
-        const SizedBox(height: 10),
-        _buildSection("Yesterday", tasks.sublist(2)),
-        const SizedBox(height: 10),
-        _buildSection("Last weak", tasks.sublist(1)),
-      ],
+      children: groupedTasks.entries.map((entry) {
+        final String type = entry.key;
+        final List<Task> sectionTasks = entry.value;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "$type (${sectionTasks.length})",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            ...sectionTasks.map((task) => _buildTaskItem(task)).toList(),
+            const SizedBox(height: 12),
+          ],
+        );
+      }).toList(),
     );
   }
-
-  Widget _buildSection(String title, List<Task> sectionTasks) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "$title (${sectionTasks.length})",
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        ...sectionTasks.map((task) => _buildTaskItem(task)),
-      ],
-    );
-  }
-
 
   Widget _buildTaskItem(Task task) {
     return Dismissible(

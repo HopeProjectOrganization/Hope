@@ -40,32 +40,6 @@ class _CategoryCardState extends State<CategoryCard> {
   bool _isLoading = false;
   DateTime selectedDate = DateTime.now();
 
-  Map<String, double> _calculateNutritionForMealType(String mealType) {
-    double totalCalories = 0;
-    double totalFat = 0;
-    double totalProtein = 0;
-    double totalCarbs = 0;
-
-    for (final meal in widget.meals) {
-      if (widget.category == mealType) {
-        totalCalories += meal.calories;
-        totalFat += meal.fat;
-        totalProtein += meal.protein;
-        totalCarbs += meal.carbs;
-      }
-    }
-
-    double totalMacros = totalFat + totalProtein + totalCarbs;
-
-    return {
-      'calories': totalCalories,
-      'fat': totalFat,
-      'protein': totalProtein,
-      'carbs': totalCarbs,
-      'macros': totalMacros,
-    };
-  }
-
   @override
   void initState() {
     super.initState();
@@ -73,18 +47,13 @@ class _CategoryCardState extends State<CategoryCard> {
   }
 
   Future<void> fetchMealsFromApi() async {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       final formattedDate = selectedDate.toIso8601String().split('T').first;
       final url = Uri.parse(
-          'http://${MyApp.IP}/api/user-meals?userId=19&date=$formattedDate&category=${widget.title.toLowerCase()}');
-
-      print("📅 Date: $formattedDate");
-      print("📂 Category: ${widget.title}");
-      print("🌐 Full URL: $url");
+        'http://${MyApp.IP}/api/user-meals?userId=19&date=$formattedDate&category=${widget.category.toLowerCase()}',
+      );
 
       final response = await http.get(url);
 
@@ -93,11 +62,10 @@ class _CategoryCardState extends State<CategoryCard> {
 
         if (jsonMap.containsKey('mealIds')) {
           final List<dynamic> mealIds = jsonMap['mealIds'];
-
-          // استدعاء بيانات كل وجبة بالتفصيل عن طريق الـ IDs
           List<Meal> mealsList = [];
+
           for (var id in mealIds) {
-            final meal = await fetchMealById(int.parse(id));
+            final meal = await fetchMealById(id);
             if (meal != null) mealsList.add(meal);
           }
 
@@ -110,23 +78,42 @@ class _CategoryCardState extends State<CategoryCard> {
             _mealsFromApi = [];
             _isLoading = false;
           });
-          print('❗ Unexpected response format: missing "mealIds" key');
         }
       } else {
         setState(() {
           _mealsFromApi = [];
           _isLoading = false;
         });
-        print('❌ Failed to load meals: ${response.statusCode}');
-        print('❗ Response body: ${response.body}');
       }
     } catch (e) {
       setState(() {
         _mealsFromApi = [];
         _isLoading = false;
       });
-      print('❌ Error fetching meals: $e');
     }
+  }
+
+  Map<String, double> _calculateNutrition() {
+    double totalCalories = 0;
+    double totalFat = 0;
+    double totalProtein = 0;
+    double totalCarbs = 0;
+
+    for (final meal in widget.meals) {
+      if (meal.tags.contains(widget.category.toLowerCase())) {
+        totalCalories += meal.nutrients.calories;
+        totalFat += meal.nutrients.fat;
+        totalProtein += meal.nutrients.protein;
+        totalCarbs += meal.nutrients.netCarbs;
+      }
+    }
+
+    return {
+      'calories': totalCalories,
+      'fat': totalFat,
+      'protein': totalProtein,
+      'carbs': totalCarbs,
+    };
   }
 
   @override
@@ -134,18 +121,14 @@ class _CategoryCardState extends State<CategoryCard> {
     themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
 
-    final nutrition = _calculateNutritionForMealType(widget.category);
-    final mealsToShow = _mealsFromApi;
-    final isDarkMode = themeProvider.isDark();
-    final filteredMeals =
-        widget.meals.where((meal) => widget.category == widget.title).toList();
+    final nutrition = _calculateNutrition();
+    final isDark = themeProvider.isDark();
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color:
-            isDarkMode ? AppColors.lavender.withOpacity(0.8) : AppColors.white,
+        color: isDark ? AppColors.lavender.withOpacity(0.8) : AppColors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
@@ -158,22 +141,14 @@ class _CategoryCardState extends State<CategoryCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title and Add Button
+          // Header row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                widget.title,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.purple,
-                ),
-              ),
-              Text(
-                "${nutrition['calories']?.toStringAsFixed(0) ?? '0'} kcal",
-                style: TextStyle(color: widget.kcalColor),
-              ),
+              Text(widget.title,
+                  style: Theme.of(context).textTheme.labelMedium),
+              Text("${nutrition['calories']?.toStringAsFixed(0) ?? '0'} kcal",
+                  style: TextStyle(color: widget.kcalColor)),
               InkWell(
                 onTap: () async {
                   final result = await Navigator.pushNamed(
@@ -190,81 +165,88 @@ class _CategoryCardState extends State<CategoryCard> {
                 },
                 child: Container(
                   decoration: const BoxDecoration(
-                    color: AppColors.purple,
+                    color: AppColors.yellow,
                     shape: BoxShape.circle,
                   ),
                   padding: const EdgeInsets.all(4),
-                  child: const Icon(Icons.add, color: Colors.white),
+                  child: const Icon(Icons.add, color: AppColors.white),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
+
+          // Meal List or Loader or Empty
           _isLoading
               ? const Center(child: CircularProgressIndicator())
-              : mealsToShow.isNotEmpty
+              : _mealsFromApi.isNotEmpty
                   ? ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                      itemCount: mealsToShow.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _mealsFromApi.length,
                       itemBuilder: (context, index) {
-                        final meal = mealsToShow[index];
+                        final meal = _mealsFromApi[index];
                         return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            RecipeDetails.routeName,
-                            arguments: meal.id,
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                meal.imageUrl,
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(meal.name,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  Text("${meal.calories}",
-                                      style:
-                                          const TextStyle(color: Colors.grey)),
-                                ],
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                RecipeDetails.routeName,
+                                arguments: meal.id,
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    meal.image,
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(meal.name,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                      Text("${meal.nutrients.calories} kcal",
+                                          style: const TextStyle(
+                                              color: AppColors.gray)),
+                                    ],
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
                                       _mealsFromApi.remove(meal);
+                                      widget.meals
+                                          .removeWhere((m) => m.id == meal.id);
                                       widget.onMealsChanged?.call(widget.meals);
-                                });
-                              },
-                              child: Icon(Icons.close, color: AppColors.gray),
+                                    });
+                                  },
+                                  child: const Icon(Icons.close,
+                                      color: AppColors.gray),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                )
+                          ),
+                        );
+                      },
+                    )
                   : Center(
                       child: Text(
                         appLocalizations.noMealsYet,
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
-                  ),
-                )
+                        style: const TextStyle(
+                            color: AppColors.gray, fontSize: 16),
+                      ),
+                    ),
         ],
       ),
     );

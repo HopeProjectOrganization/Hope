@@ -17,6 +17,7 @@ class TextRecognitionService {
 
       final fullText = recognizedText.text;
       print("📄 النص الكامل:\n$fullText");
+      print("📄 النص المعدل:\n$processedText");
 
       return isFood ? fullText : processedText;
     } catch (e) {

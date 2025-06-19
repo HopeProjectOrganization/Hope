@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/recipes/fetch_recipe.dart';
+import 'package:hope/Api/recipes/recipe_service.dart';
+import 'package:hope/Api/saved/favorite_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -12,7 +13,7 @@ import 'package:provider/provider.dart';
 
 class RecipeDetails extends StatefulWidget {
   static const routeName = '/recipe';
-  final int id;
+  final String id;
 
   const RecipeDetails({super.key, required this.id});
 
@@ -26,6 +27,7 @@ class _RecipeDetailsState extends State<RecipeDetails>
   late TabController _tabController;
   bool isDescriptionExpanded = false;
   bool isPressed = false;
+  bool isSaved = false;
 
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
@@ -35,6 +37,18 @@ class _RecipeDetailsState extends State<RecipeDetails>
     super.initState();
     mealFuture = fetchMealById(widget.id);
     _tabController = TabController(length: 2, vsync: this);
+    checkIfFavorite(); // نضيف هنا
+  }
+
+  void checkIfFavorite() async {
+    try {
+      bool favorite = await FavoriteApiService.isFavorite(widget.id);
+      setState(() {
+        isPressed = favorite;
+      });
+    } catch (e) {
+      print("Failed to check favorite: $e");
+    }
   }
 
   @override
@@ -88,7 +102,7 @@ class _RecipeDetailsState extends State<RecipeDetails>
                             fit: StackFit.expand,
                             children: [
                               Image.network(
-                                meal.imageUrl,
+                                meal.image,
                                 fit: BoxFit.cover,
                               ),
                               CustomGradient(),
@@ -104,16 +118,45 @@ class _RecipeDetailsState extends State<RecipeDetails>
                               _circleIconButton(
                                   Icons.close, () => Navigator.pop(context)),
                               _circleIconButton(
-                                  isPressed
-                                      ? Icons.favorite
-                                      : Icons.favorite_border, () {
-                                setState(() {
-                                  isPressed = !isPressed;
-                                });
-                              },
-                                  iconColor: isPressed
-                                      ? AppColors.red
-                                      : AppColors.dark),
+                                isPressed
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                () async {
+                                  if (meal.id == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text("Meal ID is missing")),
+                                    );
+                                    return;
+                                  }
+
+                                  try {
+                                    await FavoriteApiService.saveFavorite(
+                                      meal.id!,
+                                      'mealSence',
+                                      'meal',
+                                    );
+
+                                    setState(() {
+                                      isPressed = !isPressed;
+                                    });
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text("Saved to your favorites")),
+                                    );
+                                  } catch (e) {
+                                    print(e);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text("Failed to save")),
+                                    );
+                                  }
+                                },
+                                iconColor:
+                                    isPressed ? AppColors.red : AppColors.dark,
+                              ),
                             ],
                           ),
                         ),
@@ -157,8 +200,7 @@ class _RecipeDetailsState extends State<RecipeDetails>
                               ),
                               Icon(Icons.access_time, color: Colors.grey),
                               SizedBox(width: 4),
-                              Text(
-                                  "${meal.prepTimeInMinutes} ${appLocalizations.min}",
+                              Text("${meal.cookTime} ${appLocalizations.min}",
                                   style: TextStyle(color: Colors.grey)),
                             ],
                           ),
@@ -166,13 +208,13 @@ class _RecipeDetailsState extends State<RecipeDetails>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
-                                  child: Text("${meal.difficulty} ",
-                                      style: TextStyle(color: AppColors.gray))),
-                              Icon(Icons.room_service, color: Colors.grey),
+                              // Expanded(
+                              //     child: Text("${meal.} ",
+                              //         style: TextStyle(color: AppColors.gray))),
+                              // Icon(Icons.room_service, color: Colors.grey),
                               SizedBox(width: 4),
                               Text(
-                                  "${meal.serving} ${appLocalizations.serving} ",
+                                  "${meal.servings} ${appLocalizations.serving} ",
                                   style: TextStyle(color: Colors.grey))
                             ],
                           ),
@@ -182,18 +224,20 @@ class _RecipeDetailsState extends State<RecipeDetails>
                             children: [
                               _nutrientCard(
                                   appLocalizations.carbs,
-                                  "${meal.carbs}g",
+                                  "${meal.nutrients.netCarbs}g",
                                   AppIcons.carbs, Colors.blue),
                               _nutrientCard(
                                   appLocalizations.protein,
-                                  "${meal.protein}g",
+                                  "${meal.nutrients.protein}g",
                                   AppIcons.proteins, Colors.green),
                               _nutrientCard(
                                   appLocalizations.calories,
-                                  "${meal.calories} Kcal",
+                                  "${meal.nutrients.calories} Kcal",
                                   AppIcons.calories, Colors.red),
                               _nutrientCard(appLocalizations.fat,
-                                  "${meal.fat}g", AppIcons.fats, Colors.orange),
+                                  "${meal.nutrients.fat}g",
+                                  AppIcons.fats,
+                                  Colors.orange),
                             ],
                           ),
                           SizedBox(height: 20),
@@ -266,13 +310,12 @@ class _RecipeDetailsState extends State<RecipeDetails>
 
   Widget buildIngredients(Meal meal) {
     return ListView.builder(
-      physics: NeverScrollableScrollPhysics(), // يتحكم فيه السكول الرئيسي
+      physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: meal.ingredients.length,
       itemBuilder: (context, index) {
         final ingredient = meal.ingredients[index];
-        final measurement =
-            index < meal.measurements.length ? meal.measurements[index] : '';
+
         return Container(
           margin: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
           padding: EdgeInsets.all(12),
@@ -289,15 +332,14 @@ class _RecipeDetailsState extends State<RecipeDetails>
           ),
           child: Row(
             children: [
-              // صورة العنصر
+              // صورة رمزية (عامة أو من اسم المكوّن لاحقًا)
               Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: NetworkImage(
-                        meal.categoryThumbnail), // يمكن تخصيصها لاحقًا
+                    image: NetworkImage(meal.image), // أو صورة عامة لاحقًا
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -305,16 +347,16 @@ class _RecipeDetailsState extends State<RecipeDetails>
               SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  ingredient,
+                  ingredient.name.split(',')[0],
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
                 ),
               ),
-              // الكمية
+              // عرض الكمية والوحدة
               Text(
-                "$measurement",
+                "${ingredient.servingSize.qty} ${ingredient.servingSize.units}",
                 style: TextStyle(fontSize: 16),
               ),
             ],
@@ -325,50 +367,39 @@ class _RecipeDetailsState extends State<RecipeDetails>
   }
 
   Widget buildInstructions(Meal meal) {
-    return ListView.builder(
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: meal.directions.length,
-      itemBuilder: (context, index) {
-        final step = meal.directions[index];
-        return Container(
-            margin: EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              children: [
-                SizedBox(height: 18),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // رقم الخطوة داخل دائرة
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundColor: AppColors.purple.withOpacity(0.1),
-                      child: Text(
-                        "${index + 1}",
-                        style: TextStyle(
-                          color: AppColors.purple,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    // نص الخطوة
-                    Expanded(
-                      child: Text(
-                        step,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ],
+    final steps = meal.steps;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: List.generate(steps.length, (index) {
+        final step = steps[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: AppColors.purple.withOpacity(0.1),
+                child: Text(
+                  "${index + 1}",
+                  style: TextStyle(
+                    color: AppColors.purple,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                SizedBox(height: 18),
-                Divider(
-                  color: AppColors.purple,
-                  height: 2,
-                )
-              ],
-            ));
-      },
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  step,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 

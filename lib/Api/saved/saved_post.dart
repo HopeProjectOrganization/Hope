@@ -6,7 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SavedPost {
   static Future<bool> addToSaved({
-    required double postId,
+    required int postId,
+    required String postStringId,
     required String postType,
   }) async {
     final url = Uri.parse('http://${MyApp.IP}/api/favorites/add');
@@ -14,28 +15,20 @@ class SavedPost {
     // جلب التوكن من SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     final token =
-        'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYXNzZWxAZ21haWwuY29tIiwiaWF0IjoxNzQ3NzU0MjQwLCJleHAiOjE3NDgwMTM0NDB9.gVmNo8BoXmIdmvqeR7ytioNZep8MR5hHqhTZ_UtAo8Y';
+        'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYXNzZWxAZ21haWwuY29tIiwiaWF0IjoxNzQ5NzkzMzUxLCJleHAiOjE3NTAwNTI1NTF9.OAhDIPGIdU31mvKwCnjwXoQznIN764SC-q_LnIsAOOQ';
     //prefs.getString('auth_token');
-
-    if (token == null) {
-      print('No token found!');
-      return false; // أو ممكن ترجعي رسالة للمستخدم
-    }
-
     final response = await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer $token', // ضيف التوكن الصحيح
       },
       body: jsonEncode({
-        'postType': postType,
-        'postId': postId,
+        "postId": postId,
+        "postStringId": postStringId,
+        "postType": postType,
       }),
     );
-    print("THE ARTICLE ID IS ${postId}}");
-    print('Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
 
     return response.statusCode == 200;
   }

@@ -24,9 +24,9 @@ class LanguageButton extends StatelessWidget {
         width: 35,
         height: 35,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: themeProvider.isDark() ? AppColors.dark : AppColors.white,
-        ),
+          borderRadius: BorderRadius.circular(10), color: AppColors.yellow
+            //themeProvider.isDark() ? AppColors.dark : AppColors.white,
+            ),
         child: Text(
           localeProvider.locale.toUpperCase(),
           style:

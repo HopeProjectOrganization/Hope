@@ -54,7 +54,7 @@ class _ProgressCardState extends State<ProgressCard> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: themeProvider.isDark() ? AppColors.gray : AppColors.white,
+        color: themeProvider.isDark() ? AppColors.white : AppColors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
@@ -131,10 +131,10 @@ class _ProgressCardState extends State<ProgressCard> {
     double totalCarbs = 0;
 
     for (final meal in widget.meals) {
-      totalCalories += meal.calories;
-      totalFat += meal.fat;
-      totalProtein += meal.protein;
-      totalCarbs += meal.carbs;
+      totalCalories += meal.nutrients.calories;
+      totalFat += meal.nutrients.fat;
+      totalProtein += meal.nutrients.protein;
+      totalCarbs += meal.nutrients.netCarbs;
     }
 
     return {

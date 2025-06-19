@@ -2,50 +2,67 @@ import 'package:flutter/material.dart';
 import 'package:hope/core/theme/app_colors.dart';
 
 class ArticleCard extends StatelessWidget {
-  final String title, imageUrl, author, date;
+  final String title, date;
+  final String? imageUrl, author;
 
   const ArticleCard({
+    super.key,
     required this.title,
     required this.imageUrl,
-    required this.author,
     required this.date,
+    this.author,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: AppColors.lavender,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Article Image
+// Article Image
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.network(
-              imageUrl,
-              height: 200,
+            child: (imageUrl != null && imageUrl!.trim().isNotEmpty)
+                ? Image.network(
+                    imageUrl!,
+                    height: 200,
               width: double.infinity,
               fit: BoxFit.cover,
-              // Ensures image covers the area properly
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
-                return Center(child: CircularProgressIndicator());
-              },
+                      return Container(
+                        height: 200,
+                        alignment: Alignment.center,
+                        child: const CircularProgressIndicator(),
+                      );
+                    },
               errorBuilder: (context, error, stackTrace) {
-                return Center(
-                  child: Icon(Icons.image_not_supported,
-                      size: 100, color: AppColors.gray),
-                );
-              },
-            ),
+                      return _buildPlaceholderImage();
+                    },
+                  )
+                : _buildPlaceholderImage(),
           ),
+
+          // Article Text
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title
                 Text(
                   title,
                   style: const TextStyle(
@@ -54,7 +71,9 @@ class ArticleCard extends StatelessWidget {
                     color: AppColors.dark,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
+
+                // Author & Date
                 Row(
                   children: [
                     const CircleAvatar(
@@ -64,14 +83,21 @@ class ArticleCard extends StatelessWidget {
                           Icon(Icons.person, size: 14, color: AppColors.white),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      author,
-                      style: const TextStyle(color: AppColors.gray),
+                    Expanded(
+                      child: Text(
+                        author ?? "Unknown",
+                        style: const TextStyle(color: AppColors.gray),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.calendar_today,
+                        size: 14, color: AppColors.gray),
+                    const SizedBox(width: 4),
                     Text(
                       date,
-                      style: const TextStyle(color: AppColors.gray),
+                      style:
+                          const TextStyle(color: AppColors.gray, fontSize: 12),
                     ),
                   ],
                 ),
@@ -79,6 +105,19 @@ class ArticleCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      height: 200,
+      width: double.infinity,
+      color: AppColors.gray.withOpacity(0.2),
+      child: const Icon(
+        Icons.image_not_supported,
+        size: 60,
+        color: AppColors.gray,
       ),
     );
   }
