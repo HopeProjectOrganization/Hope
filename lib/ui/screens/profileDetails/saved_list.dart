@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hope/Api/saved/favorite_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
-
-class Task {
-  final String type;
-  final String title;
-
-  Task({required this.type, required this.title});
-}
 
 class SavedListScreen extends StatefulWidget {
   static const String routeName = "savedlist";
@@ -16,111 +10,119 @@ class SavedListScreen extends StatefulWidget {
 }
 
 class _SavedListScreenState extends State<SavedListScreen> {
-  List<Task> tasks = [
-    Task(type: "Hereditary", title: "Update Blog"),
-    Task(type: "Awareness", title: "Finalize Presentation"),
-    Task(type: "Healthy diet", title: "Book Flights To Seattle"),
-    Task(type: "High risk people", title: "Buy Travel Insurance"),
-    Task(type: "Awareness", title: "Campaign Planning"),
+  List<dynamic> favorites = [];
+  String? selectedCategory;
+  bool isLoading = false;
+
+  final List<String> allCategories = [
+    'NEWS',
+    'HEREDITARY',
+    'AWARENESS',
+    'HEALTHY_DIET',
+    'HIGH_RISK_PEOPLE',
   ];
 
-  String? selectedType; // null = All
+  @override
+  void initState() {
+    super.initState();
+    loadAllCategoriesFavorites();
+  }
 
-  List<String> get types => tasks.map((e) => e.type).toSet().toList();
+  Future<void> loadAllCategoriesFavorites() async {
+    setState(() => isLoading = true);
+    try {
+      List<dynamic> allFavorites = [];
+      for (String category in allCategories) {
+        final response = await FavoriteApiService.getByCategory(category);
+        allFavorites.addAll(response);
+      }
+      setState(() => favorites = allFavorites);
+    } catch (e) {
+      print("Error loading favorites: $e");
+      _showError("Failed to load favorites");
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> loadFavoritesByCategory(String category) async {
+    setState(() => isLoading = true);
+    try {
+      final response = await FavoriteApiService.getByCategory(category);
+      setState(() => favorites = response);
+    } catch (e) {
+      print("Error loading favorites: $e");
+      _showError("Failed to load favorites");
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        backgroundColor: Colors.grey[100],
-        appBar: AppBar(
-          backgroundColor: AppColors.purple,
-          title: const Text("Saved List", style: TextStyle(color: AppColors.white)),
-        ),
-        drawer: Drawer(
-          child: Column(
-            children: [
-              const DrawerHeader(
-                child: Text("Filter by Type", style: TextStyle(fontSize: 20)),
-              ),
-              ListTile(
-                title: const Text("All"),
-                onTap: () {
-                  setState(() {
-                    selectedType = null;
-                    Navigator.pop(context);
-                  });
-                },
-              ),
-              ...types.map((type) => ListTile(
-                    title: Text(type),
-                    onTap: () {
-                      setState(() {
-                        selectedType = type;
-                        Navigator.pop(context);
-                      });
-                    },
-                  )),
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: AppColors.Teal,
+        title:
+            const Text("Saved List", style: TextStyle(color: AppColors.white)),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'All') {
+                selectedCategory = null;
+                loadAllCategoriesFavorites();
+              } else {
+                selectedCategory = value;
+                loadFavoritesByCategory(value);
+              }
+            },
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 'All', child: Text('All')),
+              ...allCategories
+                  .map((cat) => PopupMenuItem(value: cat, child: Text(cat))),
             ],
+            icon: const Icon(Icons.filter_list, color: Colors.white),
           ),
-        ),
-        body: Column(
-          children: [
-            if (selectedType != null)
-              Container(
-                width: double.infinity,
-                color: AppColors.lavender.withOpacity(0.2),
-                padding: const EdgeInsets.all(8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Filtered by: $selectedType"),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          selectedType = null;
-                        });
-                      },
-                      child: const Text("Clear Filter"),
-                    ),
-                  ],
-                ),
-              ),
-            const SizedBox(height: 10),
-            Expanded(child: _buildGroupedTasksView()),
-          ],
-        ),
+        ],
       ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : favorites.isEmpty
+              ? const Center(child: Text('No favorites found.'))
+              : _buildGroupedFavorites(),
     );
   }
 
-  Widget _buildGroupedTasksView() {
-    final List<Task> filteredTasks = selectedType == null
-        ? tasks
-        : tasks.where((task) => task.type == selectedType).toList();
-
-    // Group tasks
-    Map<String, List<Task>> groupedTasks = {};
-    for (var task in filteredTasks) {
-      groupedTasks.putIfAbsent(task.type, () => []).add(task);
+  Widget _buildGroupedFavorites() {
+    Map<String, List<dynamic>> grouped = {};
+    for (var fav in favorites) {
+      String type = fav['type'];
+      if (!grouped.containsKey(type)) {
+        grouped[type] = [];
+      }
+      grouped[type]!.add(fav);
     }
 
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      children: groupedTasks.entries.map((entry) {
-        final String type = entry.key;
-        final List<Task> sectionTasks = entry.value;
-
+      padding: const EdgeInsets.all(12),
+      children: grouped.entries.map((entry) {
+        final type = entry.key;
+        final items = entry.value;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "$type (${sectionTasks.length})",
+              "$type (${items.length})",
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            ...sectionTasks.map((task) => _buildTaskItem(task)).toList(),
+            ...items.map((item) => _buildFavoriteItem(item)).toList(),
             const SizedBox(height: 12),
           ],
         );
@@ -128,7 +130,11 @@ class _SavedListScreenState extends State<SavedListScreen> {
     );
   }
 
-  Widget _buildTaskItem(Task task) {
+  Widget _buildFavoriteItem(dynamic item) {
+    String type = item['type'];
+    String category = item['category'];
+    String mealId = item['mealId'];
+
     return Dismissible(
       key: UniqueKey(),
       direction: DismissDirection.endToStart,
@@ -138,10 +144,18 @@ class _SavedListScreenState extends State<SavedListScreen> {
         padding: const EdgeInsets.only(right: 20),
         child: const Icon(Icons.delete, color: Colors.white),
       ),
-      onDismissed: (_) {
-        setState(() {
-          tasks.remove(task);
-        });
+      onDismissed: (_) async {
+        try {
+          await FavoriteApiService.deleteById(mealId);
+          if (selectedCategory == null) {
+            loadAllCategoriesFavorites();
+          } else {
+            loadFavoritesByCategory(selectedCategory!);
+          }
+        } catch (e) {
+          print("Error deleting: $e");
+          _showError("Failed to delete item");
+        }
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 6),
@@ -163,10 +177,14 @@ class _SavedListScreenState extends State<SavedListScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(task.type, style: const TextStyle(color: Colors.grey)),
+                  Text("Type: $type",
+                      style: const TextStyle(color: Colors.grey)),
+                  Text("Category: $category",
+                      style: const TextStyle(color: Colors.grey)),
                   const SizedBox(height: 4),
-                  Text(task.title,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  Text(mealId,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w500)),
                 ],
               ),
             ),

@@ -29,7 +29,7 @@ class _CustomTabSelectorState extends State<CustomTabSelector> {
 
     final tabs = [appLocalizations.all, appLocalizations.byCategory];
     final colors = [Colors.purple.shade100, Colors.blue.shade100];
-    final textColors = [AppColors.purple, Colors.blue];
+    final textColors = [AppColors.Teal, Colors.blue];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

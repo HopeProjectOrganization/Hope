@@ -75,7 +75,7 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
           icon: const Icon(Icons.arrow_back_outlined),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
         centerTitle: true,
         title: Text(
           appLocalizations.cancerTreatmentPlaces,
@@ -93,7 +93,7 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
                 });
               },
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search, color: AppColors.purple),
+                prefixIcon: Icon(Icons.search, color: AppColors.Teal),
                 hintText: appLocalizations.search,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -245,7 +245,7 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
             fetchAllPlaces();
           }
         },
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
         child: const Icon(Icons.add, color: AppColors.lavender),
       ),
     );

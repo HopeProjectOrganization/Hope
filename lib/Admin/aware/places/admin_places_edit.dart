@@ -139,7 +139,7 @@ class _AdminAddHospitalScreenState extends State<AdminAddHospitalScreen> {
       appBar: AppBar(
         title: const Text("Add Hospital",
             style: TextStyle(color: AppColors.white)),
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

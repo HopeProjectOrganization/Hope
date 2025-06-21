@@ -43,7 +43,7 @@ class CategoryItemWidget extends StatelessWidget {
           //   ),
           // ],
           border: Border.all(
-            color: AppColors.purple, // لون البوردر
+            color: AppColors.Teal, // لون البوردر
             width: 2.0, // سمك البوردر
           ),
           borderRadius: BorderRadius.all(Radius.circular(15))),
@@ -90,7 +90,7 @@ class CategoryItemWidget extends StatelessWidget {
                       //   ),
                       // ],
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: AppColors.purple, width: 1),
+                      border: Border.all(color: AppColors.Teal, width: 1),
                       color: AppColors.lavender),
                   child: FittedBox(
                     child: Row(

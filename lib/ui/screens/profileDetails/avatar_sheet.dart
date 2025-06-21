@@ -59,11 +59,11 @@ class _AvatarSheetState extends State<AvatarSheet> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppColors.purple.withOpacity(0.6)
+                          ? AppColors.Teal.withOpacity(0.6)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: AppColors.purple,
+                        color: AppColors.Teal,
                         width: 3,
                       ),
                     ),

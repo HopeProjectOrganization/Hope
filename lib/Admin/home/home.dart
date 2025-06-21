@@ -87,7 +87,7 @@ class _HomeScreenState extends State<AdminHomeScreen> {
               ? null
               : FloatingActionButton(
                   heroTag: 'scan',
-                  backgroundColor: AppColors.purple,
+                  backgroundColor: AppColors.Teal,
                   shape: CircleBorder(
                     side: BorderSide(color: AppColors.white, width: 5),
                   ),

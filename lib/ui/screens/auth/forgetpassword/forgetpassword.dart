@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Api/auth/auth.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/verify/verification.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
-import 'package:http/http.dart' as http;
 
 class ForgetpasswordScreen extends StatefulWidget {
   static const String routeName = "/forgetpasswordScreen";
@@ -22,47 +20,38 @@ class ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _inputController = TextEditingController();
 
+  /// نستخدم الـ AuthApiService اللي أصلاً معمول وجاهز
   Future<void> forgetPassword(String input) async {
-    final url =
-        Uri.parse('http://192.168.1.109:9090/api/v1/auth/forgot-password');
-
+    final service = AuthApiService();
     try {
       showLoading(context);
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': input,
-        }),
-      );
+      final response = await service.forgotPassword(email: input);
       hideLoading(context);
 
       if (response.statusCode == 200) {
         Navigator.pushNamed(context, VerficationScreen.routeName);
       } else {
-        print('Error');
         showMessage(
           context,
           "${response.statusCode}",
-          title: "Error during registration! : ",
+          title: "Error during reset password!",
           posButtonTitle: "Try again",
           posButtonClick: () {
-            Navigator.pop;
+            Navigator.pop(context);
           },
         );
       }
     } catch (e) {
+      hideLoading(context);
       showMessage(
         context,
-        "${e.toString()}",
-        title: "Error during registration! : ",
+        "Error: $e",
+        title: "Error during reset password!",
         posButtonTitle: "Try again",
         posButtonClick: () {
-          Navigator.pop;
+          Navigator.pop(context);
         },
       );
-      print('Error: $e');
-      showMessage(context, 'Error: $e');
     }
   }
 

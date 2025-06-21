@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/auth/login/logout_service.dart';
+import 'package:hope/Api/auth/auth.dart';
 import 'package:hope/Api/profile/profile_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/locale_provider.dart';
@@ -82,7 +82,7 @@ class _MenuTabState extends State<MenuTab> {
       title: "Profile",
       body: isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: AppColors.purple),
+              child: CircularProgressIndicator(color: AppColors.Teal),
             )
           : userProfile == null
               ? const Center(
@@ -147,7 +147,7 @@ class _MenuTabState extends State<MenuTab> {
           buildCustomeItem(
             customIcon: Icon(
               themeProvider.isDark() ? EvaIcons.moon : EvaIcons.sun,
-              color: AppColors.purple,
+              color: AppColors.Teal,
             ),
             title: appLocalizations.theme,
             context: context,
@@ -165,7 +165,7 @@ class _MenuTabState extends State<MenuTab> {
               icon: ImageIcon(AssetImage(AppIcons.exit)),
               title: appLocalizations.exit,
               onClick: () {
-                LogoutService().logoutUser(context);
+                AuthApiService().logout();
               },
             ),
           )
@@ -191,7 +191,7 @@ class _MenuTabState extends State<MenuTab> {
               backgroundColor: AppColors.lavender,
               radius: 20,
               child: FittedBox(
-                child: Icon(icon, color: AppColors.purple),
+                child: Icon(icon, color: AppColors.Teal),
               ),
             ),
             SizedBox(width: 16),
@@ -220,7 +220,7 @@ class _MenuTabState extends State<MenuTab> {
   }) {
     final iconWidget = customIcon ??
         (iconData != null
-            ? Icon(iconData, color: AppColors.purple, size: 20)
+            ? Icon(iconData, color: AppColors.Teal, size: 20)
             : null);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
@@ -255,7 +255,7 @@ class _MenuTabState extends State<MenuTab> {
                         ? AppLocalizations.of(context)!.en
                         : AppLocalizations.of(context)!.ar,
                     style: TextStyle(
-                        color: AppColors.purple, fontWeight: FontWeight.bold),
+                        color: AppColors.Teal, fontWeight: FontWeight.bold),
                   )
                 : Text(
                     themeProvider.isDark()

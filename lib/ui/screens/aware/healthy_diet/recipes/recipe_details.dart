@@ -59,10 +59,10 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             elevation: 2,
             child: ListTile(
               leading: CircleAvatar(
-                backgroundColor: AppColors.purple.withOpacity(0.2),
+                backgroundColor: AppColors.Teal.withOpacity(0.2),
                 child: Text('$i',
                     style: TextStyle(
-                        color: AppColors.purple, fontWeight: FontWeight.bold)),
+                        color: AppColors.Teal, fontWeight: FontWeight.bold)),
               ),
               title: Text(ingredient, style: const TextStyle(fontSize: 18)),
               trailing: Text(measure ?? '',
@@ -85,7 +85,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.purple),
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.Teal),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(appLocalizations.recipeDetails,
@@ -202,7 +202,7 @@ class _RecipeStepsScreenState extends State<RecipeStepsScreen> {
   }) {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
-        backgroundColor: color ?? AppColors.purple,
+        backgroundColor: color ?? AppColors.Teal,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         elevation: 4,
@@ -330,7 +330,7 @@ class StepIndicators extends StatelessWidget {
           width: isActive ? 20 : 10,
           height: 10,
           decoration: BoxDecoration(
-            color: isActive ? AppColors.purple : Colors.grey[300],
+            color: isActive ? AppColors.Teal : Colors.grey[300],
             borderRadius: BorderRadius.circular(10),
           ),
         );

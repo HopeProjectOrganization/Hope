@@ -296,7 +296,7 @@ class _SuggestedReplacementsScreenState
           },
         ),
         toolbarHeight: MediaQuery.of(context).size.height * 0.1,
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(20),

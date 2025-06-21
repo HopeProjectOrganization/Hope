@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/auth/login/logout_service.dart';
+import 'package:hope/Api/auth/auth.dart';
 import 'package:hope/Api/profile/profile_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/locale_provider.dart';
@@ -9,6 +9,7 @@ import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/avatar.dart';
 import 'package:hope/model/get_profile.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
+import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab/edit_profile.dart';
 import 'package:hope/ui/screens/profileDetails/custom_item.dart';
 import 'package:hope/ui/screens/profileDetails/profile_item.dart';
@@ -134,7 +135,7 @@ class _ProfileBodyState extends State<ProfileBody> {
             themeProvider: widget.themeProvider,
             customIcon: Icon(
               widget.themeProvider.isDark() ? EvaIcons.moon : EvaIcons.sun,
-              color: AppColors.purple,
+              color: AppColors.Teal,
             ),
             title: widget.appLocalizations.theme,
           ),
@@ -148,10 +149,17 @@ class _ProfileBodyState extends State<ProfileBody> {
           CustomButton(
             icon: const ImageIcon(AssetImage(AppIcons.exit)),
             title: widget.appLocalizations.exit,
-            onClick: () {
-              LogoutService().logoutUser(context);
+            onClick: () async {
+              await AuthApiService().logout();
+              // بعد تسجيل الخروج انقله إلى شاشة تسجيل الدخول
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                LoginScreen.routeName,
+                (route) =>
+                    false, // يمسح كل الـ stack ويبدأ من شاشة تسجيل الدخول
+              );
             },
-          ),
+          )
         ],
       ),
     );

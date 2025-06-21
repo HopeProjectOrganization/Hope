@@ -101,13 +101,13 @@ class BodyPartScreen extends StatelessWidget {
                               Text(
                                 appLocalizations.viewMore,
                                 style: TextStyle(
-                                  color: AppColors.purple,
+                                  color: AppColors.Teal,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                               SizedBox(width: 6),
                               Icon(Icons.arrow_forward_ios_rounded,
-                                  size: 14, color: AppColors.purple),
+                                  size: 14, color: AppColors.Teal),
                             ],
                           ),
                         ),

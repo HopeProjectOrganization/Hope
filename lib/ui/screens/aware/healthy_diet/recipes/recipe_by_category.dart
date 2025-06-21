@@ -43,7 +43,7 @@ class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${appLocalizations.category} ${widget.category}'),
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

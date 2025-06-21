@@ -116,7 +116,7 @@ class MyCalendarWidgetState extends State<MyCalendarWidget> {
       decoration: BoxDecoration(
         color: isSelected ? AppColors.lavender : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
-        border: isToday ? Border.all(color: AppColors.purple, width: 2) : null,
+        border: isToday ? Border.all(color: AppColors.Teal, width: 2) : null,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -124,7 +124,7 @@ class MyCalendarWidgetState extends State<MyCalendarWidget> {
           Text(
             day,
             style: TextStyle(
-              color: isSelected ? AppColors.purple : AppColors.gray,
+              color: isSelected ? AppColors.Teal : AppColors.gray,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -132,7 +132,7 @@ class MyCalendarWidgetState extends State<MyCalendarWidget> {
           Text(
             date,
             style: TextStyle(
-              color: isSelected ? AppColors.purple : AppColors.dark,
+              color: isSelected ? AppColors.Teal : AppColors.dark,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -147,7 +147,7 @@ class MyCalendarWidgetState extends State<MyCalendarWidget> {
       child: Text(
         "${DateHelper.getMonthName(selectedDate.month)} ${selectedDate.year}",
         style: const TextStyle(
-            fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.purple),
+            fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.Teal),
       ),
     );
   }

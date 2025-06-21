@@ -150,7 +150,7 @@ class _AdminHealthyEditorScreenState extends State<AdminHealthyEditorScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(isEdit ? 'Edit Diet Article' : 'Add Diet Article'),
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -259,7 +259,7 @@ class _AdminHealthyEditorScreenState extends State<AdminHealthyEditorScreen> {
               const SizedBox(height: 30),
               CustomButton(
                 onClick: _saveNews,
-                color: AppColors.purple,
+                color: AppColors.Teal,
                 title: isEdit ? 'Update Article' : 'Add Article',
               ),
             ],

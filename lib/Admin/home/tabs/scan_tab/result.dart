@@ -45,7 +45,6 @@ class ResultScreen extends StatelessWidget {
     ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
     AppLocalizations appLocalizations = AppLocalizations.of(context)!;
 
-    // ✅ Get image based on first ingredient's riskCategory
     final String imageToShow = getRiskImage(
       highRiskIngredients.isNotEmpty
           ? highRiskIngredients[0]['riskCategory']
@@ -58,7 +57,7 @@ class ResultScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_outlined,
-            color: AppColors.purple,
+            color: AppColors.Teal,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -89,7 +88,7 @@ class ResultScreen extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 20),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: const BoxDecoration(
-                color: AppColors.purple,
+                color: AppColors.Teal,
                 borderRadius: BorderRadius.all(Radius.circular(16)),
               ),
               width: double.infinity,

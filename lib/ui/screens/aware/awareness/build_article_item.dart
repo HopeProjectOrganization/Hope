@@ -41,7 +41,7 @@ class BuildArticleItem extends StatelessWidget {
       child: Card(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: AppColors.purple)),
+            side: BorderSide(color: AppColors.Teal)),
         child: Container(
           height: MediaQuery.of(context).size.height * 0.35,
           padding: const EdgeInsets.all(16.0),

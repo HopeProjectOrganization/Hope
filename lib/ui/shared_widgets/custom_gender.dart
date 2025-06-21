@@ -36,11 +36,11 @@ class _CustomGenderState extends State<CustomGender> {
         decoration: BoxDecoration(
           border: Border.all(
               color: themeProvider.isDark()
-                  ? AppColors.purple
+                  ? AppColors.Teal
                   : AppColors.gray), // Border color
           borderRadius: BorderRadius.circular(20), // Rounded border
           color: widget.isSelected
-              ? AppColors.purple.withOpacity(0.1)
+              ? AppColors.Teal.withOpacity(0.1)
               : Colors.transparent, // Change color when selected
         ),
         child: Row(

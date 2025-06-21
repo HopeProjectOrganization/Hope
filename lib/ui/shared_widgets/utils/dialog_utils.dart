@@ -15,13 +15,13 @@ showLoading(
               Text(
                 "Loading...",
                 style: TextStyle(
-                    color: AppColors.purple,
+                    color: AppColors.Teal,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
               Spacer(),
               CircularProgressIndicator(
-                color: AppColors.purple,
+                color: AppColors.Teal,
               ),
             ],
           ),
@@ -50,7 +50,7 @@ showMessage(
           content: Text(
             message,
             style: TextStyle(
-                color: AppColors.purple,
+                color: AppColors.Teal,
                 fontSize: 20,
                 fontWeight: FontWeight.bold),
           ),
@@ -58,7 +58,7 @@ showMessage(
             if (posButtonTitle != null)
               TextButton(
                   style: FilledButton.styleFrom(
-                    textStyle: TextStyle(fontSize: 16 , color: AppColors.purple),
+                    textStyle: TextStyle(fontSize: 16, color: AppColors.Teal),
                     padding: const EdgeInsets.all(16),
                   ),
                   onPressed: () {
@@ -71,7 +71,7 @@ showMessage(
             if (negativeButtonTitle != null)
               TextButton(
                   style: FilledButton.styleFrom(
-                    textStyle: TextStyle(fontSize: 16 , color: AppColors.purple),
+                    textStyle: TextStyle(fontSize: 16, color: AppColors.Teal),
                     padding: const EdgeInsets.all(16),
                   ),
                   onPressed: () {

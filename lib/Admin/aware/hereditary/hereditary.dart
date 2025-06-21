@@ -61,7 +61,7 @@ class _HereditaryState extends State<AdminHereditary>
           onPressed: () => Navigator.of(context).pop(),
         ),
         toolbarHeight: MediaQuery.of(context).size.height * 0.1,
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(20),
@@ -88,7 +88,7 @@ class _HereditaryState extends State<AdminHereditary>
         onPressed: () {
           Navigator.pushNamed(context, AdminHereditaryEditorScreen.routeName);
         },
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
         child: const Icon(
           Icons.add,
           color: AppColors.lavender,

@@ -90,7 +90,7 @@ class _EditProfileState extends State<EditProfile> {
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back_outlined,
-              color: AppColors.purple,
+              color: AppColors.Teal,
             ),
             onPressed: () {
               Navigator.of(context).pop();
@@ -121,7 +121,7 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           CircleAvatar(
                             radius: 14,
-                            backgroundColor: AppColors.purple,
+                            backgroundColor: AppColors.Teal,
                             child: Icon(Icons.edit,
                                 size: 16, color: AppColors.white),
                           ),
@@ -233,11 +233,11 @@ class _EditProfileState extends State<EditProfile> {
                           child: Container(
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? AppColors.purple.withOpacity(0.6)
+                                  ? AppColors.Teal.withOpacity(0.6)
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: AppColors.purple,
+                                color: AppColors.Teal,
                                 width: 3,
                               ),
                             ),

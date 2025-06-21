@@ -40,7 +40,7 @@ class HealthyDietCategory extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: AppColors.purple,
+              color: AppColors.Teal,
               offset: Offset(0, 4),
               blurRadius: 4,
             ),

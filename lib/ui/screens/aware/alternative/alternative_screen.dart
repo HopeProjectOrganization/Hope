@@ -576,7 +576,7 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
                   if (text.isNotEmpty) handleSearch(text);
                 },
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.purple,
+            backgroundColor: AppColors.Teal,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             shape:
@@ -666,9 +666,9 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
-          labelColor: AppColors.purple,
+          labelColor: AppColors.Teal,
           unselectedLabelColor: Colors.grey,
-          indicatorColor: AppColors.purple,
+          indicatorColor: AppColors.Teal,
           tabs: const [
             Tab(text: 'بحث يدوي'),
             Tab(text: 'السجل'),

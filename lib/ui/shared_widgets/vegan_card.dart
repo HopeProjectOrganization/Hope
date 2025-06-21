@@ -55,7 +55,7 @@ class VeganCard extends StatelessWidget {
                       child: Text(
                         recipe.difficulty.toUpperCase(),
                         style: const TextStyle(
-                          color: AppColors.purple,
+                          color: AppColors.Teal,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
                           letterSpacing: 0.8,

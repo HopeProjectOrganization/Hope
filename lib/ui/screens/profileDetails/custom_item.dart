@@ -30,7 +30,7 @@ class CustomItem extends StatelessWidget {
 
     final iconWidget = customIcon ??
         (iconData != null
-            ? Icon(iconData, color: AppColors.purple, size: 20)
+            ? Icon(iconData, color: AppColors.Teal, size: 20)
             : null);
 
     return Padding(

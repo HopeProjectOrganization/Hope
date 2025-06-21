@@ -216,7 +216,7 @@ class _RecipesState extends State<Recipes> {
           text,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: isSelected ? AppColors.purple : Colors.grey,
+            color: isSelected ? AppColors.Teal : Colors.grey,
           ),
         ),
       ),

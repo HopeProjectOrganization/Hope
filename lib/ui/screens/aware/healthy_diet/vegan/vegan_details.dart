@@ -19,7 +19,7 @@ class RecipeDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
         title: Text(appLocalizations.recipeDetails),
         centerTitle: true,
         elevation: 4,
@@ -78,21 +78,21 @@ class RecipeDetailsScreen extends StatelessWidget {
                             backgroundColor:
                                 AppColors.lavender.withOpacity(0.1),
                             avatar: const Icon(Icons.fitness_center,
-                                size: 15, color: AppColors.purple),
+                                size: 15, color: AppColors.Teal),
                           ),
                           Chip(
                             label: Text(recipe.portion),
                             backgroundColor:
                                 AppColors.lavender.withOpacity(0.1),
                             avatar: const Icon(Icons.people,
-                                size: 15, color: AppColors.purple),
+                                size: 15, color: AppColors.Teal),
                           ),
                           Chip(
                             label: Text(recipe.time),
                             backgroundColor:
                                 AppColors.lavender.withOpacity(0.1),
                             avatar: const Icon(Icons.timer,
-                                size: 15, color: AppColors.purple),
+                                size: 15, color: AppColors.Teal),
                           ),
                         ],
                       ),
@@ -131,14 +131,14 @@ class RecipeDetailsScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.restaurant_menu, color: AppColors.purple),
+              Icon(Icons.restaurant_menu, color: AppColors.Teal),
               const SizedBox(width: 8),
               Text(
                 appLocalizations.ingredients,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 22,
-                    color: AppColors.purple),
+                    color: AppColors.Teal),
               ),
             ],
           ),
@@ -149,7 +149,7 @@ class RecipeDetailsScreen extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(Icons.circle,
-                      size: 12, color: AppColors.purple.withOpacity(0.7)),
+                      size: 12, color: AppColors.Teal.withOpacity(0.7)),
                   const SizedBox(width: 10),
                   Expanded(child: Text(ingredient)),
                 ],
@@ -174,14 +174,14 @@ class RecipeDetailsScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.format_list_numbered, color: AppColors.purple),
+              Icon(Icons.format_list_numbered, color: AppColors.Teal),
               const SizedBox(width: 8),
               Text(
                 appLocalizations.preparationSteps,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 22,
-                    color: AppColors.purple),
+                    color: AppColors.Teal),
               ),
             ],
           ),
@@ -194,7 +194,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 15,
-                        backgroundColor: AppColors.purple,
+                        backgroundColor: AppColors.Teal,
                         child: Text('${entry.key + 1}',
                             style: const TextStyle(color: Colors.white)),
                       ),

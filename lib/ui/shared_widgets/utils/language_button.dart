@@ -29,8 +29,7 @@ class LanguageButton extends StatelessWidget {
             ),
         child: Text(
           localeProvider.locale.toUpperCase(),
-          style:
-              TextStyle(color: AppColors.purple, fontWeight: FontWeight.bold),
+          style: TextStyle(color: AppColors.Teal, fontWeight: FontWeight.bold),
         ),
       ),
     );

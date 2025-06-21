@@ -136,12 +136,12 @@ class OnBoardingScreenState extends State<OnBoardingScreen> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: AppColors.purple, width: 1), // Purple border
+                            color: AppColors.Teal, width: 1), // Purple border
                       ),
                       child: const CircleAvatar(
                         backgroundColor: Colors.transparent,
                         child: Icon(Icons.arrow_back_outlined,
-                            color: AppColors.purple),
+                            color: AppColors.Teal),
                       ),
                     ))
                 : Container(),
@@ -156,9 +156,7 @@ class OnBoardingScreenState extends State<OnBoardingScreen> {
                     width: currentIndex == index ? 16.0 : 8.0,
                     height: 8.0,
                     decoration: BoxDecoration(
-                      color: currentIndex == index
-                          ? AppColors.purple
-                          : Colors.grey,
+                      color: currentIndex == index ? AppColors.Teal : Colors.grey,
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   );
@@ -181,12 +179,12 @@ class OnBoardingScreenState extends State<OnBoardingScreen> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                        color: AppColors.purple, width: 1), // Purple border
+                        color: AppColors.Teal, width: 1), // Purple border
                   ),
                   child: const CircleAvatar(
                     backgroundColor: Colors.transparent,
                     child: Icon(Icons.arrow_forward_outlined,
-                        color: AppColors.purple),
+                        color: AppColors.Teal),
                   ),
                 )),
           ]),

@@ -1,26 +1,29 @@
 import 'dart:convert';
 
+import 'package:hope/Api/auth/auth.dart';
 import 'package:hope/main.dart';
 import 'package:http/http.dart' as http;
 
 class FavoriteApiService {
   static String baseUrl = 'http://${MyApp.IP}/api/favorite-meals';
-  static const String token =
-      'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYXNzZWxAZ21haWwuY29tIiwiaWF0IjoxNzUwMjk3MTE2LCJleHAiOjE3NTA1NTYzMTZ9.btgUCRk12qLPfs4apneerqlcSVMzECwXc_cwpfRXGmg'; // <<< حطي هنا التوكن اللي معاكِ
 
-  static Map<String, String> get headers => {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      };
+  static Future<Map<String, String>> getHeaders() async {
+    final authService = AuthApiService();
+    final token = await authService.getToken();
+    if (token == null) {
+      throw Exception("User not authenticated.");
+    }
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+  }
 
   static Future<bool> isFavorite(String id) async {
     final uri = Uri.parse('$baseUrl/$id');
     final response = await http.get(
       uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+      headers: await getHeaders(),
     );
 
     if (response.statusCode == 200) {
@@ -32,7 +35,6 @@ class FavoriteApiService {
     }
   }
 
-  // Save Favorite
   static Future<void> saveFavorite(
       String mealId, String category, String type) async {
     final body = jsonEncode({
@@ -43,7 +45,7 @@ class FavoriteApiService {
 
     final response = await http.post(
       Uri.parse(baseUrl),
-      headers: headers,
+      headers: await getHeaders(),
       body: body,
     );
 
@@ -53,11 +55,10 @@ class FavoriteApiService {
     }
   }
 
-  // Get Favorites by Category
   static Future<List<dynamic>> getByCategory(String category) async {
     final response = await http.get(
       Uri.parse('$baseUrl/category/$category'),
-      headers: headers,
+      headers: await getHeaders(),
     );
 
     if (response.statusCode == 200) {
@@ -67,11 +68,10 @@ class FavoriteApiService {
     }
   }
 
-  // Get Favorites by Type
   static Future<List<dynamic>> getByType(String type) async {
     final response = await http.get(
       Uri.parse('$baseUrl/type/$type'),
-      headers: headers,
+      headers: await getHeaders(),
     );
 
     if (response.statusCode == 200) {
@@ -81,11 +81,10 @@ class FavoriteApiService {
     }
   }
 
-  // Get Favorite by MealId
   static Future<dynamic> getById(String mealId) async {
     final response = await http.get(
       Uri.parse('$baseUrl/$mealId'),
-      headers: headers,
+      headers: await getHeaders(),
     );
 
     if (response.statusCode == 200) {
@@ -95,11 +94,10 @@ class FavoriteApiService {
     }
   }
 
-  // Delete Favorite by MealId
   static Future<void> deleteById(String mealId) async {
     final response = await http.delete(
       Uri.parse('$baseUrl/$mealId'),
-      headers: headers,
+      headers: await getHeaders(),
     );
 
     if (response.statusCode != 200) {
@@ -107,11 +105,10 @@ class FavoriteApiService {
     }
   }
 
-  // Delete All Favorites
   static Future<void> deleteAll() async {
     final response = await http.delete(
       Uri.parse(baseUrl),
-      headers: headers,
+      headers: await getHeaders(),
     );
 
     if (response.statusCode != 200) {

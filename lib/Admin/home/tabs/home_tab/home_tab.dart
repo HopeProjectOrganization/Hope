@@ -52,7 +52,7 @@ class _HomeTabState extends State<HomeTab> {
                   width: double.infinity,
                   height: 118,
                   decoration: const BoxDecoration(
-                    color: AppColors.purple,
+                    color: AppColors.Teal,
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(24),
                     ),

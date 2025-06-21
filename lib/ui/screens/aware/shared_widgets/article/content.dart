@@ -41,7 +41,7 @@ class Content extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: AppColors.purple, width: 4)),
+        border: Border(left: BorderSide(color: AppColors.Teal, width: 4)),
         color: AppColors.white,
       ),
       child: Text(

@@ -1,7 +1,8 @@
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/auth/login/login_service.dart';
+import 'package:hope/Api/auth/auth.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -29,7 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
 
-  final LoginService authService = LoginService(); // إنشاء كائن من AuthService
+  final AuthApiService authService =
+      AuthApiService(); // إنشاء كائن من AuthService
 
   bool _obscurePassword = true;
   String? _emptyFieldError;
@@ -140,13 +142,41 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget buildLoginButton(BuildContext context) {
     return CustomButton(
-        onClick: () {
-          if (formKey.currentState!.validate()) {
-            authService.loginUser(context, emailController.text.trim(),
-                passwordController.text.trim());
+      onClick: () async {
+        if (formKey.currentState!.validate()) {
+          try {
+            final response = await authService.authenticate(
+              email: emailController.text.trim(),
+              password: passwordController.text.trim(),
+            );
+
+            if (response.statusCode == 200) {
+              final responseData = jsonDecode(response.body);
+              final token = responseData['token'];
+
+              // خزن التوكن في SharedPreferences
+              await authService.storeToken(token);
+
+              // ادخله على الصفحة الرئيسية
+              Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+            } else if (response.statusCode == 401) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Invalid credentials')),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Login failed: ${response.body}')),
+              );
+            }
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('An error occurred: $e')),
+            );
           }
-        },
-        title: appLocalizations.login);
+        }
+      },
+      title: appLocalizations.login,
+    );
   }
 
   Widget buildSignUpRow(BuildContext context) {

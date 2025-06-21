@@ -51,7 +51,7 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(color: AppColors.purple),
+              border: Border.all(color: AppColors.Teal),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -60,8 +60,7 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                 // Header with Icon
                 Row(
                   children: [
-                    ImageIcon(AssetImage(AppIcons.meal),
-                        color: AppColors.purple),
+                    ImageIcon(AssetImage(AppIcons.meal), color: AppColors.Teal),
                     SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,7 +163,7 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: CustomButton(
-                    color: AppColors.purple,
+                    color: AppColors.Teal,
                     onClick: () async {
                       try {
                         final mealIds = _selectedMeals

@@ -48,12 +48,10 @@ class _CustomCheckFieldState extends State<CustomCheckField> {
         decoration: BoxDecoration(
           border: Border.all(
               color: themeProvider.isDark()
-                  ? AppColors.purple
+                  ? AppColors.Teal
                   : AppColors.gray), // Border color
           borderRadius: BorderRadius.circular(20), // Rounded border
-          color: isChecked
-              ? AppColors.purple.withOpacity(0.1)
-              : Colors.transparent,
+          color: isChecked ? AppColors.Teal.withOpacity(0.1) : Colors.transparent,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -81,7 +79,7 @@ class _CustomCheckFieldState extends State<CustomCheckField> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5)),
               // Rounded checkbox
-              activeColor: AppColors.purple,
+              activeColor: AppColors.Teal,
             ),
           ],
         ),

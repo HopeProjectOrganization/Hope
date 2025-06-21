@@ -25,7 +25,7 @@ class NewsArticleScreen extends StatelessWidget {
     return Scaffold(
         backgroundColor: AppColors.white,
         appBar: AppBar(
-          backgroundColor: AppColors.purple,
+          backgroundColor: AppColors.Teal,
           centerTitle: true,
           title: Text(
             "News",

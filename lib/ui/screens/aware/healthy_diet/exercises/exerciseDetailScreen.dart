@@ -100,7 +100,7 @@ class ExerciseDetailScreen extends StatelessWidget {
                                 child: Text(
                                   index.toString().padLeft(2, '0'),
                                   style: const TextStyle(
-                                      color: AppColors.purple,
+                                      color: AppColors.Teal,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 12),
                                 ),

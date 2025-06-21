@@ -67,7 +67,7 @@ class _BuildArticleItemState extends State<BuildArticleItem> {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.purple),
+        side: BorderSide(color: AppColors.Teal),
       ),
       child: Container(
         height: MediaQuery.of(context).size.height * 0.46,

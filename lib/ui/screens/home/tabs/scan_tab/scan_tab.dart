@@ -52,7 +52,7 @@ class _ScanTabState extends State<ScanTab> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_outlined,
-            color: AppColors.purple,
+            color: AppColors.Teal,
           ),
           onPressed: () {
             Navigator.pop(context);

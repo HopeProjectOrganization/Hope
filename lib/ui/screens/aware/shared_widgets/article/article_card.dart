@@ -78,7 +78,7 @@ class ArticleCard extends StatelessWidget {
                   children: [
                     const CircleAvatar(
                       radius: 12,
-                      backgroundColor: AppColors.purple,
+                      backgroundColor: AppColors.Teal,
                       child:
                           Icon(Icons.person, size: 14, color: AppColors.white),
                     ),

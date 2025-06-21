@@ -81,7 +81,7 @@ class _MenuTabState extends State<MenuTab> {
       title: "Profile",
       body: isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: AppColors.purple),
+              child: CircularProgressIndicator(color: AppColors.Teal),
             )
           : userProfile == null
               ? const Center(

@@ -31,11 +31,11 @@ class _ScanButtonState extends State<ScanButton> {
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
 
-    Color color = themeProvider.isDark() ? AppColors.dark : AppColors.purple;
+    Color color = themeProvider.isDark() ? AppColors.dark : AppColors.Teal;
     return FloatingActionButton(
       backgroundColor: AppColors.white,
       shape: CircleBorder(
-        side: BorderSide(color: AppColors.purple, width: 5),
+        side: BorderSide(color: AppColors.Teal, width: 5),
       ),
       onPressed: () {
         // Navigator.pushNamed(

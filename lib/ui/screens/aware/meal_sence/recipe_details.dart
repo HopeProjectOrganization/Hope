@@ -247,7 +247,7 @@ class _RecipeDetailsState extends State<RecipeDetails>
                                 Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: AppColors.purple),
+                                    border: Border.all(color: AppColors.Teal),
                                   ),
                                   child: TabBar(
                                     controller: _tabController,
@@ -257,10 +257,10 @@ class _RecipeDetailsState extends State<RecipeDetails>
                                     indicatorSize: TabBarIndicatorSize.tab,
                                     indicator: BoxDecoration(
                                       borderRadius: BorderRadius.circular(15),
-                                      color: AppColors.purple,
+                                      color: AppColors.Teal,
                                     ),
                                     labelColor: AppColors.white,
-                                    unselectedLabelColor: AppColors.purple,
+                                    unselectedLabelColor: AppColors.Teal,
                                     tabs: [
                                       Tab(text: appLocalizations.ingredients),
                                       Tab(text: appLocalizations.instructions),
@@ -379,11 +379,11 @@ class _RecipeDetailsState extends State<RecipeDetails>
             children: [
               CircleAvatar(
                 radius: 16,
-                backgroundColor: AppColors.purple.withOpacity(0.1),
+                backgroundColor: AppColors.Teal.withOpacity(0.1),
                 child: Text(
                   "${index + 1}",
                   style: TextStyle(
-                    color: AppColors.purple,
+                    color: AppColors.Teal,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

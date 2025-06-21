@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,8 @@ class CustomTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final Widget? prefixIcon;
   final String? Function(String?)? validator;
+  final TextInputType keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   CustomTextField({
     super.key,
@@ -26,6 +29,8 @@ class CustomTextField extends StatelessWidget {
     this.prefixIcon,
     this.validator,
     this.minLines = 1,
+    this.keyboardType = TextInputType.text, // القيمة الافتراضية نص عادي
+    this.inputFormatters,
   });
 
   @override
@@ -41,6 +46,8 @@ class CustomTextField extends StatelessWidget {
           controller: controller,
           minLines: minLines,
           maxLines: minLines > 1 ? minLines : 1,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           decoration: InputDecoration(
             prefixIcon: prefixIcon,
             hintMaxLines: minLines,
@@ -52,13 +59,13 @@ class CustomTextField extends StatelessWidget {
                   color: error != null
                       ? AppColors.red
                       : themeProvider.isDark()
-                          ? AppColors.purple
+                          ? AppColors.Teal
                           : AppColors.dark),
               borderRadius: BorderRadius.circular(16),
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
-                  color: error != null ? AppColors.red : AppColors.purple),
+                  color: error != null ? AppColors.red : AppColors.Teal),
               borderRadius: BorderRadius.circular(16),
             ),
             errorText: error,
@@ -66,8 +73,8 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         Positioned(
-          right: 8, // Padding from the right
-          top: 8, // Padding from the top
+          right: 8,
+          top: 8,
           child: suffixIcon ?? Container(),
         ),
       ],

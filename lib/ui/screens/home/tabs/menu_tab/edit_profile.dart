@@ -106,8 +106,8 @@ class _EditProfileState extends State<EditProfile> {
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back_outlined,
-              color: AppColors.purple,
-            ),
+            color: AppColors.Teal,
+          ),
             onPressed: () {
             Navigator.pop(context, true);
           },

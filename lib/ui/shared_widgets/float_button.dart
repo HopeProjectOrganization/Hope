@@ -21,7 +21,7 @@ class _FloatButtonState extends State<FloatButton> {
           MaterialPageRoute(builder: (context) => ChatScreen()),
         );
       },
-      backgroundColor: AppColors.purple,
+      backgroundColor: AppColors.Teal,
       child: Image.asset(AppIcons.chatbot),
     );
   }

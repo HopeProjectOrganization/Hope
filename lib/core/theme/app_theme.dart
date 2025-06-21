@@ -11,23 +11,23 @@ class AppTheme {
         ),
         dividerColor: Colors.transparent,
         unselectedLabelStyle: const TextStyle(color: AppColors.white),
-        labelStyle: const TextStyle(color: AppColors.purple),
-      ),
+      labelStyle: const TextStyle(color: AppColors.Teal),
+    ),
       brightness: Brightness.light,
     scaffoldBackgroundColor: AppColors.white,
-    dividerColor: AppColors.purple,
-    primaryColor: AppColors.purple,
+    dividerColor: AppColors.Teal,
+    primaryColor: AppColors.Teal,
     primaryColorDark: AppColors.dark,
     appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
-          foregroundColor: AppColors.purple,
-      centerTitle: true,
+        foregroundColor: AppColors.Teal,
+        centerTitle: true,
       elevation: 0,
         iconTheme: IconThemeData(color: AppColors.white)),
     radioTheme: RadioThemeData(
       fillColor: WidgetStateProperty.resolveWith<Color>((states) {
         if (states.contains(MaterialState.selected)) {
-          return AppColors.purple;
+          return AppColors.Teal;
         }
         return AppColors.gray;
       }),
@@ -57,7 +57,7 @@ class AppTheme {
       bodyLarge: TextStyle(
           color: AppColors.dark, fontSize: 16, fontWeight: FontWeight.w500),
       bodyMedium: TextStyle(
-          color: AppColors.purple, fontSize: 14, fontWeight: FontWeight.w500),
+          color: AppColors.Teal, fontSize: 14, fontWeight: FontWeight.w500),
       bodySmall: TextStyle(
           color: AppColors.dark, fontSize: 12, fontWeight: FontWeight.w500),
       labelLarge: TextStyle(
@@ -68,11 +68,11 @@ class AppTheme {
           color: AppColors.dark, fontSize: 16, fontWeight: FontWeight.bold),
     ),
     dividerTheme: const DividerThemeData(
-      color: AppColors.purple,
+      color: AppColors.Teal,
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
         foregroundColor: AppColors.white,
         padding: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
@@ -82,9 +82,9 @@ class AppTheme {
     ),
     textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-            foregroundColor: AppColors.white,
+            foregroundColor: AppColors.Teal,
             textStyle: const TextStyle(
-                color: AppColors.purple,
+                color: AppColors.Teal,
                 decoration: TextDecoration.underline,
                 fontStyle: FontStyle.italic,
                 fontWeight: FontWeight.bold,
@@ -116,9 +116,9 @@ class AppTheme {
         )),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: AppColors.white,
-      selectedItemColor: AppColors.purple,
+      selectedItemColor: AppColors.Teal,
       selectedLabelStyle: TextStyle(
-        color: AppColors.purple,
+        color: AppColors.Teal,
       ),
       unselectedItemColor: AppColors.dark,
     ),
@@ -138,21 +138,20 @@ class AppTheme {
         ),
         dividerColor: Colors.transparent,
         unselectedLabelStyle: const TextStyle(color: AppColors.white),
-        labelStyle: const TextStyle(color: AppColors.purple),
-      ),
+      labelStyle: const TextStyle(color: AppColors.Teal),
+    ),
       scaffoldBackgroundColor: AppColors.dark,
-      dividerColor: AppColors.purple,
-      dividerTheme: const DividerThemeData(
-        color: AppColors.purple,
-      ),
-      bottomAppBarTheme:
-          BottomAppBarTheme(color: AppColors.purple, elevation: 5),
-      iconTheme: IconThemeData(color: AppColors.dark),
+    dividerColor: AppColors.Teal,
+    dividerTheme: const DividerThemeData(
+      color: AppColors.Teal,
+    ),
+      bottomAppBarTheme: BottomAppBarTheme(color: AppColors.Teal, elevation: 5),
+    iconTheme: IconThemeData(color: AppColors.dark),
       radioTheme: RadioThemeData(
         fillColor: WidgetStateProperty.resolveWith<Color>((states) {
           if (states.contains(MaterialState.selected)) {
-            return AppColors.purple;
-          }
+          return AppColors.Teal;
+        }
           return AppColors.white;
         }),
         overlayColor: WidgetStateProperty.resolveWith<Color>((states) {
@@ -164,12 +163,12 @@ class AppTheme {
       ),
       appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.dark,
-          foregroundColor: AppColors.purple,
-          centerTitle: true,
+        foregroundColor: AppColors.Teal,
+        centerTitle: true,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.dark)),
-      primaryColor: AppColors.purple,
-      textTheme: const TextTheme(
+    primaryColor: AppColors.Teal,
+    textTheme: const TextTheme(
       titleLarge: TextStyle(
           color: AppColors.white,
           fontSize: 40,
@@ -182,8 +181,7 @@ class AppTheme {
             fontSize: 16,
             fontWeight: FontWeight.w500),
         bodyMedium: TextStyle(
-          color: AppColors.purple, fontSize: 14,
-            fontWeight: FontWeight.w500),
+          color: AppColors.Teal, fontSize: 14, fontWeight: FontWeight.w500),
         bodySmall: TextStyle(
             color: AppColors.white,
             fontSize: 12,
@@ -205,7 +203,7 @@ class AppTheme {
     ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
         foregroundColor: AppColors.dark,
         padding: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
@@ -215,10 +213,10 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-              foregroundColor: AppColors.purple,
-              textStyle: const TextStyle(
-                  color: AppColors.purple,
-                  decoration: TextDecoration.underline,
+            foregroundColor: AppColors.Teal,
+            textStyle: const TextStyle(
+                color: AppColors.Teal,
+                decoration: TextDecoration.underline,
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.bold,
                   fontSize: 20))),
@@ -231,16 +229,16 @@ class AppTheme {
             fontWeight: FontWeight.w500),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.purple, width: 1),
-        ),
+        borderSide: const BorderSide(color: AppColors.Teal, width: 1),
+      ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.purple, width: 1),
-        ),
+        borderSide: const BorderSide(color: AppColors.Teal, width: 1),
+      ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.purple, width: 1),
-        ),
+        borderSide: const BorderSide(color: AppColors.Teal, width: 1),
+      ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.red, width: 1),
@@ -252,7 +250,7 @@ class AppTheme {
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: AppColors.dark,
-      selectedItemColor: AppColors.purple,
+      selectedItemColor: AppColors.Teal,
       selectedLabelStyle: TextStyle(
         color: AppColors.dark,
         ),

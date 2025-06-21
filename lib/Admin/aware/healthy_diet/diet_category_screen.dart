@@ -72,7 +72,7 @@ class _DietCategoryScreenState extends State<DietCategoryScreen> {
               fetchData(); // reload list after adding
             }
           },
-          backgroundColor: AppColors.purple,
+          backgroundColor: AppColors.Teal,
           child: const Icon(
             Icons.add,
             color: AppColors.lavender,
@@ -88,7 +88,7 @@ class _DietCategoryScreenState extends State<DietCategoryScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 16),
                     decoration: const BoxDecoration(
-                      color: AppColors.purple,
+                      color: AppColors.Teal,
                       borderRadius: BorderRadius.vertical(
                         bottom: Radius.circular(24),
                       ),
@@ -119,7 +119,7 @@ class _DietCategoryScreenState extends State<DietCategoryScreen> {
                             hintText: 'Search here',
                             hintStyle: TextStyle(color: Colors.grey),
                             prefixIcon:
-                                Icon(Icons.search, color: AppColors.purple),
+                                Icon(Icons.search, color: AppColors.Teal),
                           ),
                         ),
                         const SizedBox(height: 32),

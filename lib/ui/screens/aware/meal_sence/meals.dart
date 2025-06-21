@@ -110,7 +110,7 @@ class _MealsState extends State<Meals> {
           children: [
             IconButton(
               icon: ImageIcon(AssetImage(AppIcons.meal),
-                  color: AppColors.purple, size: 45),
+                  color: AppColors.Teal, size: 45),
               onPressed: () {
                 Navigator.pushNamed(context, MyMealsScreen.routeName,
                     arguments: {
@@ -167,7 +167,7 @@ class _MealsState extends State<Meals> {
                           flex: 1,
                           child: Container(
                             decoration: BoxDecoration(
-                                color: AppColors.purple,
+                                color: AppColors.Teal,
                                 borderRadius: BorderRadius.circular(12)),
                             child: IconButton(
                               icon: const Icon(Icons.filter_list_outlined,
@@ -236,7 +236,7 @@ class _MealsState extends State<Meals> {
                                                       sel
                                                           ? Icons.check
                                                           : Icons.add,
-                                                      color: AppColors.purple,
+                                                      color: AppColors.Teal,
                                                       size: 25),
                                                   onPressed: () {
                                                     setState(() {

@@ -22,7 +22,7 @@ class CustomHomeButton extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.purple),
+                border: Border.all(color: AppColors.Teal),
               ),
             ),
           ),

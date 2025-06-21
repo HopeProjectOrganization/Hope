@@ -30,7 +30,7 @@ class ProfileItem extends StatelessWidget {
               backgroundColor: AppColors.lavender,
               radius: 20,
               child: FittedBox(
-                child: Icon(icon, color: AppColors.purple),
+                child: Icon(icon, color: AppColors.Teal),
               ),
             ),
             const SizedBox(width: 16),

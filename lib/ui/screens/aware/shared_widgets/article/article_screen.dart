@@ -75,7 +75,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
         centerTitle: true,
         title: Text("News", style: Theme.of(context).textTheme.titleMedium),
         elevation: 0,
@@ -100,7 +100,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
               try {
                 await FavoriteApiService.saveFavorite(
                   article.articleId,
-                  category,
+                  'NEWS',
                   'post',
                 );
                 setState(() => isSaved = true);
@@ -133,7 +133,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.purple,
+                  backgroundColor: AppColors.Teal,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8)),
                 ),
@@ -150,7 +150,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.purple),
+                  border: Border.all(color: AppColors.Teal),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -185,7 +185,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
                         child: Text(
                           article.sourceUrl,
                           style: const TextStyle(
-                            color: AppColors.purple,
+                            color: AppColors.Teal,
                             decoration: TextDecoration.underline,
                           ),
                         ),

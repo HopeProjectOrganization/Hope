@@ -63,7 +63,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
           icon: const Icon(Icons.arrow_back_outlined),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: AppColors.purple,
+        backgroundColor: AppColors.Teal,
         centerTitle: true,
         title: Text(
           appLocalizations.cancerTreatmentPlaces,
@@ -82,7 +82,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
                 });
               },
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search, color: AppColors.purple),
+                prefixIcon: Icon(Icons.search, color: AppColors.Teal),
                 hintText: appLocalizations.search,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
