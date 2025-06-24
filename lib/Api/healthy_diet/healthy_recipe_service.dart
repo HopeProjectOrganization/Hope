@@ -5,7 +5,7 @@ import 'package:hope/model/healthy_recipes.dart';
 import 'package:http/http.dart' as http;
 
 class RecipeService {
-  static String baseUrl = 'http://${MyApp.IP}/api/recipes';
+  static String baseUrl = 'https://${MyApp.IP}/api/recipes';
 
   static Future<List<RecipeModel>> getAllRecipes() async {
     final response = await http.get(Uri.parse(baseUrl));

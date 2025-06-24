@@ -15,7 +15,7 @@ class ChangePasswordService {
       return null;
     }
 
-    final url = Uri.parse("http://${MyApp.IP}/api/profile");
+    final url = Uri.parse("https://${MyApp.IP}/api/profile");
 
     try {
       final response = await http.put(

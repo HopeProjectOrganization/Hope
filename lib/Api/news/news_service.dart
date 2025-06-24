@@ -5,7 +5,7 @@ import 'package:hope/model/article.dart';
 import 'package:http/http.dart' as http;
 
 class NewsApiService {
-  final String baseUrl = 'http://${MyApp.IP}/api/news';
+  final String baseUrl = 'https://${MyApp.IP}/api/news';
 
   // إضافة خبر جديد
   Future<Article> addNews(Article article) async {
@@ -28,6 +28,7 @@ class NewsApiService {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
+      print(response.body);
       return data.map((json) => Article.fromJson(json)).toList();
     } else {
       throw Exception('فشل في جلب الأخبار');

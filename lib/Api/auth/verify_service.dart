@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import '../../main.dart';
 
 class VerifyService {
-  final String baseUrl = 'http://${MyApp.IP}/api/v1/auth';
+  final String baseUrl = 'https://${MyApp.IP}/api/v1/auth';
 
   Future<void> resendCode(BuildContext context, bool isCodeValid) async {
     if (!isCodeValid) {

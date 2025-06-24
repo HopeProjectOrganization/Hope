@@ -25,7 +25,7 @@ class AddService {
     String ingredientsText,
     String productType,
   ) async {
-    final url = Uri.parse("http://${MyApp.IP}/products/add");
+    final url = Uri.parse("https://${MyApp.IP}/products/add");
 
     String? token = await getToken();
     if (token == null) {
@@ -120,7 +120,7 @@ class AddService {
       String barcode,
       String ingredientsText,
       String productType) async {
-    final url = Uri.parse("http://${MyApp.IP}/products/add");
+    final url = Uri.parse("https://${MyApp.IP}/products/add");
 
     String? token = await getToken();
     if (token == null) {
@@ -184,7 +184,7 @@ class AddService {
 
   static Future<Map<String, dynamic>?> fetchScanResult(String barcode) async {
     try {
-      var url = Uri.parse("http://${MyApp.IP}/api/scan/$barcode");
+      var url = Uri.parse("https://${MyApp.IP}/api/scan/$barcode");
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -214,7 +214,7 @@ class AddService {
   }
 
   Future<List<dynamic>?> getAddedProducts() async {
-    final url = Uri.parse("http://${MyApp.IP}/history/added");
+    final url = Uri.parse("https://${MyApp.IP}/history/added");
 
     String? token = await getToken();
     if (token == null) {

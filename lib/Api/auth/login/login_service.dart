@@ -1,6 +1,8 @@
 // import 'dart:convert';
 //
 // import 'package:flutter/material.dart';
+// import 'package:hope/Admin/home/home.dart';
+// import 'package:hope/Api/profile/profile_service.dart';
 // import 'package:hope/main.dart';
 // import 'package:hope/ui/screens/home/home.dart';
 // import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
@@ -36,12 +38,32 @@
 //
 //         if (token != null) {
 //           await storeToken(token); // تخزين التوكن في SharedPreferences
-//           Navigator.pushNamed(
-//               context, HomeScreen.routeName); // الانتقال للصفحة الرئيسية
+//
+//           // استدعاء بيانات المستخدم
+//           final profileService = GetUserProfile();
+//           final userData = await profileService.fetchUserProfile(token);
+//
+//           if (userData != null) {
+//             final userRole = userData.role;
+//
+//             if (userRole == 'USER') {
+//               print('Malak is User');
+//               Navigator.pushNamed(context, HomeScreen.routeName);
+//             } else if (userRole == 'ADMIN') {
+//               print('Malak is Admin');
+//               Navigator.pushNamed(context, AdminHomeScreen.routeName); // غيرها حسب اسم صفحة الأدمن
+//             } else {
+//               showMessage(context, "Unknown role: $userRole");
+//             }
+//           } else {
+//             showMessage(context, "Failed to fetch user profile");
+//           }
+//
 //           print('Login successful: $token');
 //         } else {
 //           showMessage(context, "Token not found in response");
 //         }
+//
 //       } else {
 //         showMessage(context, "Email or password may be incorrect");
 //       }

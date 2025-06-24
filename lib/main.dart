@@ -14,6 +14,7 @@ import 'package:hope/Admin/aware/places/admin_places_edit.dart';
 import 'package:hope/Admin/aware/places/places_screen.dart';
 import 'package:hope/Admin/home/home.dart';
 import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
+import 'package:hope/Api/notification/check_meals.dart';
 import 'package:hope/core/providers/locale_provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_theme.dart';
@@ -45,15 +46,25 @@ import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
 import 'package:hope/ui/screens/onBoarding_screens/on_boarding/onboarding_screen.dart';
 import 'package:hope/ui/screens/onBoarding_screens/set_up/setup_screen.dart';
 import 'package:hope/ui/screens/onBoarding_screens/splash/splash_screen.dart';
+import 'package:hope/ui/screens/profileDetails/change_password.dart';
 import 'package:hope/ui/screens/profileDetails/saved_list.dart';
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
 
 import 'ui/screens/aware/meal_sence/meals.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
+  // جدولة المهمة اليومية
+  Workmanager().registerPeriodicTask(
+    "mealReminderTask",
+    "mealReminderTask",
+    frequency: Duration(hours: 24),
+    initialDelay: Duration(minutes: 1), // للتجربة
+  );
   runApp(
     MultiProvider(providers: [
       ChangeNotifierProvider(
@@ -69,7 +80,7 @@ main() async {
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  static String IP = "192.168.1.26:8081";
+  static String IP = "graduation-project-production-4619.up.railway.app";
   MyApp({super.key});
 
   late ThemeProvider themeProvider;
@@ -109,7 +120,7 @@ class MyApp extends StatelessWidget {
         HighRiskPeople.routeName: (_) => HighRiskPeople(),
         HealthyDiet.routeName: (_) => HealthyDiet(),
         EditProfile.routeName: (_) => const EditProfile(),
-        //     ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
+        ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
         SavedListScreen.routeName: (_) => SavedListScreen(),
         AdminHomeScreen.routeName: (_) => const AdminHomeScreen(),
         AdminAwareTab.routeName: (_) => AdminAwareTab(),
@@ -176,7 +187,7 @@ class MyApp extends StatelessWidget {
         PlacesAdminScreen.routeName: (_) => PlacesAdminScreen(),
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen()
       },
-      initialRoute: LoginScreen.routeName,
+      initialRoute: HomeScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

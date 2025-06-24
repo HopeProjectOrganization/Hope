@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/healthy_diet/healthy_recipe.dart';
+import 'package:hope/Api/healthy_diet/healthy_recipe_service.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/model/healthy_recipes.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,7 @@ class RecipeDetailScreen extends StatefulWidget {
 }
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
-  Map<String, dynamic>? mealDetails;
+  RecipeModel? recipe;
   bool isLoading = true;
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
@@ -31,9 +32,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   Future<void> fetchMealDetails() async {
     try {
-      final data = await MealService.getMealDetailsById(widget.mealId);
+      final data = await RecipeService.getRecipeById(widget.mealId);
       setState(() {
-        mealDetails = data;
+        recipe = data;
         isLoading = false;
       });
     } catch (e) {
@@ -45,34 +46,66 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   Widget buildIngredientsList() {
-    List<Widget> ingredientWidgets = [];
-    for (int i = 1; i <= 20; i++) {
-      final ingredient = mealDetails?['strIngredient$i'];
-      final measure = mealDetails?['strMeasure$i'];
-      if (ingredient != null && ingredient.toString().trim().isNotEmpty) {
-        ingredientWidgets.add(
-          Card(
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 2,
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: AppColors.Teal.withOpacity(0.2),
-                child: Text('$i',
+    if (recipe?.ingredients == null || recipe!.ingredients.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.all(16),
+        child: Text("No ingredients available."),
+      );
+    }
+
+    final ingredientList = recipe!.ingredients.entries.toList();
+
+    return Column(
+      children: List.generate(ingredientList.length, (index) {
+        final entry = ingredientList[index];
+        final ingredientName = entry.key;
+        final measurement = entry.value;
+
+        return Card(
+          color: AppColors.cloudi,
+          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: AppColors.yellow,
+                  radius: 18,
+                  child: Text(
+                    '${index + 1}',
                     style: TextStyle(
-                        color: AppColors.Teal, fontWeight: FontWeight.bold)),
-              ),
-              title: Text(ingredient, style: const TextStyle(fontSize: 18)),
-              trailing: Text(measure ?? '',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600])),
+                      color: AppColors.Teal,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    ingredientName,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                Text(
+                  measurement,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
             ),
           ),
         );
-      }
-    }
-    return Column(children: ingredientWidgets);
+      }),
+    );
   }
 
   @override
@@ -81,7 +114,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
@@ -89,11 +121,12 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(appLocalizations.recipeDetails,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 26)),
         centerTitle: true,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.Teal))
           : SafeArea(
               child: Column(children: [
                 Expanded(
@@ -106,21 +139,26 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                           bottomRight: Radius.circular(50),
                         ),
                         child: Image.network(
-                          mealDetails?['strMealThumb'] ?? '',
+                          recipe?.imageUrl ?? '',
                           height: MediaQuery.of(context).size.height * 0.4,
                           width: double.infinity,
                           fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            height: 150,
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.broken_image, size: 40),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          mealDetails?['strMeal'] ?? '',
+                          recipe?.name ?? '',
                           style: const TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87),
+                              color: AppColors.Teal),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -138,9 +176,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (_) => RecipeStepsScreen(
-                                instructions:
-                                    mealDetails?['strInstructions'] ?? '',
-                                youtubeUrl: mealDetails?['strYoutube'],
+                                instructions: recipe?.instructions ?? '',
+                                youtubeUrl: recipe?.youtubeUrl,
                               ),
                             ),
                           ),
@@ -159,8 +196,11 @@ class RecipeStepsScreen extends StatefulWidget {
   final String instructions;
   final String? youtubeUrl;
 
-  const RecipeStepsScreen(
-      {super.key, required this.instructions, this.youtubeUrl});
+  const RecipeStepsScreen({
+    super.key,
+    required this.instructions,
+    this.youtubeUrl,
+  });
 
   @override
   State<RecipeStepsScreen> createState() => _RecipeStepsScreenState();
@@ -207,8 +247,15 @@ class _RecipeStepsScreenState extends State<RecipeStepsScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         elevation: 4,
       ),
-      icon: icon != null ? Icon(icon, size: 20) : const SizedBox.shrink(),
-      label: Text(text, style: const TextStyle(fontSize: 18)),
+      icon: icon != null
+          ? Icon(
+              icon,
+              size: 20,
+              color: AppColors.white,
+            )
+          : const SizedBox.shrink(),
+      label: Text(text,
+          style: const TextStyle(fontSize: 18, color: AppColors.white)),
       onPressed: onPressed,
     );
   }
@@ -239,8 +286,8 @@ class _RecipeStepsScreenState extends State<RecipeStepsScreen> {
                   ),
                   IconButton(
                     iconSize: 80,
-                    icon:
-                        const Icon(Icons.play_circle_fill, color: Colors.white),
+                    icon: const Icon(Icons.play_circle_fill,
+                        color: AppColors.white),
                     onPressed: _launchYoutube,
                   ),
                 ],
@@ -314,9 +361,11 @@ class StepIndicators extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
 
-  const StepIndicators(
-      {Key? key, required this.currentStep, required this.totalSteps})
-      : super(key: key);
+  const StepIndicators({
+    Key? key,
+    required this.currentStep,
+    required this.totalSteps,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -330,7 +379,7 @@ class StepIndicators extends StatelessWidget {
           width: isActive ? 20 : 10,
           height: 10,
           decoration: BoxDecoration(
-            color: isActive ? AppColors.Teal : Colors.grey[300],
+            color: isActive ? AppColors.yellow : Colors.grey[300],
             borderRadius: BorderRadius.circular(10),
           ),
         );

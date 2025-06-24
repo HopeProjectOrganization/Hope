@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:hope/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> submitUserMeals({
   required int userId,
@@ -38,6 +39,11 @@ Future<void> submitUserMeals({
       } catch (e) {
         print('⚠️ Warning: response body is not valid JSON: $e');
       }
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now();
+      final key = "${today.year}-${today.month}-${today.day}";
+      await prefs.setBool("mealAdded_$key", true);
+      print('✅ Saved meal flag for today');
     } else {
       print('ℹ️ Response body is empty');
     }

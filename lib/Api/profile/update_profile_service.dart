@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:hope/main.dart';
+
 import 'package:flutter/material.dart';
+import 'package:hope/main.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,7 +17,7 @@ class AvatarService {
     required String avatarId,
     required String phone,
   }) async {
-    final String url = "http://${MyApp.IP}/api/profile";
+    final String url = "https://${MyApp.IP}/api/profile";
     final Map<String, String> headers = {
       "Authorization": "Bearer $token",
       "Content-Type": "application/json"

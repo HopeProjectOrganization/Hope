@@ -1,12 +1,17 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:hope/Admin/home/home.dart';
+import 'package:hope/Api/profile/profile_service.dart';
 import 'package:hope/main.dart';
 import 'package:hope/model/register_dm.dart';
+import 'package:hope/ui/screens/home/home.dart';
+import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthApiService {
-  final String baseUrl = 'http://${MyApp.IP}/api/v1/auth';
+  final String baseUrl = 'https://${MyApp.IP}/api/v1/auth';
 
   /// ==================== Register ====================
   Future<http.Response> register({
@@ -34,6 +39,59 @@ class AuthApiService {
       }),
     );
     return response;
+  }
+
+  /// ==================== LoginUserOrAdmin ====================
+
+  Future<void> loginAndRedirectUser({
+    required context,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      showLoading(context);
+
+      final response = await authenticate(email: email, password: password);
+
+      hideLoading(context);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final token = data['token'];
+
+        if (token != null) {
+          await storeToken(token);
+
+          // جلب معلومات المستخدم
+          final profileService = GetUserProfile();
+          final userData = await profileService.fetchUserProfile(token);
+
+          if (userData != null) {
+            final role = userData.role.toUpperCase();
+
+            if (role == 'ADMIN') {
+              print("Malak is Admin");
+              Navigator.pushReplacementNamed(
+                  context, AdminHomeScreen.routeName);
+            } else if (role == 'USER') {
+              print("Malak is User");
+              Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+            } else {
+              showMessage(context, 'Unknown role: $role');
+            }
+          } else {
+            showMessage(context, 'Failed to fetch user profile.');
+          }
+        } else {
+          showMessage(context, 'Token not found in response.');
+        }
+      } else {
+        showMessage(context, 'Email or password may be incorrect.');
+      }
+    } catch (e) {
+      hideLoading(context);
+      showMessage(context, 'An error occurred: $e');
+    }
   }
 
   /// ==================== Forgot Password ====================

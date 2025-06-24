@@ -39,8 +39,28 @@ class _NewsScreenState extends State<NewsScreen> {
     "Endometrial",
     "Cervical",
     "Gallbladder",
-    "Multiple Myeloma",
+    "Multiple_Myeloma",
     "Oral"
+  ];
+
+  final List<String> hereditaryTypes = [
+    "Breast",
+    "Colorectal",
+    "Ovarian",
+    "Prostate",
+    "Pancreatic",
+  ];
+
+  final List<String> highRiskTypes = [
+    "Smokers",
+    "Obese",
+    "Elderly",
+    "Pregnant",
+    "Weak Immune System",
+    "Genetic Mutation",
+    "Inactive",
+    "Chemical Exposure",
+    "Polluted Areas",
   ];
 
   String selectedCancerType = "All";
@@ -73,65 +93,22 @@ class _NewsScreenState extends State<NewsScreen> {
           ),
         ),
         centerTitle: true,
-        title: Text(
-          "News",
-          style: TextStyle(color: AppColors.white),
-        ),
+        title: const Text("News", style: TextStyle(color: AppColors.white)),
       ),
       drawer: Drawer(
         width: MediaQuery.of(context).size.width * 0.6,
-        backgroundColor: Color(0xffd5eaff),
+        backgroundColor: const Color(0xffd5eaff),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
               decoration: BoxDecoration(color: Color(0xffd5eaff)),
-              child: Text(
-                "Select News Filter",
-                style: TextStyle(color: AppColors.dark, fontSize: 25),
-              ),
+              child: Text("Select News Filter",
+                  style: TextStyle(color: AppColors.dark, fontSize: 25)),
             ),
-            buildCategorySection("Cancer Types", [
-              "Breast",
-              "Lung",
-              "Prostate",
-              "Colorectal",
-              "Skin",
-              "Ovarian",
-              "Pancreatic",
-              "Leukemia",
-              "Lymphoma",
-              "Brain",
-              "Liver",
-              "Stomach",
-              "Esophageal",
-              "Bladder",
-              "Kidney",
-              "Thyroid",
-              "Bone",
-              "Testicular",
-              "Endometrial",
-              "Cervical",
-              "Gallbladder",
-              "Multiple Myeloma",
-              "Oral",
-            ]),
-            buildCategorySection("Hereditary Cancer", [
-              "Hereditary Breast",
-              "Hereditary Colorectal",
-              "Hereditary Ovarian",
-              "Hereditary Prostate",
-              "Hereditary Pancreatic",
-            ]),
-            buildCategorySection("High Risk People", [
-              "Smokers",
-              "Obese People",
-              "Family History",
-              "Elderly",
-              "Radiation Exposure",
-              "Chronic Inflammation",
-              "Unhealthy Diet",
-            ]),
+            buildCategorySection("Cancer Types", cancerTypes),
+            buildCategorySection("Hereditary Cancer", hereditaryTypes),
+            buildCategorySection("High Risk People", highRiskTypes),
           ],
         ),
       ),
@@ -141,10 +118,8 @@ class _NewsScreenState extends State<NewsScreen> {
             width: double.infinity,
             color: AppColors.lavender.withOpacity(0.2),
             padding: const EdgeInsets.all(8),
-            child: Text(
-              "$selectedCancerType",
-              style: const TextStyle(fontSize: 16),
-            ),
+            child:
+                Text(selectedCancerType, style: const TextStyle(fontSize: 16)),
           ),
           Expanded(child: NewsList(type: selectedCancerType)),
         ],
@@ -157,14 +132,9 @@ class _NewsScreenState extends State<NewsScreen> {
       data: ThemeData().copyWith(
         dividerColor: Colors.transparent,
         unselectedWidgetColor: AppColors.white,
-        textTheme:
-            const TextTheme(bodyMedium: TextStyle(color: AppColors.white)),
       ),
       child: ExpansionTile(
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
+        title: Text(title, style: Theme.of(context).textTheme.titleSmall),
         iconColor: AppColors.yellow,
         collapsedIconColor: AppColors.yellow,
         children: items.map((type) {

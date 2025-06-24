@@ -338,9 +338,14 @@
 //  static const String _apiKey = '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';
 // final barcode = await FlutterBarcodeScanner.scanBarcode(
 //         '#ff6666', 'Cancel', true, ScanMode.BARCODE,500,'BACK' , ScanFormat.ONLY_BARCODE);
+// دمج Flutter UI مع API داخلي لجلب بدائل صحية من GPT
+
+// بعد التعديل الكامل على الكود، قمنا بربطه ب ChatApiService واستخدام JSON في الرد
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hope/Api/chat/chatApi.dart';
 import 'package:hope/Api/scan/scan_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:http/http.dart' as http;
@@ -374,12 +379,9 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
   bool _recentLoaded = false;
 
   String _productName = "";
-  List<String> _alternatives = [];
+  List<Map<String, String>> _alternatives = [];
   String _note = "";
   List<Map<String, dynamic>> _productAlternatives = [];
-
-  static const String _apiKey =
-      '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';
 
   @override
   void initState() {
@@ -399,8 +401,7 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
       final response = await getAlternative(input);
       setState(() {
         _productName = input;
-        _alternatives = parseAlternatives(response);
-        _note = extractNote(response);
+        _alternatives = parseAlternativesJson(response);
       });
     } catch (e) {
       showErrorDialog("فشل في جلب البدائل: $e");
@@ -409,8 +410,202 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
     }
   }
 
+  Future<String> getAlternative(String productName) async {
+    const promptTemplate = '''
+I have a product: "{productName}".
+Suggest 3 to 5 healthier alternative products that are widely available, especially in Egypt.
+The alternatives must:
+- Be similar in purpose (e.g., snack for snack, cereal for cereal).
+- Contain less sugar, saturated fat, or harmful additives.
+- Be local Egyptian options if possible.
+- Be affordable and easy to find in stores or online.
+Return the result as a JSON array. Each item must include:
+- name
+- reason
+- nutritionInfo (optional)
+''';
+
+    final prompt = promptTemplate.replaceAll('{productName}', productName);
+    return await ChatApiService.sendPrompt(prompt);
+  }
+
+  List<Map<String, String>> parseAlternativesJson(String jsonText) {
+    try {
+      final List<dynamic> data = jsonDecode(jsonText);
+      return data
+          .map<Map<String, String>>((item) => {
+                'name': item['name'] ?? '',
+                'reason': item['reason'] ?? '',
+                'nutritionInfo': item['nutritionInfo'] ?? '',
+              })
+          .toList();
+    } catch (e) {
+      throw Exception("فشل في تحليل JSON: $e");
+    }
+  }
+
+  void showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Note"),
+        content: Text(message),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Okay")),
+        ],
+      ),
+    );
+  }
+
+  Widget buildManualSearchTab() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.dark,
+                blurRadius: 6,
+                offset: Offset(0, 2),
+              )
+            ],
+          ),
+          child: TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              hintText: 'Search',
+              prefixIcon: const Icon(
+                Icons.search,
+                color: AppColors.yellow,
+              ),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.qr_code_scanner),
+                onPressed: _isLoading ? null : scanBarcodeAndSearch,
+              ),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            ),
+            onSubmitted: (text) =>
+                _isLoading ? null : handleSearch(text.trim()),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Center(
+          child: ElevatedButton.icon(
+            icon: const Icon(
+              Icons.search,
+              color: AppColors.yellow,
+            ),
+            label: const Text('Search for Alternative'),
+            onPressed: _isLoading
+                ? null
+                : () {
+                    final text = _controller.text.trim();
+                    if (text.isNotEmpty) handleSearch(text);
+                  },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.Teal,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+              textStyle:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        const SizedBox(height: 30),
+        if (_isLoading)
+          const Center(child: CircularProgressIndicator())
+        else if (_productName.isNotEmpty && _alternatives.isNotEmpty)
+          buildAlternativesView(),
+      ],
+    );
+  }
+
+  Widget buildAlternativesView() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("البدائل لـ: $_productName",
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 16),
+        ..._alternatives.map((alt) => Card(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.verified,
+                            color: Colors.green, size: 24),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            alt['name'] ?? '',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.info_outline, color: Colors.orange),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            alt['reason'] ?? '',
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if ((alt['nutritionInfo'] ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.local_fire_department,
+                              color: Colors.redAccent),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              alt['nutritionInfo'] ?? '',
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.teal),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+          ),
+            )),
+      ],
+    );
+  }
+
   Future<void> scanBarcodeAndSearch() async {
-    final barcode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'إلغاء',
+    final barcode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel',
         true, ScanMode.BARCODE, 500, 'BACK', ScanFormat.ONLY_BARCODE);
 
     if (barcode == '-1') return;
@@ -423,6 +618,22 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
     } else {
       showErrorDialog("المنتج غير موجود. حاول إدخاله يدويًا.");
     }
+  }
+
+  Future<String?> fetchProductNameFromBarcode(String barcode) async {
+    for (final url in [
+      "https://world.openfoodfacts.org/api/v2/product/$barcode.json",
+      "https://world.openbeautyfacts.org/api/v2/product/$barcode.json"
+    ]) {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['status'] == 1) {
+          return data['product']['product_name']?.toString();
+        }
+      }
+    }
+    return null;
   }
 
   Future<void> loadRecentAlternatives() async {
@@ -448,7 +659,7 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
         if (name.isEmpty) continue;
 
         final alt = await getAlternative(name);
-        final parsed = parseAlternatives(alt);
+        final parsed = parseAlternativesJson(alt);
 
         loadedAlternatives.add({
           'name': name,
@@ -468,180 +679,30 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
     }
   }
 
-  Future<String?> fetchProductNameFromBarcode(String barcode) async {
-    for (final url in [
-      "https://world.openfoodfacts.org/api/v2/product/$barcode.json",
-      "https://world.openbeautyfacts.org/api/v2/product/$barcode.json"
-    ]) {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['status'] == 1) {
-          return data['product']['product_name']?.toString();
-        }
-      }
-    }
-    return null;
-  }
-
-  Future<String> getAlternative(String productName) async {
-    final url = Uri.parse('https://openrouter.ai/api/v1/chat/completions');
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $_apiKey',
-      },
-      body: jsonEncode({
-        'model': 'meta-llama/llama-4-maverick:free',
-        'messages': [
-          {
-            'role': 'user',
-            'content':
-                "Suggest healthier Egyptian products . Alternatives to: $productName with same category. Bullet list without notes."
-          }
-        ],
-        'max_tokens': 200,
-        'temperature': 0.7,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['choices'][0]['message']['content'].toString().trim();
-    } else {
-      throw 'OpenRouter Error ${response.statusCode}';
-    }
-  }
-
-  List<String> parseAlternatives(String text) {
-    final lines = text.split(RegExp(r'\n|\r'));
-    return lines
-        .where((line) =>
-            line.trim().isNotEmpty && !line.toLowerCase().startsWith("note:"))
-        .map((line) => line.replaceAll(RegExp(r'^[-*\d.\s]+'), ''))
-        .toList();
-  }
-
-  String extractNote(String text) {
-    final match = RegExp(r'(?i)note[:\s]*(.*)').firstMatch(text);
-    return match != null ? match.group(1)!.trim() : "";
-  }
-
-  void showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("تنبيه"),
-        content: Text(message),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("موافق")),
-        ],
-      ),
-    );
-  }
-
-  Widget buildManualSearchTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextField(
-          controller: _controller,
-          decoration: InputDecoration(
-            hintText: 'ادخل أو امسح اسم المنتج',
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.qr_code_scanner),
-              onPressed: _isLoading ? null : scanBarcodeAndSearch,
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide.none,
-            ),
-          ),
-          onSubmitted: (text) => _isLoading ? null : handleSearch(text.trim()),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton.icon(
-          icon: const Icon(Icons.search),
-          label: const Text('بحث عن بدائل صحية'),
-          onPressed: _isLoading
-              ? null
-              : () {
-                  final text = _controller.text.trim();
-                  if (text.isNotEmpty) handleSearch(text);
-                },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.Teal,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        ),
-        const SizedBox(height: 30),
-        if (_isLoading)
-          const Center(child: CircularProgressIndicator())
-        else if (_productName.isNotEmpty && _alternatives.isNotEmpty)
-          buildAlternativesView(),
-      ],
-    );
-  }
-
-  Widget buildAlternativesView() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("البدائل لـ: $_productName",
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 16),
-        ..._alternatives.map((alt) => Card(
-              color: Colors.grey[100],
-              margin: const EdgeInsets.symmetric(vertical: 6),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: Text("🟢 $alt", style: const TextStyle(fontSize: 16)),
-              ),
-            )),
-        if (_note.isNotEmpty)
-          Card(
-            color: Colors.amber[100],
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Text("📌 ملاحظة: $_note"),
-            ),
-          ),
-      ],
-    );
-  }
-
   Widget buildHistoryTab() {
     if (!_recentLoaded) {
       return const Center(child: CircularProgressIndicator());
     }
     if (_productAlternatives.isEmpty) {
-      return const Center(child: Text("لا يوجد منتجات حديثة."));
+      return const Center(child: Text("There is no Product"));
     }
     return Column(
       children: _productAlternatives.map((product) {
+        final List<dynamic> alternatives = product['alternatives'] ?? [];
         return ExpansionTile(
           backgroundColor: Colors.grey[50],
           collapsedBackgroundColor: Colors.grey[100],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           title: Text(product['name'],
               style: const TextStyle(fontWeight: FontWeight.bold)),
-          children: (product['alternatives'] as List<String>)
+          children: alternatives
               .map((alt) => ListTile(
                   leading: const Icon(Icons.check_circle_outline,
                       color: Colors.green),
-                  title: Text(alt)))
+                  title: Text(alt['name'] ?? ''),
+                  subtitle: Text(alt['reason'] ?? '')))
               .toList(),
         );
       }).toList(),
@@ -660,7 +721,7 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
     return Scaffold(
       backgroundColor: const Color(0xfff7f7f7),
       appBar: AppBar(
-        title: const Text('بدائل المنتجات'),
+        title: const Text('Alternative'),
         backgroundColor: Colors.white,
         elevation: 0.5,
         centerTitle: true,
@@ -670,8 +731,8 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
           unselectedLabelColor: Colors.grey,
           indicatorColor: AppColors.Teal,
           tabs: const [
-            Tab(text: 'بحث يدوي'),
-            Tab(text: 'السجل'),
+            Tab(text: 'Search'),
+            Tab(text: 'History'),
           ],
         ),
       ),

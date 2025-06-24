@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/healthy_diet/healthy_recipe.dart';
+import 'package:hope/Api/healthy_diet/healthy_recipe_service.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/model/healthy_recipes.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/recipes/recipe_details.dart';
 import 'package:provider/provider.dart';
 
@@ -16,8 +17,11 @@ class MealsByCategoryScreen extends StatefulWidget {
 }
 
 class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
-  List<dynamic> meals = [];
+  List<RecipeModel> meals = [];
   bool isLoading = true;
+  String searchText = '';
+  TextEditingController searchController = TextEditingController();
+
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
@@ -28,11 +32,23 @@ class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
   }
 
   Future<void> fetchMealsByCategory() async {
-    final data = await MealService.getMealsByCategory(widget.category);
-    setState(() {
-      meals = data;
-      isLoading = false;
-    });
+    try {
+      final allRecipes = await RecipeService.getAllRecipes();
+      final filtered = allRecipes
+          .where((recipe) =>
+              recipe.category.toLowerCase() == widget.category.toLowerCase())
+          .toList();
+
+      setState(() {
+        meals = filtered;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error loading meals: $e")),
+      );
+    }
   }
 
   @override
@@ -40,32 +56,62 @@ class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
     themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
 
+    final filteredMeals = meals.where((meal) {
+      final name = meal.name.toLowerCase();
+      return name.contains(searchText.toLowerCase());
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('${appLocalizations.category} ${widget.category}'),
+        title: Text(
+          '${appLocalizations.category} ${widget.category}',
+          style: TextStyle(color: AppColors.white, fontSize: 26),
+        ),
         backgroundColor: AppColors.Teal,
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : GridView.builder(
-              padding: const EdgeInsets.all(12),
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: TextField(
+                    controller: searchController,
+                    onChanged: (value) => setState(() => searchText = value),
+                    decoration: InputDecoration(
+                      hintText: appLocalizations.search,
+                      prefixIcon: const Icon(Icons.search),
+                      filled: true,
+                      fillColor: AppColors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: filteredMeals.isEmpty
+                      ? const Center(child: Text('No results found.'))
+                      : GridView.builder(
+                          padding: const EdgeInsets.all(12),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: .7,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
               ),
-              itemCount: meals.length,
-              itemBuilder: (context, index) {
-                final meal = meals[index];
-                return GestureDetector(
+                          itemCount: filteredMeals.length,
+                          itemBuilder: (context, index) {
+                            final meal = filteredMeals[index];
+                            return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>
-                            RecipeDetailScreen(mealId: meal['idMeal']),
-                      ),
+                                    builder: (_) => RecipeDetailScreen(
+                                        mealId: meal.recipeId),
+                                  ),
                     );
                   },
                   child: Container(
@@ -84,11 +130,11 @@ class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(20)),
-                          child: Image.network(
-                            meal['strMealThumb'],
-                            height: 150,
+                                      borderRadius: const BorderRadius.vertical(
+                                          top: Radius.circular(20)),
+                                      child: Image.network(
+                                        meal.imageUrl,
+                                        height: 150,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => Container(
                               height: 150,
@@ -103,8 +149,8 @@ class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                meal['strMeal'],
-                                style: const TextStyle(
+                                            meal.name,
+                                            style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -125,6 +171,9 @@ class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
                   ),
                 );
               },
+            ),
+                ),
+              ],
             ),
     );
   }

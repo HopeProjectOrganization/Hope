@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/auth/auth.dart';
@@ -140,34 +138,54 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // Widget buildLoginButton(BuildContext context) {
+  //   return CustomButton(
+  //     onClick: () async {
+  //       if (formKey.currentState!.validate()) {
+  //         try {
+  //           final response = await authService.loginAndRedirectUser(
+  //             email: emailController.text.trim(),
+  //             password: passwordController.text.trim(), context: null,
+  //           );
+  //
+  //           if (response.statusCode == 200) {
+  //             final responseData = jsonDecode(response.body);
+  //             final token = responseData['token'];
+  //
+  //             // خزن التوكن في SharedPreferences
+  //             await authService.storeToken(token);
+  //
+  //             // ادخله على الصفحة الرئيسية
+  //             Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+  //           } else if (response.statusCode == 401) {
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               SnackBar(content: Text('Invalid credentials')),
+  //             );
+  //           } else {
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               SnackBar(content: Text('Login failed: ${response.body}')),
+  //             );
+  //           }
+  //         } catch (e) {
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             SnackBar(content: Text('An error occurred: $e')),
+  //           );
+  //         }
+  //       }
+  //     },
+  //     title: appLocalizations.login,
+  //   );
+  // }
   Widget buildLoginButton(BuildContext context) {
     return CustomButton(
       onClick: () async {
         if (formKey.currentState!.validate()) {
           try {
-            final response = await authService.authenticate(
+            await authService.loginAndRedirectUser(
+              context: context,
               email: emailController.text.trim(),
               password: passwordController.text.trim(),
             );
-
-            if (response.statusCode == 200) {
-              final responseData = jsonDecode(response.body);
-              final token = responseData['token'];
-
-              // خزن التوكن في SharedPreferences
-              await authService.storeToken(token);
-
-              // ادخله على الصفحة الرئيسية
-              Navigator.pushReplacementNamed(context, HomeScreen.routeName);
-            } else if (response.statusCode == 401) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Invalid credentials')),
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Login failed: ${response.body}')),
-              );
-            }
           } catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('An error occurred: $e')),

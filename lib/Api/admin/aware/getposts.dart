@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class NewsService {
   static Future<List<ArticleDM>> fetchNews(String type) async {
-    final String baseUrl = 'http://${MyApp.IP}/api/news';
+    final String baseUrl = 'https://${MyApp.IP}/api/news';
     final String url = (type.toLowerCase() == 'all')
         ? baseUrl
         : '$baseUrl/${type.toLowerCase()}';

@@ -12,7 +12,7 @@ class HistoryApiService {
 
   // 1️⃣ إضافة منتج إلى الهيستوري
   static Future<void> addToHistory(String barcode, String actionType) async {
-    final url = Uri.parse("http://${MyApp.IP}/history/add");
+    final url = Uri.parse("https://${MyApp.IP}/history/add");
 
     String? token = await getToken();
     if (token == null) {
@@ -49,17 +49,17 @@ class HistoryApiService {
 
   // 2️⃣ جلب المنتجات الممسوحة
   static Future<List<dynamic>> getScannedProducts() async {
-    return await _fetchHistory("scanned");
+    return await _fetchHistory("SCANNED");
   }
 
   // 3️⃣ جلب المنتجات المضافة
   static Future<List<dynamic>> getAddedProducts() async {
-    return await _fetchHistory("added");
+    return await _fetchHistory("ADDED");
   }
 
   // دالة خاصة مشتركة لجلب البيانات من الهيستوري
   static Future<List<dynamic>> _fetchHistory(String type) async {
-    final url = Uri.parse("http://${MyApp.IP}/history/$type");
+    final url = Uri.parse("https://${MyApp.IP}/history/$type");
 
     String? token = await getToken();
     if (token == null) {

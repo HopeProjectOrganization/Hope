@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
+import 'package:hope/main.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/verify/circle_input.dart';
 import 'package:http/http.dart' as http;
@@ -60,7 +61,7 @@ class _VerficationScreenState extends State<VerficationScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.109:9090/api/v1/auth/Resend'),
+        Uri.parse('https://${MyApp.IP}/api/v1/auth/Resend'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -99,7 +100,7 @@ class _VerficationScreenState extends State<VerficationScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.78.153:8080/api/v1/auth/Verify'),
+        Uri.parse('https://${MyApp.IP}/api/v1/auth/Verify'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'code': code}),
       );
