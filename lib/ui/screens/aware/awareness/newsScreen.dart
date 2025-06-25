@@ -43,13 +43,13 @@ class _NewsScreenState extends State<NewsScreen> {
     "Oral"
   ];
 
-  final List<String> hereditaryTypes = [
-    "Breast",
-    "Colorectal",
-    "Ovarian",
-    "Prostate",
-    "Pancreatic",
-  ];
+  final Map<String, String> hereditaryTypeMap = {
+    "Hereditary Breast": "BREAST",
+    "Hereditary Colorectal": "COLORECTAL",
+    "Hereditary Ovarian": "OVARIAN",
+    "Hereditary Prostate": "PROSTATE",
+    "Hereditary Pancreatic": "PANCREATIC",
+  };
 
   final List<String> highRiskTypes = [
     "Smokers",
@@ -60,7 +60,7 @@ class _NewsScreenState extends State<NewsScreen> {
     "Genetic Mutation",
     "Inactive",
     "Chemical Exposure",
-    "Polluted Areas",
+    "Polluted Areas"
   ];
 
   String selectedCancerType = "All";
@@ -96,32 +96,60 @@ class _NewsScreenState extends State<NewsScreen> {
         title: const Text("News", style: TextStyle(color: AppColors.white)),
       ),
       drawer: Drawer(
-        width: MediaQuery.of(context).size.width * 0.6,
-        backgroundColor: const Color(0xffd5eaff),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xffd5eaff)),
-              child: Text("Select News Filter",
-                  style: TextStyle(color: AppColors.dark, fontSize: 25)),
-            ),
-            buildCategorySection("Cancer Types", cancerTypes),
-            buildCategorySection("Hereditary Cancer", hereditaryTypes),
-            buildCategorySection("High Risk People", highRiskTypes),
-          ],
+        backgroundColor: Colors.white,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundColor: Colors.grey.shade200,
+                      child: Icon(Icons.newspaper,
+                          color: Colors.black87, size: 24),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text("News Filters",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+              const Divider(thickness: 1),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    buildCategorySection("Cancer Types", cancerTypes),
+                    buildCategorySection(
+                      "Hereditary Cancer",
+                      hereditaryTypeMap.keys.toList(),
+                    ),
+                    buildCategorySection("High Risk People", highRiskTypes),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       body: Column(
         children: [
           Container(
             width: double.infinity,
-            color: AppColors.lavender.withOpacity(0.2),
+            color: AppColors.cloudi.withOpacity(0.2),
             padding: const EdgeInsets.all(8),
             child:
                 Text(selectedCancerType, style: const TextStyle(fontSize: 16)),
           ),
-          Expanded(child: NewsList(type: selectedCancerType)),
+          Expanded(
+              child: NewsList(
+                  type: selectedCancerType,
+                  hereditaryTypeMap: hereditaryTypeMap)),
         ],
       ),
     );
@@ -146,7 +174,7 @@ class _NewsScreenState extends State<NewsScreen> {
                     ? AppColors.yellow
                     : themeProvider.isDark()
                         ? AppColors.dark
-                        : AppColors.white,
+                        : AppColors.Teal,
                 fontWeight: selectedCancerType == type
                     ? FontWeight.bold
                     : FontWeight.normal,

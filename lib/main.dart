@@ -30,8 +30,6 @@ import 'package:hope/ui/screens/aware/healthy_diet/exercises/exercises_screen.da
 import 'package:hope/ui/screens/aware/healthy_diet/healthy_diet.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/recipes/healthy_recipes.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/vegan/vegan_screen.dart';
-import 'package:hope/ui/screens/aware/hereditary/hereditary.dart';
-import 'package:hope/ui/screens/aware/high_risk/high_risk_people.dart';
 import 'package:hope/ui/screens/aware/meal_sence/meal_sence_screen.dart';
 import 'package:hope/ui/screens/aware/meal_sence/my_meals.dart';
 import 'package:hope/ui/screens/aware/meal_sence/recipe_details.dart';
@@ -106,7 +104,7 @@ class MyApp extends StatelessWidget {
         ForgetpasswordScreen.routeName: (_) => const ForgetpasswordScreen(),
         VerficationScreen.routeName: (_) => const VerficationScreen(),
         ResetpasswordScreen.routeName: (_) => const ResetpasswordScreen(),
-        Hereditary.routeName: (_) => const Hereditary(),
+        // Hereditary.routeName: (_) => const Hereditary(),
         AwareTab.routeName: (_) => AwareTab(),
         HomeScreen.routeName: (_) => const HomeScreen(),
         ScanTab.routeName: (_) => const ScanTab(),
@@ -117,7 +115,7 @@ class MyApp extends StatelessWidget {
         NewsScreen.routeName: (_) => NewsScreen(),
         PlacesScreen.routeName: (_) => PlacesScreen(),
         NewsArticleScreen.routeName: (_) => const NewsArticleScreen(),
-        HighRiskPeople.routeName: (_) => HighRiskPeople(),
+        // HighRiskPeople.routeName: (_) => HighRiskPeople(),
         HealthyDiet.routeName: (_) => HealthyDiet(),
         EditProfile.routeName: (_) => const EditProfile(),
         ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),

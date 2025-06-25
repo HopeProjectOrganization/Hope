@@ -7,11 +7,14 @@ import 'package:hope/ui/screens/aware/awareness/build_article_item.dart';
 
 class NewsList extends StatelessWidget {
   final String type;
+  final Map<String, String> hereditaryTypeMap;
 
-  const NewsList({Key? key, required this.type}) : super(key: key);
+  const NewsList(
+      {Key? key, required this.type, required this.hereditaryTypeMap})
+      : super(key: key);
 
   bool isHereditaryCategory(String type) {
-    return type.toLowerCase().startsWith("hereditary");
+    return hereditaryTypeMap.containsKey(type);
   }
 
   bool isHighRiskCategory(String type) {
@@ -22,20 +25,25 @@ class NewsList extends StatelessWidget {
       "elderly",
       "radiation",
       "inflammation",
-      "unhealthy"
+      "unhealthy",
+      "pregnant",
+      "weak",
+      "mutation",
+      "inactive",
+      "polluted",
+      "chemical"
     ];
     return highRiskKeywords
-        .any((keyword) => type.toLowerCase().contains(keyword.toLowerCase()));
+        .any((keyword) => type.toLowerCase().contains(keyword));
   }
 
   Future<List<Article>> getCorrectSource() {
     if (isHereditaryCategory(type)) {
-      final formattedType = type.replaceAll(' ', '_').toUpperCase();
-      return HereditaryService.getByCategory(formattedType);
+      final apiValue = hereditaryTypeMap[type]!;
+      return HereditaryService.getByCategory(apiValue);
     } else if (isHighRiskCategory(type)) {
-      // 💡 نحول الاسم للي يناسب الـ enum: SMOKERS
-      final formattedType = type.replaceAll(' ', '_').toUpperCase();
-      return HighRiskService.getByCategory(formattedType);
+      final categoryEnum = type.toUpperCase().replaceAll(" ", "_");
+      return HighRiskService.getByCategory(categoryEnum);
     } else {
       return NewsApiService().getNewsByCategory(type == "All" ? "all" : type);
     }
@@ -51,10 +59,14 @@ class NewsList extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          print('📛 Snapshot is empty or null');
+          print('📛 Raw data: ${snapshot.data}');
           return const Center(child: Text('No news available.'));
         }
 
         final articles = snapshot.data!;
+        print('✅ Articles loaded: ${articles.length}');
+
         return ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: articles.length,

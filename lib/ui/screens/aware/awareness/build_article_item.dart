@@ -39,6 +39,7 @@ class BuildArticleItem extends StatelessWidget {
         );
       },
       child: Card(
+        color: AppColors.cloudi,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(color: AppColors.Teal)),
