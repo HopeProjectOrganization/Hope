@@ -6,6 +6,7 @@ import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/healthy_recipes.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
+import 'package:hope/ui/shared_widgets/favorite_button.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,6 +24,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   bool isLoading = true;
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
+  bool isPressed = false;
 
   @override
   void initState() {
@@ -115,6 +117,16 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          InkWell(
+            onTap: () {}, // ممكن تسيبيه فاضي أو تشيليه لو مش محتاجاه
+            child: FavoriteButton(
+              id: recipe!.recipeId,
+              category: 'HEALTHY_DIET',
+              type: 'meal',
+            ),
+          ),
+        ],
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: AppColors.Teal),

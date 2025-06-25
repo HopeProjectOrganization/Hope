@@ -10,10 +10,12 @@ class BuildArticleItem extends StatelessWidget {
     super.key,
     required this.article,
     required this.selectedCancerType,
+    required this.category, // ← الجديد
   });
 
   final Article article;
   final String selectedCancerType;
+  final String category;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,8 @@ class BuildArticleItem extends StatelessWidget {
           NewsArticleScreen.routeName,
           arguments: {
             'article': article,
-            'category': selectedCancerType,
+            'type': selectedCancerType,
+            'category': category, // ← الأساسي
           },
         );
       },

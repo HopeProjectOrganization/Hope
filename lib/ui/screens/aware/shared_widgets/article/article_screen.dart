@@ -22,6 +22,8 @@ class NewsArticleScreen extends StatefulWidget {
 }
 
 class _NewsArticleScreenState extends State<NewsArticleScreen> {
+  late String type;
+
   bool isSaved = false;
 
   late ThemeProvider themeProvider;
@@ -47,12 +49,12 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
     themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
 
-    // أول مرة بس نقرأ ال arguments
     if (!isInitialized) {
       final args =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       article = args['article'];
       category = args['category'];
+      type = args['type']; // ← الجديد
       isInitialized = true;
       checkIfFavorite(article.articleId);
     }
@@ -100,7 +102,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
               try {
                 await FavoriteApiService.saveFavorite(
                   article.articleId,
-                  'NEWS',
+                  category,
                   'post',
                 );
                 setState(() => isSaved = true);

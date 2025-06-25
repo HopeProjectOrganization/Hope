@@ -6,7 +6,7 @@ import 'package:hope/model/favorite.dart';
 import 'package:http/http.dart' as http;
 
 class FavoriteApiService {
-  static String baseUrl = 'http://${MyApp.IP}/api/favorite-meals';
+  static String baseUrl = 'https://${MyApp.IP}/api/favorite-meals';
 
   static Future<Map<String, String>> getHeaders() async {
     final authService = AuthApiService();
@@ -26,6 +26,7 @@ class FavoriteApiService {
       uri,
       headers: await getHeaders(),
     );
+    print("Favorite check status: ${response.statusCode}");
 
     if (response.statusCode == 200) {
       return true;
@@ -89,9 +90,10 @@ class FavoriteApiService {
     for (String cat in [
       'NEWS',
       'HEREDITARY',
-      'AWARENESS',
+      'MEALSENSE',
       'HEALTHY_DIET',
-      'HIGH_RISK_PEOPLE'
+      'HIGH_RISK_PEOPLE',
+      'EXERCISE'
     ]) {
       final list = await getByCategory(cat);
       all.addAll(list);

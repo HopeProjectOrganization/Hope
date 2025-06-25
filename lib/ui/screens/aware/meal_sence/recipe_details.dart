@@ -8,6 +8,7 @@ import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_gradient.dart';
+import 'package:hope/ui/shared_widgets/favorite_button.dart';
 import 'package:provider/provider.dart';
 
 class RecipeDetails extends StatefulWidget {
@@ -88,6 +89,8 @@ class _RecipeDetailsState extends State<RecipeDetails>
               return Center(child: Text("Error: ${snapshot.error}"));
             } else {
               final meal = snapshot.data!;
+              print("Meal ID: ${meal.id}");
+
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,45 +119,10 @@ class _RecipeDetailsState extends State<RecipeDetails>
                             children: [
                               _circleIconButton(
                                   Icons.close, () => Navigator.pop(context)),
-                              _circleIconButton(
-                                isPressed
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                () async {
-                                  if (meal.id == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text("Meal ID is missing")),
-                                    );
-                                    return;
-                                  }
-
-                                  try {
-                                    await FavoriteApiService.saveFavorite(
-                                      meal.id,
-                                      'mealSence',
-                                      'meal',
-                                    );
-
-                                    setState(() {
-                                      isPressed = !isPressed;
-                                    });
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content:
-                                              Text("Saved to your favorites")),
-                                    );
-                                  } catch (e) {
-                                    print(e);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text("Failed to save")),
-                                    );
-                                  }
-                                },
-                                iconColor:
-                                    isPressed ? AppColors.red : AppColors.dark,
+                              FavoriteButton(
+                                id: meal!.id,
+                                category: 'MEALSENSE',
+                                type: 'meal',
                               ),
                             ],
                           ),

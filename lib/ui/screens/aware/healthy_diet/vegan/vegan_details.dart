@@ -5,6 +5,7 @@ import 'package:hope/Api/healthy_diet/vegan_service.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/vegan_details.dart';
+import 'package:hope/ui/shared_widgets/favorite_button.dart';
 import 'package:provider/provider.dart';
 
 class RecipeDetailsScreen extends StatelessWidget {
@@ -19,6 +20,16 @@ class RecipeDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          InkWell(
+            onTap: () {}, // ممكن تسيبيه فاضي أو تشيليه لو مش محتاجاه
+            child: FavoriteButton(
+              id: id.toString(),
+              category: 'HEALTHY_DIET',
+              type: 'meal',
+            ),
+          ),
+        ],
         backgroundColor: AppColors.Teal,
         title: Text(appLocalizations.recipeDetails),
         centerTitle: true,

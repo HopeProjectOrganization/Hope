@@ -18,6 +18,7 @@ import 'package:hope/Api/notification/check_meals.dart';
 import 'package:hope/core/providers/locale_provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_theme.dart';
+import 'package:hope/fruit.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
@@ -104,7 +105,6 @@ class MyApp extends StatelessWidget {
         ForgetpasswordScreen.routeName: (_) => const ForgetpasswordScreen(),
         VerficationScreen.routeName: (_) => const VerficationScreen(),
         ResetpasswordScreen.routeName: (_) => const ResetpasswordScreen(),
-        // Hereditary.routeName: (_) => const Hereditary(),
         AwareTab.routeName: (_) => AwareTab(),
         HomeScreen.routeName: (_) => const HomeScreen(),
         ScanTab.routeName: (_) => const ScanTab(),
@@ -115,7 +115,6 @@ class MyApp extends StatelessWidget {
         NewsScreen.routeName: (_) => NewsScreen(),
         PlacesScreen.routeName: (_) => PlacesScreen(),
         NewsArticleScreen.routeName: (_) => const NewsArticleScreen(),
-        // HighRiskPeople.routeName: (_) => HighRiskPeople(),
         HealthyDiet.routeName: (_) => HealthyDiet(),
         EditProfile.routeName: (_) => const EditProfile(),
         ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
@@ -183,9 +182,10 @@ class MyApp extends StatelessWidget {
         // },
         //  FilterScreen.routeName: (_) => const FilterScreen(),
         PlacesAdminScreen.routeName: (_) => PlacesAdminScreen(),
-        AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen()
+        AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen(),
+        ExploreScreen.routeName: (_) => ExploreScreen()
       },
-      initialRoute: HomeScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

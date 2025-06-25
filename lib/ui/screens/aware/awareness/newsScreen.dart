@@ -64,6 +64,7 @@ class _NewsScreenState extends State<NewsScreen> {
   ];
 
   String selectedCancerType = "All";
+  String selectedMainCategory = "NEWS"; // default
 
   @override
   Widget build(BuildContext context) {
@@ -124,12 +125,11 @@ class _NewsScreenState extends State<NewsScreen> {
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: [
-                    buildCategorySection("Cancer Types", cancerTypes),
+                    buildCategorySection("Cancer Types", cancerTypes, "NEWS"),
+                    buildCategorySection("Hereditary Cancer",
+                        hereditaryTypeMap.keys.toList(), "HEREDITARY"),
                     buildCategorySection(
-                      "Hereditary Cancer",
-                      hereditaryTypeMap.keys.toList(),
-                    ),
-                    buildCategorySection("High Risk People", highRiskTypes),
+                        "High Risk People", highRiskTypes, "HIGH_RISK_PEOPLE"),
                   ],
                 ),
               ),
@@ -149,13 +149,16 @@ class _NewsScreenState extends State<NewsScreen> {
           Expanded(
               child: NewsList(
                   type: selectedCancerType,
-                  hereditaryTypeMap: hereditaryTypeMap)),
+            hereditaryTypeMap: hereditaryTypeMap,
+            category: selectedMainCategory, // ← أضف هذا
+          )),
         ],
       ),
     );
   }
 
-  Widget buildCategorySection(String title, List<String> items) {
+  Widget buildCategorySection(
+      String title, List<String> items, String mainCategory) {
     return Theme(
       data: ThemeData().copyWith(
         dividerColor: Colors.transparent,
@@ -184,6 +187,7 @@ class _NewsScreenState extends State<NewsScreen> {
             onTap: () {
               setState(() {
                 selectedCancerType = type;
+                selectedMainCategory = mainCategory;
               });
               Navigator.pop(context);
             },

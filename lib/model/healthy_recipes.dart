@@ -22,15 +22,18 @@ class RecipeModel {
   });
 
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
-    final ingredientsMap = Map<String, String>.from(json['ingredients'] ?? {});
+    final ingredientsMap = (json['ingredients'] as Map?)?.map(
+          (key, value) => MapEntry(key.toString(), value.toString()),
+        ) ??
+        {};
 
     return RecipeModel(
-      recipeId: json['recipeId'],
-      name: json['name'],
-      category: json['category'],
-      area: json['area'],
-      instructions: json['instructions'],
-      imageUrl: json['imageUrl'],
+      recipeId: json['recipeId'] ?? '',
+      name: json['name'] ?? '',
+      category: json['category'] ?? '',
+      area: json['area'] ?? '',
+      instructions: json['instructions'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
       tags: json['tags'],
       youtubeUrl: json['youtubeUrl'],
       ingredients: ingredientsMap,

@@ -8,10 +8,14 @@ import 'package:hope/ui/screens/aware/awareness/build_article_item.dart';
 class NewsList extends StatelessWidget {
   final String type;
   final Map<String, String> hereditaryTypeMap;
+  final String category; // ← الجديد
 
-  const NewsList(
-      {Key? key, required this.type, required this.hereditaryTypeMap})
-      : super(key: key);
+  const NewsList({
+    Key? key,
+    required this.type,
+    required this.hereditaryTypeMap,
+    required this.category, // ← الجديد
+  }) : super(key: key);
 
   bool isHereditaryCategory(String type) {
     return hereditaryTypeMap.containsKey(type);
@@ -75,6 +79,7 @@ class NewsList extends StatelessWidget {
             return BuildArticleItem(
               article: articles[index],
               selectedCancerType: type,
+              category: category, // ← الجديد
             );
           },
         );
