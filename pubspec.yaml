@@ -70,6 +70,7 @@ dependencies:
   percent_indicator: ^4.2.5
   flutter_spinkit: ^5.1.0
   workmanager: ^0.5.1
+  firebase_app_check: ^0.3.2+6
 
 #  youtube_player_flutter: ^8.1.1
 #  flutter_inappwebview: ^

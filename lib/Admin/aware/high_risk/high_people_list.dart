@@ -1,85 +1,64 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hope/Admin/aware/high_risk/build_article_high.dart';
-import 'package:hope/main.dart';
-import 'package:hope/model/news_model.dart';
-import 'package:http/http.dart' as http;
+import 'package:hope/Api/high_risk/highrisk_serivce.dart';
+import 'package:hope/model/article.dart';
 
 class AdminHighPeopleList extends StatefulWidget {
   final String type;
-  final bool news;
 
-  const AdminHighPeopleList({required this.type, this.news = false, super.key});
+  const AdminHighPeopleList({required this.type, super.key});
 
   @override
-  State<AdminHighPeopleList> createState() => _AdminNewsListState();
+  State<AdminHighPeopleList> createState() => _AdminHighPeopleListState();
 }
 
-class _AdminNewsListState extends State<AdminHighPeopleList> {
-  late Future<List<NewsModel>> futureNews;
+class _AdminHighPeopleListState extends State<AdminHighPeopleList> {
+  late Future<List<Article>> futureArticles;
 
   @override
   void initState() {
     super.initState();
-    futureNews = fetchNewsFromLocalAPI(widget.type);
+    futureArticles = fetchArticles(widget.type);
   }
 
-  Future<List<NewsModel>> fetchNewsFromLocalAPI(String type) async {
-    late Uri url;
-
+  Future<List<Article>> fetchArticles(String type) {
     if (type == 'ALL') {
-      url = Uri.parse('http://${MyApp.IP}/api/highrisk');
+      return HighRiskService().getAll();
     } else {
-      url = Uri.parse('http://${MyApp.IP}/api/highrisk/category/$type');
-    }
-
-    final response = await http.get(
-      url,
-      headers: {'Content-Type': 'application/json'},
-    );
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((item) => NewsModel.fromJson(item)).toList();
-    } else {
-      throw Exception('Failed to load news');
+      return HighRiskService.getByCategory(type);
     }
   }
 
-  Future<void> refreshNews() async {
+  Future<void> refreshArticles() async {
     setState(() {
-      futureNews = fetchNewsFromLocalAPI(widget.type);
+      futureArticles = fetchArticles(widget.type);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<NewsModel>>(
-      future: futureNews,
+    return FutureBuilder<List<Article>>(
+      future: futureArticles,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text("Error fetching news: ${snapshot.error}"));
+          return Center(
+              child: Text("Error fetching articles: ${snapshot.error}"));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text("No news available."));
+          return const Center(child: Text("No articles available."));
         } else {
           final articles = snapshot.data!;
-          return buildListView(articles);
+          return ListView.separated(
+            itemCount: articles.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            itemBuilder: (context, index) => BuildArticleHigh(
+              article: articles[index],
+              onDelete: refreshArticles,
+            ),
+          );
         }
       },
     );
   }
-
-  Widget buildListView(List<NewsModel> articles) => ListView.separated(
-        itemBuilder: (context, index) {
-          NewsModel article = articles[index];
-          return BuildArticleHigh(
-            article: article,
-            onDelete: refreshNews, // ← يعمل تحديث بعد الحذف
-          );
-        },
-        separatorBuilder: (context, index) => const SizedBox(height: 10),
-        itemCount: articles.length,
-      );
 }

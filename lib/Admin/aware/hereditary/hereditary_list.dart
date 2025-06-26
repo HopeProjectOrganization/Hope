@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hope/Admin/aware/hereditary/hereditary_article_item.dart';
 import 'package:hope/main.dart';
-import 'package:hope/model/news_model.dart';
+import 'package:hope/model/article.dart';
 import 'package:http/http.dart' as http;
 
 class AdminHereditaryList extends StatefulWidget {
@@ -17,7 +17,7 @@ class AdminHereditaryList extends StatefulWidget {
 }
 
 class _AdminNewsListState extends State<AdminHereditaryList> {
-  late Future<List<NewsModel>> futureNews;
+  late Future<List<Article>> futureNews;
 
   @override
   void initState() {
@@ -25,13 +25,13 @@ class _AdminNewsListState extends State<AdminHereditaryList> {
     futureNews = fetchNewsFromLocalAPI(widget.type);
   }
 
-  Future<List<NewsModel>> fetchNewsFromLocalAPI(String type) async {
+  Future<List<Article>> fetchNewsFromLocalAPI(String type) async {
     late Uri url;
 
     if (type == 'ALL') {
-      url = Uri.parse('http://${MyApp.IP}/api/hereditary');
+      url = Uri.parse('https://${MyApp.IP}/api/hereditary');
     } else {
-      url = Uri.parse('http://${MyApp.IP}/api/hereditary/category/$type');
+      url = Uri.parse('https://${MyApp.IP}/api/hereditary/category/$type');
     }
 
     final response = await http.get(
@@ -41,7 +41,7 @@ class _AdminNewsListState extends State<AdminHereditaryList> {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
-      return data.map((item) => NewsModel.fromJson(item)).toList();
+      return data.map((item) => Article.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load Hereditary');
     }
@@ -55,7 +55,7 @@ class _AdminNewsListState extends State<AdminHereditaryList> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<NewsModel>>(
+    return FutureBuilder<List<Article>>(
       future: futureNews,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -63,7 +63,7 @@ class _AdminNewsListState extends State<AdminHereditaryList> {
         } else if (snapshot.hasError) {
           return Center(
               child:
-                  Text("Error fetching Hereditary posts : ${snapshot.error}"));
+                  Text("Error fetching Hereditary posts : \${snapshot.error}"));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text("No Hereditary posts available."));
         } else {
@@ -74,12 +74,13 @@ class _AdminNewsListState extends State<AdminHereditaryList> {
     );
   }
 
-  Widget buildListView(List<NewsModel> articles) => ListView.separated(
+  Widget buildListView(List<Article> articles) => ListView.separated(
         itemBuilder: (context, index) {
-          NewsModel article = articles[index];
+          Article article = articles[index];
           return BuildArticleItem(
             article: article,
             onDelete: refreshNews, // ← يعمل تحديث بعد الحذف
+            showAllFields: true, // عرض كل الحقول الجديدة
           );
         },
         separatorBuilder: (context, index) => const SizedBox(height: 10),

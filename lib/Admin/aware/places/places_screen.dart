@@ -54,7 +54,7 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
         places.removeWhere((place) => place.id == id);
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hospital deleted successfully')),
+        SnackBar(content: Text('تم حذف المستشفى بنجاح')),
       );
     } catch (e) {
       print('Failed to delete: $e');
@@ -111,7 +111,7 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
                         return Stack(
                           children: [
                             Card(
-                              color: AppColors.lavender,
+                              color: AppColors.cloudi,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                               ),
@@ -143,12 +143,11 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
                                         children: [
                                           Text(
                                             place.name,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall,
                                           ),
-                                          place.website.isEmpty
+                                          (place.website.isEmpty)
                                               ? Container()
                                               : GestureDetector(
                                                   onTap: () async {
@@ -156,9 +155,10 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
                                                     if (await canLaunchUrl(
                                                         Uri.parse(url))) {
                                                       await launchUrl(
-                                                          Uri.parse(url),
-                                                          mode: LaunchMode
-                                                              .externalApplication);
+                                                        Uri.parse(url),
+                                                        mode: LaunchMode
+                                                            .externalApplication,
+                                                      );
                                                     }
                                                   },
                                                   child: buildRow(
@@ -197,33 +197,58 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
                             Positioned(
                               top: 0,
                               right: 0,
-                              child: IconButton(
-                                icon: const Icon(Icons.close,
-                                    color: AppColors.gray),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      title: const Text('Delete'),
-                                      content: const Text(
-                                          'Are you sure you want to delete this hospital?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(ctx).pop(),
-                                          child: const Text('Cancel'),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Edit Button
+                                  IconButton(
+                                    icon: const Icon(Icons.edit,
+                                        color: AppColors.yellow),
+                                    onPressed: () async {
+                                      final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              AdminAddHospitalScreen(
+                                            hospitalData: place.toJson(),
+                                          ),
                                         ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(ctx).pop();
-                                            deletePlace(place.id);
-                                          },
-                                          child: const Text('Delete'),
+                                      );
+                                      if (result == true) {
+                                        fetchAllPlaces();
+                                      }
+                                    },
+                                  ),
+                                  // Delete Button
+                                  IconButton(
+                                    icon: const Icon(Icons.close,
+                                        color: AppColors.red),
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          title: const Text('Delete'),
+                                          content: const Text(
+                                              'Are you sure you want to delete this hospital?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(ctx).pop(),
+                                              child: const Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(ctx).pop();
+                                                deletePlace(place.id);
+                                              },
+                                              child: const Text('Delete'),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  );
-                                },
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -246,7 +271,7 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
           }
         },
         backgroundColor: AppColors.Teal,
-        child: const Icon(Icons.add, color: AppColors.lavender),
+        child: const Icon(Icons.add, color: AppColors.yellow),
       ),
     );
   }

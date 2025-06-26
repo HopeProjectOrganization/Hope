@@ -45,7 +45,7 @@ class _CustomRecentlyCardState extends State<CustomRecentlyCard> {
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
         decoration: BoxDecoration(
-          color: AppColors.lavender,
+          color: AppColors.cloudi,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(

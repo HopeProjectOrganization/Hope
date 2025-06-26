@@ -153,10 +153,22 @@
   "viewMore": "View more",
   "beauty": "Beauty",
   "food": "Food",
-  "typeOfProduct": "Type of product :"
-
-
-
+  "typeOfProduct": "Type of product :",
+  "addHospital": "Add Hospital",
+  "editHospital": "Edit Hospital",
+  "hospitalAdded": "Hospital added successfully",
+  "hospitalUpdated": "Hospital updated successfully",
+  "hospitalSaveFailed": "Failed to save hospital",
+  "pleasePickImage": "Please pick an image",
+  "imageUploadFailed": "Failed to upload image",
+  "noImageSelected": "No image selected",
+  "hospitalName": "Hospital Name",
+  "website": "Website",
+  "phoneNumber": "Phone Number",
+  "googleMapsLink": "Google Maps Link",
+  "pickImageFromGallery": "Pick Image from Gallery",
+  "saveChanges": "Save Changes",
+  "required": "Required"
 
 
 

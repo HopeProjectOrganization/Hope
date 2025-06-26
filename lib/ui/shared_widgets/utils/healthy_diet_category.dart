@@ -32,7 +32,7 @@ class HealthyDietCategory extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.37,
+        height: MediaQuery.of(context).size.height * 0.38,
         margin: EdgeInsets.all(16),
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(

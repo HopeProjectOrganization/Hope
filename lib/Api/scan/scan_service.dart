@@ -183,7 +183,7 @@ class ScanService {
       final token = await getToken();
       if (token == null) return null;
 
-      final url = Uri.parse("http://${MyApp.IP}/history/scanned");
+      final url = Uri.parse("https://${MyApp.IP}/history/scanned");
       final headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",

@@ -31,12 +31,12 @@ class AppAssets {
 
   //Aware
   static const String places = "assets/images/places.png";
-  static const String awareness = "assets/images/awareness.png";
   static const String hereditary = "assets/images/hereditary.png";
   static const String alternative = "assets/images/alternative.png";
   static const String highRiskPeople = "assets/images/highRiskPeople.png";
   static const String healthyDiet = "assets/images/healthyDiet.png";
   static const String mealSence = "assets/images/mealSence.png";
+  static const String awarnesss = "assets/images/awareness.png";
 
   //Result
   static const String result = "assets/images/result.png";

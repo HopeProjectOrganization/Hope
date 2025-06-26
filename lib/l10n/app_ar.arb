@@ -149,9 +149,22 @@
   "preparationSteps": "خطوات التحضير",
   "veganRecipes": "وصفات نباتية",
   "noRecipesFound": "لم يتم العثور على وصفات",
-  "viewMore": "عرض المزيد"
-
-
-
+  "viewMore": "عرض المزيد",
+  "addHospital": "إضافة مستشفى",
+  "editHospital": "تعديل مستشفى",
+  "hospitalAdded": "تمت إضافة المستشفى بنجاح",
+  "hospitalUpdated": "تم تعديل بيانات المستشفى بنجاح",
+  "hospitalSaveFailed": "فشل في حفظ بيانات المستشفى",
+  "pleasePickImage": "يرجى اختيار صورة",
+  "imageUploadFailed": "فشل في رفع الصورة",
+  "noImageSelected": "لم يتم اختيار صورة",
+  "hospitalName": "اسم المستشفى",
+  "website": "الموقع الإلكتروني",
+  "phoneNumber": "رقم الهاتف",
+  "googleMapsLink": "رابط خرائط جوجل",
+  "address": "العنوان",
+  "pickImageFromGallery": "اختر صورة من المعرض",
+  "saveChanges": "حفظ التعديلات",
+  "required": "هذا الحقل مطلوب"
 
 }

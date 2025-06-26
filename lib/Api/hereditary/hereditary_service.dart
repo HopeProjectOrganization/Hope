@@ -51,7 +51,7 @@ class HereditaryService {
     }
   }
 
-  Future<void> deleteNews(int id) async {
+  static Future<void> deleteNews(int id) async {
     final response = await http.delete(Uri.parse('$baseUrl/$id'));
 
     if (response.statusCode != 200 && response.statusCode != 204) {

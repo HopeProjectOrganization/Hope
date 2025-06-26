@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/aware/awareness/addNewsScreen.dart';
 import 'package:hope/Admin/aware/awareness/news_screen.dart';
-import 'package:hope/Admin/aware/healthy_diet/addHealthyScreen.dart';
-import 'package:hope/Admin/aware/healthy_diet/diet_category_screen.dart';
 import 'package:hope/Admin/aware/healthy_diet/healthy_diet.dart';
 import 'package:hope/Admin/aware/hereditary/addHereditaryScreen.dart';
 import 'package:hope/Admin/aware/hereditary/hereditary.dart';
@@ -55,6 +53,11 @@ import 'ui/screens/aware/meal_sence/meals.dart';
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug, // لتجربة بدون مشاكل
+  );
+
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
   // جدولة المهمة اليومية
@@ -129,9 +132,6 @@ class MyApp extends StatelessWidget {
         AdminHighEditorScreen.routeName: (_) => AdminHighEditorScreen(),
         AdminHighRiskPeople.routeName: (_) => AdminHighRiskPeople(),
         AdminHealthyDiet.routeName: (_) => AdminHealthyDiet(),
-        DietCategoryScreen.routeName: (_) => const DietCategoryScreen(),
-        AdminHealthyEditorScreen.routeName: (_) =>
-            const AdminHealthyEditorScreen(),
         Recipes.routeName: (_) => Recipes(),
         BodyPartScreen.routeName: (_) => BodyPartScreen(),
         VeganScreen.routeName: (_) => VeganScreen(),
@@ -185,7 +185,7 @@ class MyApp extends StatelessWidget {
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen(),
         ExploreScreen.routeName: (_) => ExploreScreen()
       },
-      initialRoute: LoginScreen.routeName,
+      initialRoute: AdminHomeScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
