@@ -281,8 +281,13 @@ class _SuggestedReplacementsScreenState
     );
   }
 
-  List<Widget> buildTabs() {
-    return categories.map((cat) => CustomeTab(text: cat)).toList();
+  List<Widget> buildTabs(List<String> types) {
+    return List.generate(types.length, (index) {
+      return CustomeTab(
+        text: types[index],
+        isSelected: _tabController.index == index,
+      );
+    });
   }
 
   @override
@@ -306,14 +311,14 @@ class _SuggestedReplacementsScreenState
         centerTitle: true,
         title: const Text("Healthy Alternatives",
             style: TextStyle(color: AppColors.white)),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorSize: TabBarIndicatorSize.label,
-          isScrollable: true,
-          labelPadding: const EdgeInsets.symmetric(horizontal: 7),
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          tabs: buildTabs(),
-        ),
+        //  bottom: TabBar(
+        //    controller: _tabController,
+        //    indicatorSize: TabBarIndicatorSize.label,
+        //    isScrollable: true,
+        //    labelPadding: const EdgeInsets.symmetric(horizontal: 7),
+        //    padding: const EdgeInsets.symmetric(vertical: 10),
+        //    tabs: buildTabs(),
+        //  ),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

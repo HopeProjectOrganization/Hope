@@ -46,7 +46,7 @@ import 'package:hope/ui/screens/onBoarding_screens/on_boarding/onboarding_screen
 import 'package:hope/ui/screens/onBoarding_screens/set_up/setup_screen.dart';
 import 'package:hope/ui/screens/onBoarding_screens/splash/splash_screen.dart';
 import 'package:hope/ui/screens/profileDetails/change_password.dart';
-import 'package:hope/ui/screens/profileDetails/saved_list.dart';
+import 'package:hope/ui/screens/profileDetails/saved/saved_list.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -185,7 +185,7 @@ class MyApp extends StatelessWidget {
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen(),
         ExploreScreen.routeName: (_) => ExploreScreen()
       },
-      initialRoute: LoginScreen.routeName,
+      initialRoute: SavedListScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

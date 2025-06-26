@@ -3,17 +3,19 @@ import 'package:hope/core/theme/app_colors.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
-      tabBarTheme: TabBarTheme(
-        indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-          border: Border.all(color: AppColors.white),
-          color: AppColors.white,
-        ),
-        dividerColor: Colors.transparent,
-        unselectedLabelStyle: const TextStyle(color: AppColors.white),
-      labelStyle: const TextStyle(color: AppColors.Teal),
+    tabBarTheme: TabBarTheme(
+      indicator: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        color: AppColors.Teal,
+        border: Border.all(color: AppColors.Teal),
+      ),
+      indicatorSize: TabBarIndicatorSize.label,
+      labelColor: Colors.white,
+      unselectedLabelColor: AppColors.Teal,
+      dividerColor: Colors.transparent,
     ),
-      brightness: Brightness.light,
+
+    brightness: Brightness.light,
     scaffoldBackgroundColor: AppColors.white,
     dividerColor: AppColors.Teal,
     primaryColor: AppColors.Teal,

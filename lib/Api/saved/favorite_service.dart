@@ -84,16 +84,28 @@ class FavoriteApiService {
     }
   }
 
+  static Future<List<FavoriteMeal>> getFavoritesByType(String type) async {
+    final url = Uri.parse('$baseUrl/type/$type');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((e) => FavoriteMeal.fromJson(e)).toList();
+    } else {
+      throw Exception('Failed to fetch favorites by type');
+    }
+  }
 
   static Future<List<FavoriteMeal>> getAllFavorites() async {
     List<FavoriteMeal> all = [];
     for (String cat in [
       'NEWS',
       'HEREDITARY',
+      'HIGH_RISK_PEOPLE',
       'MEALSENSE',
       'HEALTHY_DIET',
-      'HIGH_RISK_PEOPLE',
-      'EXERCISE'
+      'VEGAN'
+          'EXERCISE'
     ]) {
       final list = await getByCategory(cat);
       all.addAll(list);

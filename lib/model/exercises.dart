@@ -23,13 +23,13 @@ class Exercise {
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
     return Exercise(
-      id: json['id'],
-      name: json['name'],
-      gifUrl: json['gifUrl'],
-      bodyPart: json['bodyPart'],
-      excersiesId: json['excersiesId'],
-      target: json['target'],
-      equipment: json['equipment'],
+      id: json['id'] is int ? json['id'] : null,
+      excersiesId: json['excersiesId']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      gifUrl: json['gifUrl']?.toString() ?? '',
+      bodyPart: json['bodyPart']?.toString() ?? '',
+      target: json['target']?.toString() ?? '',
+      equipment: json['equipment']?.toString() ?? '',
       secondaryMuscles: List<String>.from(json['secondaryMuscles'] ?? []),
       instructions: List<String>.from(json['instructions'] ?? []),
     );
@@ -39,11 +39,11 @@ class Exercise {
     return {
       if (id != null) 'id': id,
       'excersiesId': excersiesId,
-      'bodyPart': bodyPart,
-      'equipment': equipment,
-      'gifUrl': gifUrl,
       'name': name,
+      'gifUrl': gifUrl,
+      'bodyPart': bodyPart,
       'target': target,
+      'equipment': equipment,
       'secondaryMuscles': secondaryMuscles,
       'instructions': instructions,
     };

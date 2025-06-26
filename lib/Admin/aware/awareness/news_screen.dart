@@ -33,7 +33,12 @@ class _NewsScreenState extends State<AdminNewsScreen>
   String selectedCancerType = "ALL";
 
   List<Widget> buildTabs(List<String> types) {
-    return types.map((type) => CustomeTab(text: type)).toList();
+    return List.generate(types.length, (index) {
+      return CustomeTab(
+        text: types[index],
+        isSelected: _tabController.index == index,
+      );
+    });
   }
 
   @override

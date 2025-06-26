@@ -25,7 +25,7 @@ class RecipeDetailsScreen extends StatelessWidget {
             onTap: () {}, // ممكن تسيبيه فاضي أو تشيليه لو مش محتاجاه
             child: FavoriteButton(
               id: id.toString(),
-              category: 'HEALTHY_DIET',
+              category: 'VEGAN',
               type: 'meal',
             ),
           ),

@@ -13,7 +13,7 @@ import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab/edit_profile.dart';
 import 'package:hope/ui/screens/profileDetails/custom_item.dart';
 import 'package:hope/ui/screens/profileDetails/profile_item.dart';
-import 'package:hope/ui/screens/profileDetails/saved_list.dart';
+import 'package:hope/ui/screens/profileDetails/saved/saved_list.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';

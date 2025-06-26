@@ -127,9 +127,9 @@ class _NewsScreenState extends State<NewsScreen> {
                   children: [
                     buildCategorySection("Cancer Types", cancerTypes, "NEWS"),
                     buildCategorySection("Hereditary Cancer",
-                        hereditaryTypeMap.keys.toList(), "HEREDITARY"),
+                        hereditaryTypeMap.keys.toList(), "HEREDITARY_PEOPLE"),
                     buildCategorySection(
-                        "High Risk People", highRiskTypes, "HIGH_RISK_PEOPLE"),
+                        "High Risk People", highRiskTypes, "HIGH_RISK"),
                   ],
                 ),
               ),

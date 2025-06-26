@@ -1,4 +1,5 @@
 class Article {
+  final int id;
   final String articleId;
   final String title;
   final String link;
@@ -20,6 +21,7 @@ class Article {
   final bool duplicate;
 
   Article({
+    required this.id,
     required this.articleId,
     required this.title,
     required this.link,
@@ -43,6 +45,7 @@ class Article {
 
   factory Article.fromJson(Map<String, dynamic> json) {
     return Article(
+      id: json['id'] ?? 0,
       articleId: json['articleId'] ?? '',
       title: json['title'] ?? 'No title',
       link: json['link'] ?? '',

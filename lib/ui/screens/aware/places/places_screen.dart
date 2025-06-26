@@ -66,7 +66,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
         backgroundColor: AppColors.Teal,
         centerTitle: true,
         title: Text(
-          appLocalizations.cancerTreatmentPlaces,
+          "Cancer Treatment",
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ),

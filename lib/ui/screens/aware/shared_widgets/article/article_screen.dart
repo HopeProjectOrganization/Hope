@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/saved/favorite_service.dart';
+import 'package:hope/Api/saved/saved_post.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -35,9 +35,10 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
 
   void checkIfFavorite(String articleId) async {
     try {
-      bool favorite = await FavoriteApiService.isFavorite(articleId);
+      final savedArticles = await SavedPostService.fetchSavedArticles(category);
+      final isInFavorites = savedArticles.any((a) => a.articleId == articleId);
       setState(() {
-        isSaved = favorite;
+        isSaved = isInFavorites;
       });
     } catch (e) {
       print("Failed to check favorite: $e");
@@ -92,6 +93,10 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
               color: isSaved ? AppColors.yellow : null,
             ),
             onPressed: () async {
+              print("article.id: ${article.id}");
+              print("article.articleId: ${article.articleId}");
+              print("category: $category");
+
               if (article.articleId == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Article ID is missing")),
@@ -100,19 +105,38 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
               }
 
               try {
-                await FavoriteApiService.saveFavorite(
-                  article.articleId,
-                  category,
-                  'post',
-                );
-                setState(() => isSaved = true);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Saved to your articles")),
-                );
+                if (isSaved) {
+                  final success = await SavedPostService.deleteFavorite(
+                    postId: article.id,
+                    postType: category,
+                  );
+
+                  if (success) {
+                    setState(() => isSaved = false);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text("Removed from saved articles")),
+                    );
+                  }
+                } else {
+                  // إضافة للمفضلة
+                  final success = await SavedPostService.addToSaved(
+                    postId: article.id,
+                    postStringId: article.articleId,
+                    postType: category,
+                  );
+
+                  if (success) {
+                    setState(() => isSaved = true);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Saved to your articles")),
+                    );
+                  }
+                }
               } catch (e) {
                 print(e);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Failed to save")),
+                  const SnackBar(content: Text("Action failed")),
                 );
               }
             },
