@@ -27,7 +27,7 @@ class _AdminNewsListState extends State<AdminNewsList> {
 
   Future<List<NewsModel>> fetchNewsFromLocalAPI(String type) async {
     final response = await http.get(
-      Uri.parse('http://${MyApp.IP}/api/news/$type'),
+      Uri.parse('https://${MyApp.IP}/api/news/$type'),
       headers: {'Content-Type': 'application/json'},
     );
 

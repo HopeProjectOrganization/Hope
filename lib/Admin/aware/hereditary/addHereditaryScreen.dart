@@ -1,271 +1,236 @@
+// AdminHereditaryEditorScreen adapted to match the Article model
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:hope/Admin/utlis/news.dart';
-import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/main.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:lottie/lottie.dart';
 
-// ignore: must_be_immutable
 class AdminHereditaryEditorScreen extends StatefulWidget {
-  Map<String, dynamic>? newsData;
+  static const routeName = '/adminHereditaryEditor';
+  final Map<String, dynamic>? articleData;
 
-  static const String routeName = '/adminHereditaryEditor';
-
-  AdminHereditaryEditorScreen({Key? key, this.newsData}) : super(key: key);
+  const AdminHereditaryEditorScreen({Key? key, this.articleData})
+      : super(key: key);
 
   @override
   State<AdminHereditaryEditorScreen> createState() =>
-      _AdminNewsEditorScreenState();
+      _AdminHereditaryEditorScreenState();
 }
 
-class _AdminNewsEditorScreenState extends State<AdminHereditaryEditorScreen> {
+class _AdminHereditaryEditorScreenState
+    extends State<AdminHereditaryEditorScreen> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _titleController;
-  late TextEditingController _contentController;
+  final Map<String, TextEditingController> controllers = {
+    'articleId': TextEditingController(),
+    'title': TextEditingController(),
+    'link': TextEditingController(),
+    'description': TextEditingController(),
+    'content': TextEditingController(),
+    'pubDate': TextEditingController(),
+    'sourceId': TextEditingController(),
+    'sourceName': TextEditingController(),
+    'sourceUrl': TextEditingController(),
+    'sourcePriority': TextEditingController(),
+    'language': TextEditingController(),
+    'category': TextEditingController(),
+  };
 
-  String _category = "OVARIAN";
+  final TextEditingController keywordsController = TextEditingController();
+  final TextEditingController creatorController = TextEditingController();
+  final TextEditingController countryController = TextEditingController();
+  final TextEditingController videoUrlController = TextEditingController();
+  final TextEditingController sourceIconController = TextEditingController();
+  bool duplicate = false;
+
   File? _pickedImage;
   String? _existingImageUrl;
-
 
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController();
-    _contentController = TextEditingController();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final args =
-          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      if (args != null) {
-        setState(() {
-          _titleController.text = args['title'] ?? '';
-          _contentController.text = args['content'] ?? '';
-          _category = args['category'] ?? 'OVARIAN';
-          _existingImageUrl = args['imageUrl'];
-          widget.newsData = args;
-        });
-      }
-    });
+    if (widget.articleData != null) {
+      final data = widget.articleData!;
+      controllers.forEach((key, controller) {
+        controller.text = data[key]?.toString() ?? '';
+      });
+      keywordsController.text =
+          (data['keywords'] as List<dynamic>?)?.join(', ') ?? '';
+      creatorController.text =
+          (data['creator'] as List<dynamic>?)?.join(', ') ?? '';
+      countryController.text =
+          (data['country'] as List<dynamic>?)?.join(', ') ?? '';
+      videoUrlController.text = data['videoUrl'] ?? '';
+      sourceIconController.text = data['sourceIcon'] ?? '';
+      duplicate = data['duplicate'] ?? false;
+      _existingImageUrl = data['imageUrl'];
+    }
   }
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _pickedImage = File(pickedFile.path);
-      });
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      setState(() => _pickedImage = File(picked.path));
     }
   }
 
-  Future<String?> _uploadImageToFirebase(File imageFile) async {
+  Future<String?> _uploadImage(File imageFile) async {
     try {
       final fileName = DateTime.now().millisecondsSinceEpoch.toString();
       final ref =
-          FirebaseStorage.instance.ref().child('news_images/$fileName.jpg');
-      final downloadUrl = await ref.getDownloadURL();
-      print("Image uploaded successfully: $downloadUrl");
-      return downloadUrl;
-    } on FirebaseException catch (e) {
-      print("FirebaseException: ${e.code} - ${e.message}");
-      return null;
+          FirebaseStorage.instance.ref().child('articles/$fileName.jpg');
+      await ref.putFile(imageFile);
+      return await ref.getDownloadURL();
     } catch (e) {
-      print("General Error uploading image: $e");
+      print('Image upload error: $e');
       return null;
     }
   }
 
-  void _submitNews() async {
+  void _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     String imageUrl = _existingImageUrl ?? '';
-
     if (_pickedImage != null) {
-      final uploadedUrl = await _uploadImageToFirebase(_pickedImage!);
-      if (uploadedUrl != null) {
-        imageUrl = uploadedUrl;
-      }
+      final uploadedUrl = await _uploadImage(_pickedImage!);
+      if (uploadedUrl != null) imageUrl = uploadedUrl;
     }
 
-    final news = {
-      "title": _titleController.text,
-      "content": _contentController.text,
-      "category": _category,
-      "imageUrl": imageUrl,
+    final article = {
+      ...controllers.map((k, v) => MapEntry(k, v.text)),
+      'keywords':
+          keywordsController.text.split(',').map((e) => e.trim()).toList(),
+      'creator':
+          creatorController.text.split(',').map((e) => e.trim()).toList(),
+      'country':
+          countryController.text.split(',').map((e) => e.trim()).toList(),
+      'videoUrl': videoUrlController.text,
+      'sourceIcon': sourceIconController.text,
+      'duplicate': duplicate,
+      'imageUrl': imageUrl,
     };
 
-    final isEdit = widget.newsData != null && widget.newsData!['id'] != null;
-    final id = widget.newsData?['id'];
+    final isEdit =
+        widget.articleData != null && widget.articleData!['id'] != null;
+    final id = widget.articleData?['id'];
     final url = isEdit
-        ? 'http://${MyApp.IP}/api/hereditary/$id'
-        : 'http://${MyApp.IP}/api/hereditary';
+        ? 'https://${MyApp.IP}/api/hereditary/$id'
+        : 'https://${MyApp.IP}/api/hereditary';
 
-    final response = await (isEdit ? putNews(news, url) : postNews(news, url));
+    final response = await (isEdit
+        ? Uri.parse(url).sendJsonPut(article)
+        : Uri.parse(url).sendJsonPost(article));
 
     if (response) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(isEdit ? 'News updated' : 'News added'),
-      ));
+          content: Text(isEdit ? 'Article updated' : 'Article added')));
       Navigator.pop(context, true);
     }
   }
 
-  Future<bool> postNews(Map<String, dynamic> data, String url) async {
-    return await Uri.parse(url).sendJsonPost(data);
-  }
-
-  Future<bool> putNews(Map<String, dynamic> data, String url) async {
-    return await Uri.parse(url).sendJsonPut(data);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isEdit = widget.newsData != null;
-
+    final isEdit = widget.articleData != null;
     return Scaffold(
-      appBar: AppBar(title: Text(isEdit ? 'Edit News' : 'Add News')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              DropdownButtonFormField<String>(
-                value: _category,
-                onChanged: (val) {
-                  if (val != null) {
-                    setState(() => _category = val);
-                  }
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Category',
-                  filled: true,
-                  fillColor: AppColors.white,
-                  border: OutlineInputBorder(),
-                ),
-                dropdownColor: AppColors.lavender,
-                style: const TextStyle(
-                  color: AppColors.dark,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                items: [
-                  'ALL',
-                  'BREAST',
-                  'OVARIAN',
-                  'PROSTATE',
-                  'MELANOMA',
-                  'COLORECTAL',
-                ]
-                    .map((type) => DropdownMenuItem(
-                          value: type,
-                          child: Text(
-                            type,
-                            style: TextStyle(
-                              color: _category == type
-                                  ? Colors.deepPurple
-                                  : AppColors.dark,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ))
-                    .toList(),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
-                validator: (val) =>
-                    val == null || val.isEmpty ? 'Required' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _contentController,
-                decoration: const InputDecoration(
-                  labelText: 'Content',
-                  alignLabelWithHint: true,
-                ),
-                maxLines: 4,
-                validator: (val) =>
-                    val == null || val.isEmpty ? 'Required' : null,
-              ),
-              const SizedBox(height: 16),
-              Card(
-                elevation: 3,
-                color: AppColors.lavender,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: TextButton.icon(
-                          onPressed: _pickImage,
-                          icon:
-                              const Icon(Icons.image, color: Colors.deepPurple),
-                          label: const Text(
-                            'Pick Image from Gallery',
-                            style: TextStyle(color: Colors.deepPurple),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      if (_pickedImage != null)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            _pickedImage!,
-                            height: 150,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      else if (_existingImageUrl != null)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            _existingImageUrl!,
-                            height: 150,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      else
-                        GestureDetector(
-                          onTap: _pickImage,
-                          child: SizedBox(
-                            height: 200,
-                            child: Center(
-                              child: Lottie.asset(
-                                'assets/lottie/imagePicker.json',
-                                repeat: true,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+      appBar: AppBar(
+        title:
+            Text(isEdit ? 'Edit Hereditary Article' : 'Add Hereditary Article'),
+      ),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            ...controllers.entries.map((entry) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: TextFormField(
+                    controller: entry.value,
+                    decoration:
+                        InputDecoration(labelText: entry.key.capitalize()),
+                    validator: (val) =>
+                        val == null || val.isEmpty ? 'Required' : null,
                   ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              CustomButton(
-                title: isEdit ? "Update News" : 'Add News',
-                onClick: _submitNews,
-              ),
-            ],
-          ),
+                )),
+            TextFormField(
+              controller: keywordsController,
+              decoration: const InputDecoration(
+                  labelText: 'Keywords (comma-separated)'),
+            ),
+            TextFormField(
+              controller: creatorController,
+              decoration: const InputDecoration(
+                  labelText: 'Creator(s) (comma-separated)'),
+            ),
+            TextFormField(
+              controller: countryController,
+              decoration:
+                  const InputDecoration(labelText: 'Country (comma-separated)'),
+            ),
+            TextFormField(
+              controller: videoUrlController,
+              decoration: const InputDecoration(labelText: 'Video URL'),
+            ),
+            TextFormField(
+              controller: sourceIconController,
+              decoration: const InputDecoration(labelText: 'Source Icon URL'),
+            ),
+            SwitchListTile(
+              value: duplicate,
+              onChanged: (val) => setState(() => duplicate = val),
+              title: const Text('Duplicate'),
+            ),
+            TextButton.icon(
+              icon: const Icon(Icons.image),
+              label: const Text("Pick Image"),
+              onPressed: _pickImage,
+            ),
+            if (_pickedImage != null)
+              Image.file(_pickedImage!, height: 150, fit: BoxFit.cover)
+            else if (_existingImageUrl != null)
+              Image.network(_existingImageUrl!, height: 150, fit: BoxFit.cover),
+            const SizedBox(height: 20),
+            CustomButton(
+                title: isEdit ? 'Update Article' : 'Add Article',
+                onClick: _submit),
+          ],
         ),
       ),
     );
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() =>
+      isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
+}
+
+extension UriExtension on Uri {
+  Future<bool> sendJsonPost(Map<String, dynamic> data) async {
+    try {
+      final response = await http.post(
+        this,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      );
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> sendJsonPut(Map<String, dynamic> data) async {
+    try {
+      final response = await http.put(
+        this,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
   }
 }

@@ -23,11 +23,16 @@ class _HighRiskPeopleState extends State<AdminHighRiskPeople>
 
   // ✅ أنواع السرطان اللي موجودة في الـ API فقط
   final List<String> cancerTypes = [
-    "ALL",
-    "BREAST",
-    "OVARIAN",
-    "PROSTATE",
-    "MELANOMA",
+    'ALL',
+    'ELDERLY',
+    'PREGNANT',
+    'WEAK_IMMUNE_SYSTEM',
+    'SMOKERS',
+    'OBESE',
+    'GENETIC_MUTATION',
+    'INACTIVE',
+    'CHEMICAL_EXPOSURE',
+    'POLLUTED_AREAS'
   ];
 
   String selectedCancerType = "ALL";

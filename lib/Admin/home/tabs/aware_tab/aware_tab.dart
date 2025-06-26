@@ -26,7 +26,7 @@ class AdminAwareTab extends StatelessWidget {
           id: appLocalizations.places,
           route: '/adminPlaces'),
       CategoryModel(
-          image: AppAssets.awareness,
+          image: AppAssets.awarnesss,
           id: appLocalizations.awareness,
           route: '/adminNewsScreen'),
       CategoryModel(

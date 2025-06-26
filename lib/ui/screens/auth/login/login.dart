@@ -50,10 +50,12 @@ class _LoginScreenState extends State<LoginScreen> {
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
+              const SizedBox(height: 32),
               Image.asset(
                 AppAssets.login,
                 height: MediaQuery.of(context).size.height * 0.3,
               ),
+              const SizedBox(height: 32),
               buildEmailTextField(context),
               const SizedBox(height: 16),
               buildPasswordTextField(context),

@@ -28,7 +28,7 @@ class _BuildArticleItemState extends State<BuildArticleItem> {
 
   Future<void> deleteArticle(int id) async {
     setState(() => isDeleting = true);
-    final url = Uri.parse('http://${MyApp.IP}/api/news/delete/$id');
+    final url = Uri.parse('https://${MyApp.IP}/api/news/delete/$id');
 
     try {
       final response = await http.delete(url);

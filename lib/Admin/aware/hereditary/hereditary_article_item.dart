@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/Admin/aware/hereditary/addHereditaryScreen.dart';
+import 'package:hope/Api/hereditary/hereditary_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/main.dart';
-import 'package:hope/model/news_model.dart';
+import 'package:hope/model/article.dart';
 import 'package:hope/ui/screens/aware/shared_widgets/article/article_screen.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
-import 'package:http/http.dart' as http;
 
 class BuildArticleItem extends StatefulWidget {
   final VoidCallback? onDelete;
@@ -15,9 +14,10 @@ class BuildArticleItem extends StatefulWidget {
     super.key,
     required this.article,
     this.onDelete,
+    required bool showAllFields,
   });
 
-  final NewsModel article;
+  final Article article;
 
   @override
   State<BuildArticleItem> createState() => _BuildArticleItemState();
@@ -26,31 +26,6 @@ class BuildArticleItem extends StatefulWidget {
 class _BuildArticleItemState extends State<BuildArticleItem> {
   bool isDeleting = false;
 
-  Future<void> deleteArticle(int id) async {
-    setState(() => isDeleting = true);
-    final url = Uri.parse('http://${MyApp.IP}/api/hereditary/delete/$id');
-
-    try {
-      final response = await http.delete(url);
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Deleted successfully')),
-        );
-        if (widget.onDelete != null) widget.onDelete!();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Delete failed: ${response.statusCode}')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    } finally {
-      setState(() => isDeleting = false);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,6 +115,12 @@ class _BuildArticleItemState extends State<BuildArticleItem> {
                                 'content': article.content,
                                 'category': article.category,
                                 'imageUrl': article.imageUrl,
+                                'link': article.link,
+                                'pubDate': article.pubDate,
+                                'sourceName': article.sourceName,
+                                'sourceUrl': article.sourceUrl,
+                                'sourceIcon': article.sourceIcon,
+                                'creator': article.creator,
                               },
                             );
                           },
@@ -167,7 +148,8 @@ class _BuildArticleItemState extends State<BuildArticleItem> {
                                         TextButton(
                                           onPressed: () {
                                             Navigator.pop(context);
-                                            deleteArticle(article.id!);
+                                            HereditaryService.deleteNews(
+                                                article.id!);
                                           },
                                           child: Text("Delete",
                                               style:
