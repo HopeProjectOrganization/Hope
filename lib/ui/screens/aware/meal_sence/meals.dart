@@ -112,7 +112,7 @@ class _MealsState extends State<Meals> {
               icon: ImageIcon(AssetImage(AppIcons.meal),
                   color: AppColors.Teal, size: 45),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, MyMealsScreen.routeName,
+                Navigator.pushNamed(context, MyMealsScreen.routeName,
                     arguments: {
                       'selectedMeals': selectedMealList,
                       'title': _title

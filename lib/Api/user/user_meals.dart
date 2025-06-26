@@ -1,92 +1,88 @@
 import 'dart:convert';
 
+import 'package:hope/Api/recipes/recipe_service.dart';
 import 'package:hope/main.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserMealService {
-  /// ⬇️ إرسال وجبات المستخدم إلى السيرفر (POST)
+  static String baseUrl = 'https://${MyApp.IP}/api/user-meals';
+
+  // POST: حفظ الوجبات
   static Future<void> submitUserMeals({
     required int userId,
     required String category,
     required List<String> mealIds,
+    required DateTime dateTime,
   }) async {
-    final url = Uri.parse('https://${MyApp.IP}/api/user-meals');
-    final now = DateTime.now();
+    if (category.isEmpty) throw Exception('⚠️ category is empty!');
+    if (mealIds.isEmpty) throw Exception('⚠️ mealIds is empty!');
 
-    final body = {
+    final url = Uri.parse(baseUrl);
+    print('📤 Submitting meals to: $url');
+
+    final body = jsonEncode({
       'userId': userId,
-      'dateTime': now.toIso8601String(),
-      'category': category.toLowerCase(),
+      'category': category,
       'mealIds': mealIds,
-    };
+      'dateTime': dateTime.toIso8601String(),
+    });
 
-    print('🚀 Sending request to: $url');
-    print('📦 Payload: $body');
+    print('📝 Request Body: $body');
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(body),
-    );
+    final headers = {'Content-Type': 'application/json'};
 
-    print('📨 Response status: ${response.statusCode}');
-    print('📨 Response body: "${response.body}"');
+    final response = await http.post(url, headers: headers, body: body);
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      if (response.body.isNotEmpty) {
-        try {
-          final data = json.decode(response.body);
-          print('📦 Response JSON parsed: $data');
-        } catch (e) {
-          print('⚠️ Warning: response body is not valid JSON: $e');
-        }
+    print('📥 Response Status: ${response.statusCode}');
+    print('📥 Response Body: ${response.body}');
 
-        final prefs = await SharedPreferences.getInstance();
-        final today = DateTime.now();
-        final key = "${today.year}-${today.month}-${today.day}";
-        await prefs.setBool("mealAdded_$key", true);
-        print('✅ Saved meal flag for today');
-      } else {
-        print('ℹ️ Response body is empty');
-      }
-      print('✅ Meals submitted successfully');
-    } else {
-      print('❌ Failed to submit meals: ${response.statusCode}');
-      throw Exception('API submission failed');
+    if (response.statusCode != 200) {
+      throw Exception('❌ Failed to submit meals: ${response.body}');
     }
   }
 
-  /// ⬇️ جلب الوجبات حسب التاريخ والفئة (GET)
-  static Future<List<Meal>> fetchMealsByCategoryAndDate({
+  // GET: استرجاع الوجبات حسب اليوم والفئة
+  static Future<List<Meal>> fetchUserMeals({
+    required int userId,
     required String category,
-    DateTime? date,
+    required String date,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt("userId");
-
-    if (userId == null) throw Exception("User ID not found");
-
-    final now = date ?? DateTime.now();
-    final formattedDate =
-        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-
     final url = Uri.parse(
-      'https://${MyApp.IP}/api/user-meals?userId=$userId&category=${category.toLowerCase()}&date=$formattedDate',
-    );
+        'https://${MyApp.IP}/api/user-meals?userId=$userId&category=${category}&date=$date');
 
-    print("📡 Fetching meals from: $url");
+    print('🔍 Fetching meals from: $url');
 
-    final response = await http.get(url);
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+    });
+
+    print('📥 Response Status: ${response.statusCode}');
+    print('📥 Response Body: ${response.body}');
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final mealsJson = data['meals'] as List;
-      return mealsJson.map((meal) => Meal.fromJson(meal)).toList();
+      final data = jsonDecode(response.body);
+      final mealIds = List<String>.from(data['mealIds']);
+
+      print('📦 Meal IDs fetched: $mealIds');
+
+      List<Meal> meals = [];
+      for (String id in mealIds) {
+        try {
+          print('❌fetching meal by id $id');
+
+          final meal = await MealApiService().fetchMealById(id);
+          meals.add(meal);
+          print("${meals}");
+        } catch (e) {
+          print("${url}");
+          print('❌ Error fetching meal by id $id: $e');
+        }
+      }
+      print('✅ Total meals loaded: ${meals.length}');
+      return meals;
     } else {
-      print("❌ Failed to fetch meals: ${response.statusCode}");
-      throw Exception('Failed to fetch meals');
+      throw Exception('❌ Failed to fetch meals: ${response.body}');
     }
   }
 }

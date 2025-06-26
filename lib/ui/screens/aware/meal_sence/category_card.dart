@@ -49,11 +49,16 @@ class _CategoryCardState extends State<CategoryCard> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final today = DateTime.now();
+      final userId = prefs.getInt("userId") ?? 1;
 
-      final mealsFromBackend =
-          await UserMealService.fetchMealsByCategoryAndDate(
+      final mealsFromBackend = await UserMealService.fetchUserMeals(
+        userId: userId,
         category: widget.category,
-        date: today,
+        date:
+            "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}",
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('✅ Meal added to ${widget.category}')),
       );
 
       setState(() {
@@ -66,16 +71,10 @@ class _CategoryCardState extends State<CategoryCard> {
     setState(() => _isLoading = false);
   }
 
-  List<Meal> get _filteredMeals {
-    return loadedMeals
-        .where((meal) => meal.tags.contains(widget.category))
-        .toList();
-  }
-
   Map<String, double> _calculateNutrition() {
     double totalCalories = 0, totalFat = 0, totalProtein = 0, totalCarbs = 0;
 
-    for (final meal in _filteredMeals) {
+    for (final meal in loadedMeals) {
       totalCalories += meal.nutrients.calories;
       totalFat += meal.nutrients.fat;
       totalProtein += meal.nutrients.protein;
@@ -119,7 +118,7 @@ class _CategoryCardState extends State<CategoryCard> {
                   style: TextStyle(color: widget.kcalColor)),
               InkWell(
                 onTap: () async {
-                  final result = await Navigator.pushReplacementNamed(
+                  final result = await Navigator.pushNamed(
                       context, Meals.routeName,
                       arguments: {'title': widget.title});
                   if (result != null && result is Meal) {
@@ -133,16 +132,25 @@ class _CategoryCardState extends State<CategoryCard> {
                     final prefs = await SharedPreferences.getInstance();
                     final userId = prefs.getInt("userId") ?? 1;
 
+                    print("📤 Sending meals...");
+                    print("userId: $userId");
+                    print("category: ${widget.category}");
+                    print("mealIds: [${updatedMeal.id}]");
+
                     await UserMealService.submitUserMeals(
                       userId: userId,
                       category: widget.category,
                       mealIds: [updatedMeal.id],
+                      dateTime: DateTime.now(), // تأكد من إرسال التاريخ هنا
                     );
 
-                    setState(() {
-                      loadedMeals.add(updatedMeal);
-                      widget.onMealsChanged?.call(loadedMeals);
-                    });
+                    await _fetchMealsFromBackend(); // لإعادة تحميل الوجبات بعد الإضافة
+                    widget.onMealsChanged?.call(loadedMeals);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text('✅ Meal added to ${widget.category}')),
+                    );
                   }
                 },
                 child: Container(
@@ -157,13 +165,13 @@ class _CategoryCardState extends State<CategoryCard> {
           const SizedBox(height: 12),
           _isLoading
               ? const Center(child: CircularProgressIndicator())
-              : _filteredMeals.isNotEmpty
+              : loadedMeals.isNotEmpty
                   ? ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _filteredMeals.length,
+                      itemCount: loadedMeals.length,
                       itemBuilder: (context, index) {
-                        final meal = _filteredMeals[index];
+                        final meal = loadedMeals[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: GestureDetector(

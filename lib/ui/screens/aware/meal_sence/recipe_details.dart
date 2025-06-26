@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/recipes/fetch_recipe.dart';
 import 'package:hope/Api/saved/favorite_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
@@ -35,7 +34,6 @@ class _RecipeDetailsState extends State<RecipeDetails>
   @override
   void initState() {
     super.initState();
-    mealFuture = fetchMealById(widget.id);
     _tabController = TabController(length: 2, vsync: this);
     checkIfFavorite(); // نضيف هنا
   }

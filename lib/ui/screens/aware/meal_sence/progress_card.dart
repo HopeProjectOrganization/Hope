@@ -22,18 +22,26 @@ class _ProgressCardState extends State<ProgressCard> {
   List<Meal> meals = [];
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
+  bool _isLoading = false;
 
   late double currentCalories;
 
   @override
   void initState() {
     super.initState();
+    _isLoading = true;
   }
 
-  void _updateMeals(List<Meal> updatedMeals) {
-    setState(() {
-      meals = updatedMeals;
-    });
+  @override
+  void didUpdateWidget(covariant ProgressCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.meals.isNotEmpty && _isLoading) {
+      setState(() {
+        meals = widget.meals;
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -77,8 +85,10 @@ class _ProgressCardState extends State<ProgressCard> {
             ],
           ),
           const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Column(
                 children: [

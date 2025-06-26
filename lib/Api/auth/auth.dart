@@ -58,6 +58,7 @@ class AuthApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final token = data['token'];
+        await GetUserProfile().fetchUserProfile(token!);
 
         if (token != null) {
           await storeToken(token);

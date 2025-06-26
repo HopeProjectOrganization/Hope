@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Api/user/user_meals.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/meal_dm.dart';
@@ -8,6 +9,7 @@ import 'package:hope/ui/screens/aware/meal_sence/date_helper.dart';
 import 'package:hope/ui/screens/aware/meal_sence/progress_card.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MealSenceScreen extends StatefulWidget {
   static const routeName = '/mealSence';
@@ -27,80 +29,36 @@ class _MealSenceScreenState extends State<MealSenceScreen> {
   late AppLocalizations appLocalizations;
 
   DateTime selectedDate = DateTime.now();
-  List<Meal> meals = [];
-  late String _title = widget.title;
-  final double targetCalories = 2000;
-  final double targetFat = 70; // بالجرام مثلاً
-  final double targetProtein = 50; // بالجرام
-  final double targetCarbs = 300; // بالجرام
-
-  late ScrollController _scrollController;
+  List<Meal> allMealsForToday = [];
 
   @override
   void initState() {
     super.initState();
-    meals = List.from(widget.selectedMeals); // نسخة قابلة للتعديل
-    _scrollController = ScrollController();
-    selectedDate = DateTime.now(); // تأكيد أن اليوم هو المختار
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToSelectedDay(); // تمرير إلى المنتصف
-    });
+    fetchAllMealsForToday();
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
+  Future<void> fetchAllMealsForToday() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt("userId");
+      if (userId == null) return;
 
-  Map<String, double> _calculateNutritionForMealType(String mealType) {
-    double totalCalories = 0;
-    double totalFat = 0;
-    double totalProtein = 0;
-    double totalCarbs = 0;
+      final today = DateTime.now();
+      final dateString = today.toIso8601String().split('T')[0];
 
-    for (final meal in meals) {
-      if (_title == mealType) {
-        totalCalories += meal.nutrients.calories;
-        totalFat += meal.nutrients.fat;
-        totalProtein += meal.nutrients.protein;
-        totalCarbs += meal.nutrients.netCarbs;
-      }
+      final breakfast = await UserMealService.fetchUserMeals(
+          userId: userId, category: 'Breakfast', date: dateString);
+      final lunch = await UserMealService.fetchUserMeals(
+          userId: userId, category: 'Lunch', date: dateString);
+      final dinner = await UserMealService.fetchUserMeals(
+          userId: userId, category: 'Dinner', date: dateString);
+
+      setState(() {
+        allMealsForToday = [...breakfast, ...lunch, ...dinner];
+      });
+    } catch (e) {
+      print("❌ Error loading today's meals: $e");
     }
-
-    double totalMacros = totalFat + totalProtein + totalCarbs;
-
-    return {
-      'calories': totalCalories,
-      'fat': totalFat,
-      'protein': totalProtein,
-      'carbs': totalCarbs,
-      'macros': totalMacros,
-    };
-  }
-
-  void _scrollToSelectedDay() {
-    int daysCount =
-        DateHelper.getDaysInMonth(selectedDate.year, selectedDate.month);
-    int selectedIndex = selectedDate.day - 1;
-    double itemWidth = 60 + 8; // item + padding
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    double offset = DateHelper.calculateScrollOffset(
-      selectedIndex: selectedIndex,
-      totalDays: daysCount,
-      itemWidth: itemWidth,
-      screenWidth: screenWidth,
-    );
-
-  }
-
-  List<DateTime> getWeekDates() {
-    DateTime today = DateTime.now();
-    int currentWeekday = today.weekday; // Monday = 1
-    DateTime monday = today.subtract(Duration(days: currentWeekday - 1));
-    return List.generate(5, (index) => monday.add(Duration(days: index)));
   }
 
   @override
@@ -108,66 +66,70 @@ class _MealSenceScreenState extends State<MealSenceScreen> {
     appLocalizations = AppLocalizations.of(context)!;
     themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDark();
+
     return CustomScaffold(
-      backgroundColor: isDarkMode ? AppColors.dark : Color(0xFFF9FAFC),
+      backgroundColor: isDarkMode ? AppColors.dark : const Color(0xFFF9FAFC),
       title: appLocalizations.mealSense,
       body: ListView(
         children: [
           Column(
             children: [
               Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                  child: MyCalendarWidget()),
-              ProgressCard(
-                meals: meals,
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                child: MyCalendarWidget(),
+              ),
+
+              // ⬇️ هنا بنرسل كل الوجبات اللي اتحمّلت من كل الفئات
+              ProgressCard(meals: allMealsForToday),
+
+              CategoryCard(
+                title: appLocalizations.breakfast,
+                category: 'Breakfast',
+                kcalColor: Colors.green,
+                meals: allMealsForToday,
+                onMealsChanged: (updatedMeals) {
+                  setState(() {
+                    allMealsForToday = updatedMeals;
+                  });
+                },
               ),
               CategoryCard(
-                  title: appLocalizations.breakfast,
-                  category: _title,
-                  kcalColor: Colors.green,
-                  meals: meals,
-                  onMealsChanged: (updatedMeals) {
-                    setState(() {
-                      meals = updatedMeals;
-                    });
-                  }),
+                title: appLocalizations.lunch,
+                category: 'Lunch',
+                kcalColor: Colors.orange,
+                meals: allMealsForToday,
+                onMealsChanged: (updatedMeals) {
+                  setState(() {
+                    allMealsForToday = updatedMeals;
+                  });
+                },
+              ),
               CategoryCard(
-                  title: appLocalizations.lunch,
-                  category: _title,
-                  kcalColor: Colors.orange,
-                  meals: meals,
-                  onMealsChanged: (updatedMeals) {
-                    setState(() {
-                      meals = updatedMeals;
-                    });
-                  }),
-              CategoryCard(
-                  title: appLocalizations.dinner,
-                  category: _title,
-                  kcalColor: Colors.blue,
-                  meals: meals,
-                  onMealsChanged: (updatedMeals) {
-                    setState(() {
-                      meals = updatedMeals;
-                    });
-                  }),
+                title: appLocalizations.dinner,
+                category: 'Dinner',
+                kcalColor: Colors.blue,
+                meals: allMealsForToday,
+                onMealsChanged: (updatedMeals) {
+                  setState(() {
+                    allMealsForToday = updatedMeals;
+                  });
+                },
+              ),
             ],
           ),
         ],
       ),
     );
   }
-
 }

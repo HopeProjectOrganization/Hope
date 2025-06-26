@@ -20,13 +20,16 @@ class MealApiService {
     }
   }
 
-  // GET: fetch meal by ID
   Future<Meal> fetchMealById(String id) async {
-    final response = await http.get(Uri.parse('$_baseUrl/$id'));
+    final url = Uri.parse(
+        'https://${MyApp.IP}/api/meals/$id'); // ✅ رابط backend مش RapidAPI
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+    });
 
     if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
-      return Meal.fromJson(jsonData);
+      final data = jsonDecode(response.body);
+      return Meal.fromJson(data); // ✅ تأكدي هنا من الشكل
     } else {
       throw Exception('Failed to load meal');
     }

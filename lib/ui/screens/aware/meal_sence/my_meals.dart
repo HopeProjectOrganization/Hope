@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/auth/auth.dart';
-import 'package:hope/Api/auth/get_user_id.dart';
+import 'package:hope/Api/profile/profile_service.dart';
+import 'package:hope/Api/recipes/recipe_service.dart';
 import 'package:hope/Api/user/user_meals.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
@@ -17,12 +18,13 @@ class MyMealsScreen extends StatefulWidget {
   static const routeName = '/my';
 
   final List<Meal> selectedMeals;
-
   final String title;
 
-  const MyMealsScreen(
-      {Key? key, required this.selectedMeals, required this.title})
-      : super(key: key);
+  const MyMealsScreen({
+    Key? key,
+    required this.selectedMeals,
+    required this.title,
+  }) : super(key: key);
 
   @override
   _MyMealsScreenState createState() => _MyMealsScreenState();
@@ -30,7 +32,7 @@ class MyMealsScreen extends StatefulWidget {
 
 class _MyMealsScreenState extends State<MyMealsScreen> {
   late List<Meal> _selectedMeals;
-  late String _title = widget.title;
+  late String _title;
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
@@ -38,12 +40,14 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
   void initState() {
     super.initState();
     _selectedMeals = List.from(widget.selectedMeals);
+    _title = widget.title;
   }
 
   @override
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
+
     return CustomScaffold(
       title: appLocalizations.myMealsFor,
       backgroundColor: const Color(0xFFF6F6F6),
@@ -60,21 +64,22 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header with Icon
+                // Header with icon
                 Row(
                   children: [
-                    ImageIcon(AssetImage(AppIcons.meal), color: AppColors.Teal),
-                    SizedBox(width: 10),
+                    const ImageIcon(AssetImage(AppIcons.meal),
+                        color: AppColors.Teal),
+                    const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           _title,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "${appLocalizations.totalCalories} ${_selectedMeals.isEmpty ? 0 : _selectedMeals.fold(0.0, (total, meal) => total + meal.nutrients.calories).toInt()}",
+                          "${appLocalizations.totalCalories} ${_selectedMeals.fold(0.0, (total, meal) => total + meal.nutrients.calories).toInt()}",
                           style: const TextStyle(color: Colors.grey),
                         ),
                       ],
@@ -83,22 +88,20 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Meals Title
                 Text(appLocalizations.meals,
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
 
                 _selectedMeals.isEmpty
                     ? Center(
                         child: Text(
                           appLocalizations.noMealsYet,
-                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 16),
                         ),
                       )
                     : Expanded(
                         child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const AlwaysScrollableScrollPhysics(),
                           itemCount: _selectedMeals.length,
                           itemBuilder: (context, index) {
                             final meal = _selectedMeals[index];
@@ -106,7 +109,6 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
@@ -126,9 +128,6 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                                           Text(meal.name,
                                               style: const TextStyle(
                                                   fontWeight: FontWeight.bold)),
-                                          // Text(meal.categoryName,
-                                          //     style: const TextStyle(
-                                          //         color: Colors.grey)),
                                         ],
                                       ),
                                     ),
@@ -145,8 +144,8 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                                 ),
                                 const SizedBox(height: 20),
                                 Text(appLocalizations.details,
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold)),
                                 const SizedBox(height: 10),
                                 _buildDetailRow(appLocalizations.calories,
                                     meal.nutrients.calories.toString()),
@@ -169,31 +168,47 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                     color: AppColors.Teal,
                     onClick: () async {
                       try {
-                        final token =
-                            await AuthApiService().getToken(); // مثلاً
-                        final userId = await getUserIdFromToken(token!);
+                        // 🔐 استرجاع التوكن وحفظ userId
+                        final token = await AuthApiService().getToken();
+                        await GetUserProfile().fetchUserProfile(token!);
 
-                        if (userId != null) {
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setInt("userId", userId);
+                        final prefs = await SharedPreferences.getInstance();
+                        final userId = prefs.getInt("userId");
+
+                        if (userId == null) {
+                          print("❌ userId is null!");
+                          return;
                         }
 
-                        final mealIds = _selectedMeals
-                            .map((meal) => meal.id.toString())
-                            .toList();
+                        // تجهيز قائمة mealIds
+                        final List<String> mealIds =
+                            _selectedMeals.map((meal) => meal.id).toList();
+
+                        print('📤 Sending meals...');
+                        print('userId: $userId');
+                        print('category: $_title');
+                        print('mealIds: $mealIds');
+                        print('dateTime: ${DateTime.now()}');
+
+                        for (Meal meal in _selectedMeals) {
+                          await MealApiService().saveMeal(meal);
+                        }
 
                         await UserMealService.submitUserMeals(
-                          userId: userId!,
-                          category: _title,
-                          mealIds: mealIds,
+                          userId: userId,
+                          category: widget.title,
+                          mealIds: _selectedMeals.map((e) => e.id).toList(),
+                          dateTime: DateTime.now(),
                         );
+
                         print(
                             '✅ Meals sent to backend: $mealIds for category $_title');
                       } catch (e) {
                         print('❌ Error submitting meals: $e');
                       }
 
-                      final result = await Navigator.pushReplacementNamed(
+                      // الرجوع للشاشة السابقة
+                      final result = await Navigator.pushNamed(
                         context,
                         MealSenceScreen.routeName,
                         arguments: {
@@ -208,9 +223,9 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                         });
                       }
                     },
-                    title: "${appLocalizations.addTo} ${_title}",
+                    title: "${appLocalizations.addTo} $_title",
                   ),
-                )
+                ),
               ],
             ),
           ),
