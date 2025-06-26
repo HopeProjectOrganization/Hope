@@ -185,7 +185,7 @@ class MyApp extends StatelessWidget {
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen(),
         ExploreScreen.routeName: (_) => ExploreScreen()
       },
-      initialRoute: SavedListScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

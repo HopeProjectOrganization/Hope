@@ -1,16 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/recipes/fetch_recipe.dart';
+import 'package:hope/Api/recipes/recipe_service.dart';
+import 'package:hope/Api/user/user_meals.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/main.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/ui/screens/aware/meal_sence/meals.dart';
 import 'package:hope/ui/screens/aware/meal_sence/recipe_details.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryCard extends StatefulWidget {
   final String title;
@@ -36,76 +34,52 @@ class _CategoryCardState extends State<CategoryCard> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
-  List<Meal> _mealsFromApi = [];
   bool _isLoading = false;
-  DateTime selectedDate = DateTime.now();
+  List<Meal> loadedMeals = [];
 
   @override
   void initState() {
     super.initState();
-    fetchMealsFromApi();
+    _fetchMealsFromBackend();
   }
 
-  Future<void> fetchMealsFromApi() async {
+  Future<void> _fetchMealsFromBackend() async {
     setState(() => _isLoading = true);
 
     try {
-      final formattedDate = selectedDate.toIso8601String().split('T').first;
-      final url = Uri.parse(
-        'http://${MyApp.IP}/api/user-meals?userId=19&date=$formattedDate&category=${widget.category.toLowerCase()}',
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now();
+
+      final mealsFromBackend =
+          await UserMealService.fetchMealsByCategoryAndDate(
+        category: widget.category,
+        date: today,
       );
 
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonMap = json.decode(response.body);
-
-        if (jsonMap.containsKey('mealIds')) {
-          final List<dynamic> mealIds = jsonMap['mealIds'];
-          List<Meal> mealsList = [];
-
-          for (var id in mealIds) {
-            final meal = await fetchMealById(id);
-            if (meal != null) mealsList.add(meal);
-          }
-
-          setState(() {
-            _mealsFromApi = mealsList;
-            _isLoading = false;
-          });
-        } else {
-          setState(() {
-            _mealsFromApi = [];
-            _isLoading = false;
-          });
-        }
-      } else {
-        setState(() {
-          _mealsFromApi = [];
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
       setState(() {
-        _mealsFromApi = [];
-        _isLoading = false;
+        loadedMeals = mealsFromBackend;
       });
+    } catch (e) {
+      print('❌ Error fetching meals: $e');
     }
+
+    setState(() => _isLoading = false);
+  }
+
+  List<Meal> get _filteredMeals {
+    return loadedMeals
+        .where((meal) => meal.tags.contains(widget.category))
+        .toList();
   }
 
   Map<String, double> _calculateNutrition() {
-    double totalCalories = 0;
-    double totalFat = 0;
-    double totalProtein = 0;
-    double totalCarbs = 0;
+    double totalCalories = 0, totalFat = 0, totalProtein = 0, totalCarbs = 0;
 
-    for (final meal in widget.meals) {
-      if (meal.tags.contains(widget.category.toLowerCase())) {
-        totalCalories += meal.nutrients.calories;
-        totalFat += meal.nutrients.fat;
-        totalProtein += meal.nutrients.protein;
-        totalCarbs += meal.nutrients.netCarbs;
-      }
+    for (final meal in _filteredMeals) {
+      totalCalories += meal.nutrients.calories;
+      totalFat += meal.nutrients.fat;
+      totalProtein += meal.nutrients.protein;
+      totalCarbs += meal.nutrients.netCarbs;
     }
 
     return {
@@ -130,18 +104,12 @@ class _CategoryCardState extends State<CategoryCard> {
       decoration: BoxDecoration(
         color: isDark ? AppColors.lavender.withOpacity(0.8) : AppColors.white,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header row
+          // Header Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -151,23 +119,35 @@ class _CategoryCardState extends State<CategoryCard> {
                   style: TextStyle(color: widget.kcalColor)),
               InkWell(
                 onTap: () async {
-                  final result = await Navigator.pushNamed(
-                    context,
-                    Meals.routeName,
-                    arguments: {'title': widget.title},
-                  );
+                  final result = await Navigator.pushReplacementNamed(
+                      context, Meals.routeName,
+                      arguments: {'title': widget.title});
                   if (result != null && result is Meal) {
+                    final updatedTags = Set<String>.from(result.tags)
+                      ..add(widget.category);
+                    final updatedMeal =
+                        result.copyWith(tags: updatedTags.toList());
+
+                    await MealApiService().saveMeal(updatedMeal);
+
+                    final prefs = await SharedPreferences.getInstance();
+                    final userId = prefs.getInt("userId") ?? 1;
+
+                    await UserMealService.submitUserMeals(
+                      userId: userId,
+                      category: widget.category,
+                      mealIds: [updatedMeal.id],
+                    );
+
                     setState(() {
-                      widget.meals.add(result);
-                      widget.onMealsChanged?.call(widget.meals);
+                      loadedMeals.add(updatedMeal);
+                      widget.onMealsChanged?.call(loadedMeals);
                     });
                   }
                 },
                 child: Container(
                   decoration: const BoxDecoration(
-                    color: AppColors.yellow,
-                    shape: BoxShape.circle,
-                  ),
+                      color: AppColors.yellow, shape: BoxShape.circle),
                   padding: const EdgeInsets.all(4),
                   child: const Icon(Icons.add, color: AppColors.white),
                 ),
@@ -175,37 +155,29 @@ class _CategoryCardState extends State<CategoryCard> {
             ],
           ),
           const SizedBox(height: 12),
-
-          // Meal List or Loader or Empty
           _isLoading
               ? const Center(child: CircularProgressIndicator())
-              : _mealsFromApi.isNotEmpty
+              : _filteredMeals.isNotEmpty
                   ? ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _mealsFromApi.length,
+                      itemCount: _filteredMeals.length,
                       itemBuilder: (context, index) {
-                        final meal = _mealsFromApi[index];
+                        final meal = _filteredMeals[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(
-                                context,
-                                RecipeDetails.routeName,
-                                arguments: meal.id,
-                              );
+                                  context, RecipeDetails.routeName,
+                                  arguments: meal.id);
                             },
                             child: Row(
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    meal.image,
-                                    width: 60,
-                                    height: 60,
-                                    fit: BoxFit.cover,
-                                  ),
+                                  child: Image.network(meal.image,
+                                      width: 60, height: 60, fit: BoxFit.cover),
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
@@ -223,12 +195,12 @@ class _CategoryCardState extends State<CategoryCard> {
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
+                                    await MealApiService().deleteMeal(meal.id);
                                     setState(() {
-                                      _mealsFromApi.remove(meal);
-                                      widget.meals
+                                      loadedMeals
                                           .removeWhere((m) => m.id == meal.id);
-                                      widget.onMealsChanged?.call(widget.meals);
+                                      widget.onMealsChanged?.call(loadedMeals);
                                     });
                                   },
                                   child: const Icon(Icons.close,

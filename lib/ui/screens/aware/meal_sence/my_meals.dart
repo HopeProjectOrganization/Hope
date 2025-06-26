@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Api/auth/auth.dart';
+import 'package:hope/Api/auth/get_user_id.dart';
 import 'package:hope/Api/user/user_meals.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
@@ -9,6 +11,7 @@ import 'package:hope/ui/screens/aware/meal_sence/meal_sence_screen.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyMealsScreen extends StatefulWidget {
   static const routeName = '/my';
@@ -166,11 +169,21 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                     color: AppColors.Teal,
                     onClick: () async {
                       try {
+                        final token =
+                            await AuthApiService().getToken(); // مثلاً
+                        final userId = await getUserIdFromToken(token!);
+
+                        if (userId != null) {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setInt("userId", userId);
+                        }
+
                         final mealIds = _selectedMeals
                             .map((meal) => meal.id.toString())
                             .toList();
-                        await submitUserMeals(
-                          userId: 19,
+
+                        await UserMealService.submitUserMeals(
+                          userId: userId!,
                           category: _title,
                           mealIds: mealIds,
                         );
@@ -180,18 +193,20 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                         print('❌ Error submitting meals: $e');
                       }
 
-                      final result = await Navigator.pushNamed(
-                          context, MealSenceScreen.routeName, arguments: {
-                        'selectedMeals': _selectedMeals,
-                        'title': _title
-                      });
+                      final result = await Navigator.pushReplacementNamed(
+                        context,
+                        MealSenceScreen.routeName,
+                        arguments: {
+                          'selectedMeals': _selectedMeals,
+                          'title': _title,
+                        },
+                      );
 
                       if (result != null && result is Meal) {
                         setState(() {
                           _selectedMeals.add(result);
                         });
                       }
-
                     },
                     title: "${appLocalizations.addTo} ${_title}",
                   ),
