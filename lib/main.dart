@@ -147,12 +147,16 @@ class MyApp extends StatelessWidget {
           final List<Meal> selectedMeals =
               args?['selectedMeals'] as List<Meal>? ?? <Meal>[];
           final String title = args?['title'] as String? ?? '';
+          final DateTime selectedDate = args?['selectedDate'] as DateTime? ??
+              DateTime.now(); // ✅ حل المشكلة هنا
 
           return MyMealsScreen(
             selectedMeals: selectedMeals,
             title: title,
+            selectedDate: selectedDate, // ✅ استخدمه هنا
           );
         },
+
         MealSenceScreen.routeName: (context) {
           final args = ModalRoute.of(context)?.settings.arguments
               as Map<String, dynamic>?;
@@ -160,19 +164,25 @@ class MyApp extends StatelessWidget {
           final List<Meal> selectedMeals =
               args?['selectedMeals'] as List<Meal>? ?? <Meal>[];
           final String title = args?['title'] as String? ?? '';
+          final DateTime Date = args?['selectedDate'] as DateTime? ??
+              DateTime.now(); // ✅ حل المشكلة هنا
 
           return MealSenceScreen(
             selectedMeals: selectedMeals,
             title: title,
+            Date: Date, // ✅ استخدمه هنا
           );
         },
         Meals.routeName: (context) {
           final args = ModalRoute.of(context)?.settings.arguments
               as Map<String, dynamic>?;
           final String title = args?['title'] as String? ?? '';
+          final DateTime selectedDate = args?['selectedDate'] as DateTime? ??
+              DateTime.now(); // ✅ حل المشكلة هنا
 
           return Meals(
             title: title,
+            selectedDate: selectedDate, // ✅ استخدمه هنا
           );
         },
         // ProgressScreen.routeName: (context) {

@@ -7,6 +7,7 @@ import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/ui/screens/aware/meal_sence/meals.dart';
 import 'package:hope/ui/screens/aware/meal_sence/recipe_details.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,6 +16,8 @@ class CategoryCard extends StatefulWidget {
   final String category;
   final Color kcalColor;
   final List<Meal> meals;
+  final DateTime selectedDate; // ⬅️ أضف هذا السطر في تعريف CategoryCard
+
   final void Function(List<Meal>)? onMealsChanged;
 
   const CategoryCard({
@@ -23,6 +26,7 @@ class CategoryCard extends StatefulWidget {
     required this.category,
     required this.kcalColor,
     required this.meals,
+    required this.selectedDate, // ⬅️ أضف هذا السطر
     this.onMealsChanged,
   }) : super(key: key);
 
@@ -43,26 +47,36 @@ class _CategoryCardState extends State<CategoryCard> {
     _fetchMealsFromBackend();
   }
 
+  @override
+  void didUpdateWidget(covariant CategoryCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // ✅ لو التاريخ اختلف، عيد تحميل الوجبات
+    if (oldWidget.selectedDate != widget.selectedDate) {
+      setState(() {
+        _isLoading = true; // ✅ عرض اللودينج لما يتغير التاريخ
+      });
+      _fetchMealsFromBackend();
+    }
+  }
+
   Future<void> _fetchMealsFromBackend() async {
     setState(() => _isLoading = true);
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final today = DateTime.now();
+      final date = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
       final userId = prefs.getInt("userId") ?? 1;
 
-      final mealsFromBackend = await UserMealService.fetchUserMeals(
+      final userMeals = await UserMealService.fetchUserMealsAsUserMeal(
         userId: userId,
         category: widget.category,
-        date:
-            "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}",
+        date: date,
       );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('✅ Meal added to ${widget.category}')),
-      );
+      final meals = await UserMealService.fetchMealsFromUserMeals(userMeals);
 
       setState(() {
-        loadedMeals = mealsFromBackend;
+        loadedMeals = meals;
       });
     } catch (e) {
       print('❌ Error fetching meals: $e');
@@ -119,8 +133,10 @@ class _CategoryCardState extends State<CategoryCard> {
               InkWell(
                 onTap: () async {
                   final result = await Navigator.pushNamed(
-                      context, Meals.routeName,
-                      arguments: {'title': widget.title});
+                      context, Meals.routeName, arguments: {
+                    'title': widget.title,
+                    'selectedDate': widget.selectedDate
+                  });
                   if (result != null && result is Meal) {
                     final updatedTags = Set<String>.from(result.tags)
                       ..add(widget.category);
@@ -141,16 +157,13 @@ class _CategoryCardState extends State<CategoryCard> {
                       userId: userId,
                       category: widget.category,
                       mealIds: [updatedMeal.id],
-                      dateTime: DateTime.now(), // تأكد من إرسال التاريخ هنا
+                      dateTime:
+                          widget.selectedDate, // تأكد من إرسال التاريخ هنا
                     );
 
                     await _fetchMealsFromBackend(); // لإعادة تحميل الوجبات بعد الإضافة
                     widget.onMealsChanged?.call(loadedMeals);
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text('✅ Meal added to ${widget.category}')),
-                    );
                   }
                 },
                 child: Container(

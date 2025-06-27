@@ -5,6 +5,26 @@ import 'package:hope/main.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:http/http.dart' as http;
 
+class UserMeal {
+  final String category;
+  final DateTime date;
+  final String mealId;
+
+  UserMeal({
+    required this.category,
+    required this.date,
+    required this.mealId,
+  });
+
+  factory UserMeal.fromJson(Map<String, dynamic> json) {
+    return UserMeal(
+      category: json['category'],
+      date: DateTime.parse(json['date']),
+      mealId: json['mealIds'][0], // لو أكتر من وجبة بتحتاجي تغيري دا
+    );
+  }
+}
+
 class UserMealService {
   static String baseUrl = 'https://${MyApp.IP}/api/user-meals';
 
@@ -42,16 +62,17 @@ class UserMealService {
     }
   }
 
-  // GET: استرجاع الوجبات حسب اليوم والفئة
-  static Future<List<Meal>> fetchUserMeals({
+  // ✅ GET: استرجاع الوجبات كـ UserMeal (مع date و mealId)
+  static Future<List<UserMeal>> fetchUserMealsAsUserMeal({
     required int userId,
     required String category,
     required String date,
   }) async {
     final url = Uri.parse(
-        'https://${MyApp.IP}/api/user-meals?userId=$userId&category=${category}&date=$date');
+        'https://${MyApp.IP}/api/user-meals?userId=$userId&category=$category&date=$date');
 
-    print('🔍 Fetching meals from: $url');
+    print('🔍 Fetching user meals from: $url');
+    print("📅 FETCHING MEALS FOR DATE: $date");
 
     final response = await http.get(url, headers: {
       'Content-Type': 'application/json',
@@ -60,29 +81,39 @@ class UserMealService {
     print('📥 Response Status: ${response.statusCode}');
     print('📥 Response Body: ${response.body}');
 
+    print("✅ FINAL URL: $url");
+
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final mealIds = List<String>.from(data['mealIds']);
+      List<String> mealIds = List<String>.from(data['mealIds']);
 
-      print('📦 Meal IDs fetched: $mealIds');
-
-      List<Meal> meals = [];
-      for (String id in mealIds) {
-        try {
-          print('❌fetching meal by id $id');
-
-          final meal = await MealApiService().fetchMealById(id);
-          meals.add(meal);
-          print("${meals}");
-        } catch (e) {
-          print("${url}");
-          print('❌ Error fetching meal by id $id: $e');
-        }
-      }
-      print('✅ Total meals loaded: ${meals.length}');
-      return meals;
+      return mealIds
+          .map((id) => UserMeal(
+                category: category,
+                date: DateTime.parse(date),
+                mealId: id,
+              ))
+          .toList();
     } else {
-      throw Exception('❌ Failed to fetch meals: ${response.body}');
+      throw Exception('❌ Failed to fetch user meals: ${response.body}');
     }
+  }
+
+  // ✅ تحميل تفاصيل الوجبات بناءً على UserMeal
+  static Future<List<Meal>> fetchMealsFromUserMeals(
+      List<UserMeal> userMeals) async {
+    List<Meal> meals = [];
+
+    for (var userMeal in userMeals) {
+      try {
+        final meal = await MealApiService().fetchMealById(userMeal.mealId);
+        meal.date = userMeal.date; // ✅ حفظ التاريخ داخل الـ Meal
+        meals.add(meal);
+      } catch (e) {
+        print('❌ Error fetching meal by id ${userMeal.mealId}: $e');
+      }
+    }
+
+    return meals;
   }
 }

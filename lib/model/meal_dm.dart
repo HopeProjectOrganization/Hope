@@ -11,6 +11,7 @@ class Meal {
   final List<Ingredient> ingredients;
   final List<String> steps;
   final Nutrients nutrients;
+  DateTime? date; // ⬅️ أضفنا ده
 
   Meal({
     required this.id,
@@ -24,6 +25,7 @@ class Meal {
     required this.ingredients,
     required this.steps,
     required this.nutrients,
+    this.date, // ⬅️ مهم
   });
 
   factory Meal.fromJson(Map<String, dynamic> json) {

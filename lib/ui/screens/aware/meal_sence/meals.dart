@@ -15,8 +15,10 @@ import 'package:provider/provider.dart';
 class Meals extends StatefulWidget {
   static const routeName = '/mmmmeals';
   final String title;
+  final DateTime selectedDate;
 
-  const Meals({Key? key, required this.title}) : super(key: key);
+  const Meals({Key? key, required this.title, required this.selectedDate})
+      : super(key: key);
 
   @override
   State<Meals> createState() => _MealsState();
@@ -115,7 +117,8 @@ class _MealsState extends State<Meals> {
                 Navigator.pushNamed(context, MyMealsScreen.routeName,
                     arguments: {
                       'selectedMeals': selectedMealList,
-                      'title': _title
+                      'title': _title,
+                      'selectedDate': widget.selectedDate
                     });
               },
             ),

@@ -64,7 +64,14 @@ class DateHelper {
 }
 
 class MyCalendarWidget extends StatefulWidget {
-  const MyCalendarWidget({super.key});
+  final DateTime selectedDate;
+  final ValueChanged<DateTime> onDateChanged;
+
+  const MyCalendarWidget({
+    super.key,
+    required this.selectedDate,
+    required this.onDateChanged,
+  });
 
   @override
   State<MyCalendarWidget> createState() => MyCalendarWidgetState();
@@ -73,18 +80,15 @@ class MyCalendarWidget extends StatefulWidget {
 class MyCalendarWidgetState extends State<MyCalendarWidget> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
-  late DateTime selectedDate;
   final ScrollController _scrollController = ScrollController();
+
+  late DateTime selectedDate;
 
   @override
   void initState() {
     super.initState();
-    selectedDate = DateTime.now();
-
-    // يمكن تمرير بعد عرض الشاشة لتمرير التاريخ المحدد
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToSelectedDay();
-    });
+    selectedDate = widget.selectedDate;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToSelectedDay());
   }
 
   void _scrollToSelectedDay() {
@@ -180,6 +184,7 @@ class MyCalendarWidgetState extends State<MyCalendarWidget> {
                 setState(() {
                   selectedDate = date;
                 });
+                widget.onDateChanged(date); // ⬅️ هنا نستدعي callback
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   _scrollToSelectedDay();
                 });

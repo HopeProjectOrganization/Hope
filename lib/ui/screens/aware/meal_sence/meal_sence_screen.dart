@@ -15,9 +15,13 @@ class MealSenceScreen extends StatefulWidget {
   static const routeName = '/mealSence';
   final List<Meal> selectedMeals;
   final String title;
+  final DateTime Date;
 
   const MealSenceScreen(
-      {Key? key, required this.selectedMeals, required this.title})
+      {Key? key,
+      required this.selectedMeals,
+      required this.title,
+      required this.Date})
       : super(key: key);
 
   @override
@@ -28,37 +32,70 @@ class _MealSenceScreenState extends State<MealSenceScreen> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
-  DateTime selectedDate = DateTime.now();
+  late DateTime selectedDate;
   List<Meal> allMealsForToday = [];
 
   @override
   void initState() {
     super.initState();
-    fetchAllMealsForToday();
+    selectedDate = widget.Date;
+
+    fetchAllMealsForDate(selectedDate);
   }
 
-  Future<void> fetchAllMealsForToday() async {
+  Future<void> fetchAllMealsForDate(DateTime date) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt("userId");
       if (userId == null) return;
 
-      final today = DateTime.now();
-      final dateString = today.toIso8601String().split('T')[0];
+      final dateString = date.toIso8601String().split('T')[0];
 
-      final breakfast = await UserMealService.fetchUserMeals(
-          userId: userId, category: 'Breakfast', date: dateString);
-      final lunch = await UserMealService.fetchUserMeals(
-          userId: userId, category: 'Lunch', date: dateString);
-      final dinner = await UserMealService.fetchUserMeals(
-          userId: userId, category: 'Dinner', date: dateString);
+      // 🔽 استرجاع كل UserMeal حسب الفئة
+      final breakfastUserMeals = await UserMealService.fetchUserMealsAsUserMeal(
+        userId: userId,
+        category: 'Breakfast',
+        date: dateString,
+      );
+      final lunchUserMeals = await UserMealService.fetchUserMealsAsUserMeal(
+        userId: userId,
+        category: 'Lunch',
+        date: dateString,
+      );
+      final dinnerUserMeals = await UserMealService.fetchUserMealsAsUserMeal(
+        userId: userId,
+        category: 'Dinner',
+        date: dateString,
+      );
 
-      setState(() {
-        allMealsForToday = [...breakfast, ...lunch, ...dinner];
-      });
+      // 🔽 استرجاع التفاصيل الفعلية للوجبات وربطها بالتاريخ
+      final breakfastMeals =
+          await UserMealService.fetchMealsFromUserMeals(breakfastUserMeals);
+      final lunchMeals =
+          await UserMealService.fetchMealsFromUserMeals(lunchUserMeals);
+      final dinnerMeals =
+          await UserMealService.fetchMealsFromUserMeals(dinnerUserMeals);
+
+      if (mounted) {
+        setState(() {
+          selectedDate = date;
+          allMealsForToday = [...breakfastMeals, ...lunchMeals, ...dinnerMeals];
+        });
+      }
     } catch (e) {
-      print("❌ Error loading today's meals: $e");
+      print("❌ Error fetching meals: $e");
     }
+  }
+
+  List<Meal> _filterMealsByCategory(String category) {
+    return allMealsForToday.where((meal) {
+      if (meal.date == null) return false; // ✅ تأكد إن التاريخ موجود
+
+      return meal.tags.contains(category) &&
+          meal.date!.year == selectedDate.year &&
+          meal.date!.month == selectedDate.month &&
+          meal.date!.day == selectedDate.day;
+    }).toList();
   }
 
   @override
@@ -87,9 +124,13 @@ class _MealSenceScreenState extends State<MealSenceScreen> {
                     ),
                   ],
                 ),
-                child: MyCalendarWidget(),
+                child: MyCalendarWidget(
+                  selectedDate: selectedDate,
+                  onDateChanged: (newDate) {
+                    fetchAllMealsForDate(newDate);
+                  },
+                ),
               ),
-
               // ⬇️ هنا بنرسل كل الوجبات اللي اتحمّلت من كل الفئات
               ProgressCard(meals: allMealsForToday),
 
@@ -97,33 +138,36 @@ class _MealSenceScreenState extends State<MealSenceScreen> {
                 title: appLocalizations.breakfast,
                 category: 'Breakfast',
                 kcalColor: Colors.green,
-                meals: allMealsForToday,
-                onMealsChanged: (updatedMeals) {
-                  setState(() {
-                    allMealsForToday = updatedMeals;
-                  });
+                meals: _filterMealsByCategory("Breakfast"),
+                selectedDate: selectedDate,
+                // ✅ هن
+                onMealsChanged: (_) {
+                  fetchAllMealsForDate(
+                      selectedDate); // ✅ عيد تحميل الكل بعد الإضافة
                 },
               ),
               CategoryCard(
                 title: appLocalizations.lunch,
                 category: 'Lunch',
                 kcalColor: Colors.orange,
-                meals: allMealsForToday,
-                onMealsChanged: (updatedMeals) {
-                  setState(() {
-                    allMealsForToday = updatedMeals;
-                  });
+                meals: _filterMealsByCategory("Lunch"),
+                selectedDate: selectedDate,
+                // ✅ هنا
+                onMealsChanged: (_) {
+                  fetchAllMealsForDate(
+                      selectedDate); // ✅ عيد تحميل الكل بعد الإضافة
                 },
               ),
               CategoryCard(
                 title: appLocalizations.dinner,
                 category: 'Dinner',
                 kcalColor: Colors.blue,
-                meals: allMealsForToday,
-                onMealsChanged: (updatedMeals) {
-                  setState(() {
-                    allMealsForToday = updatedMeals;
-                  });
+                meals: _filterMealsByCategory("Dinner"),
+                selectedDate: selectedDate,
+                // ✅ هنا
+                onMealsChanged: (_) {
+                  fetchAllMealsForDate(
+                      selectedDate); // ✅ عيد تحميل الكل بعد الإضافة
                 },
               ),
             ],

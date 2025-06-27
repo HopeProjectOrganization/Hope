@@ -20,10 +20,13 @@ class MyMealsScreen extends StatefulWidget {
   final List<Meal> selectedMeals;
   final String title;
 
+  final DateTime selectedDate;
+
   const MyMealsScreen({
     Key? key,
     required this.selectedMeals,
     required this.title,
+    required this.selectedDate, // ✅ أضف هذا
   }) : super(key: key);
 
   @override
@@ -188,7 +191,6 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                         print('userId: $userId');
                         print('category: $_title');
                         print('mealIds: $mealIds');
-                        print('dateTime: ${DateTime.now()}');
 
                         for (Meal meal in _selectedMeals) {
                           await MealApiService().saveMeal(meal);
@@ -198,7 +200,8 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                           userId: userId,
                           category: widget.title,
                           mealIds: _selectedMeals.map((e) => e.id).toList(),
-                          dateTime: DateTime.now(),
+                          dateTime:
+                              widget.selectedDate, // ✅ استخدمي التاريخ المختار
                         );
 
                         print(
@@ -214,6 +217,8 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                         arguments: {
                           'selectedMeals': _selectedMeals,
                           'title': _title,
+                          'selectedDate': widget.selectedDate,
+                          // ✅ إرسال التاريخ هنا
                         },
                       );
 

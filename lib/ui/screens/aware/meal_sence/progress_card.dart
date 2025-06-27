@@ -29,7 +29,7 @@ class _ProgressCardState extends State<ProgressCard> {
   @override
   void initState() {
     super.initState();
-    _isLoading = true;
+    _isLoading = widget.meals.isEmpty; // فقط لو فاضية نعرض اللودينج
   }
 
   @override
@@ -42,6 +42,14 @@ class _ProgressCardState extends State<ProgressCard> {
         _isLoading = false;
       });
     }
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          meals = widget.meals;
+          _isLoading = false;
+        });
+      }
+    });
   }
 
   @override
