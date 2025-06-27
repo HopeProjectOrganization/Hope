@@ -30,6 +30,8 @@ class ExerciseFavorites extends StatelessWidget {
         final fav = exercises[index];
         final exerciseId = fav.mealId;
         print("sld,sld,s;,lds,lds ${exerciseId}");
+        print("Exercise ID: $exerciseId (${exerciseId.runtimeType})");
+
         if (exerciseId == null) {
           return const Text('Invalid exercise ID');
         }
@@ -37,6 +39,7 @@ class ExerciseFavorites extends StatelessWidget {
         return FutureBuilder<Exercise>(
           future: ExerciseApiService().getExerciseById(int.parse(exerciseId)),
           builder: (context, snapshot) {
+            print("Exercise ID: $exerciseId (${exerciseId.runtimeType})");
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),

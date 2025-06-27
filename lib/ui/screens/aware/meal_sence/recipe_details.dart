@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Api/recipes/recipe_service.dart';
 import 'package:hope/Api/saved/favorite_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
@@ -30,22 +31,41 @@ class _RecipeDetailsState extends State<RecipeDetails>
 
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
+  late String mealId;
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    checkIfFavorite(); // نضيف هنا
   }
 
-  void checkIfFavorite() async {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+
+      if (args != null && args is String) {
+        mealId = args;
+      }
+      mealFuture = MealApiService().fetchMealById(mealId);
+      checkIfFavorite(mealId);
+      _initialized = true;
+    }
+
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+  }
+
+  void checkIfFavorite(String mealId) async {
     try {
-      bool favorite = await FavoriteApiService.isFavorite(widget.id);
+      bool favorite = await FavoriteApiService.isFavorite(mealId);
       setState(() {
         isPressed = favorite;
       });
     } catch (e) {
-      print("Failed to check favorite: $e");
+      print("❌ Failed to check favorite: $e");
     }
   }
 

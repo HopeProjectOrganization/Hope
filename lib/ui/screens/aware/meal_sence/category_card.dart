@@ -217,7 +217,13 @@ class _CategoryCardState extends State<CategoryCard> {
                                 ),
                                 GestureDetector(
                                   onTap: () async {
-                                    await MealApiService().deleteMeal(meal.id);
+                                    await UserMealService.deleteUserMeal(
+                                      userId: 5,
+                                      date: '2025-06-27',
+                                      category: 'Lunch',
+                                      mealId: 'abc123',
+                                    );
+
                                     setState(() {
                                       loadedMeals
                                           .removeWhere((m) => m.id == meal.id);

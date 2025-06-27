@@ -36,6 +36,7 @@ class ExerciseApiService {
 
   Future<Exercise> getExerciseById(int id) async {
     final response = await http.get(Uri.parse('$baseUrl/$id'));
+
     if (response.statusCode == 200) {
       return Exercise.fromJson(json.decode(response.body));
     } else {

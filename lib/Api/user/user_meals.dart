@@ -116,4 +116,29 @@ class UserMealService {
 
     return meals;
   }
+
+  // ❌ DELETE: حذف وجبة معينة من فئة و تاريخ محدد
+  static Future<void> deleteUserMeal({
+    required int userId,
+    required String date,
+    required String category,
+    required String mealId,
+  }) async {
+    final url = Uri.parse(
+        'https://${MyApp.IP}/api/user-meals?userId=$userId&date=$date&category=$category&mealId=$mealId');
+
+    print('🗑️ Deleting user meal: $url');
+
+    final response = await http.delete(
+      url,
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    print('📥 Response Status: ${response.statusCode}');
+    print('📥 Response Body: ${response.body}');
+
+    if (response.statusCode != 204) {
+      throw Exception('❌ Failed to delete meal: ${response.body}');
+    }
+  }
 }

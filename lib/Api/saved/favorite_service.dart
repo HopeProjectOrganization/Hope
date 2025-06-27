@@ -104,8 +104,8 @@ class FavoriteApiService {
       'HIGH_RISK_PEOPLE',
       'MEALSENSE',
       'HEALTHY_DIET',
-      'VEGAN'
-          'EXERCISE'
+      'VEGAN',
+      'EXERCISE'
     ]) {
       final list = await getByCategory(cat);
       all.addAll(list);

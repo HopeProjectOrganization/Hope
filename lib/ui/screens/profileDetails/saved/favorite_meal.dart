@@ -111,25 +111,28 @@ class MealFavorites extends StatelessWidget {
 
                     switch (fav.category) {
                       case 'MEALSENSE':
-                        detailsPage =
-                            RecipeDetails(id: fav.mealId); // شاشة mealsense
+                        Navigator.pushNamed(context, RecipeDetails.routeName,
+                            arguments: fav.mealId);
                         break;
                       case 'HEALTHY_DIET':
-                        detailsPage =
-                            RecipeDetailScreen(mealId: fav.mealId); // healthy
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  RecipeDetailScreen(mealId: fav.mealId)),
+                        ).then((_) => onRefresh());
                         break;
                       case 'VEGAN':
-                        detailsPage = RecipeDetailsScreen(
-                            id: int.parse(fav.mealId)); // vegan
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RecipeDetailsScreen(
+                                  id: int.parse(fav.mealId))),
+                        ).then((_) => onRefresh());
                         break;
                       default:
                         return; // ما تعملش نافيجيشن لو النوع مش معروف
                     }
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => detailsPage),
-                    ).then((_) => onRefresh());
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 6),
