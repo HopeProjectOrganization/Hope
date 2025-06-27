@@ -20,6 +20,8 @@ import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class ProfileBody extends StatefulWidget {
+  static const routeName = '/ProfileBody';
+
   ProfileBody({
     super.key,
     required this.userProfile,
@@ -41,17 +43,29 @@ class ProfileBody extends StatefulWidget {
 }
 
 class _ProfileBodyState extends State<ProfileBody> {
+  Data? userProfile;
+
   bool isLoading = true;
 
   Future<void> fetchUserProfile(String token) async {
+    setState(() => isLoading = true);
     GetUserProfile fetchUserProfile = GetUserProfile();
     Data? profileData = await fetchUserProfile.fetchUserProfile(token);
 
     if (mounted) {
       setState(() {
-        isLoading = false;
         widget.userProfile = profileData;
+        isLoading = false;
       });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.token != null) {
+      fetchUserProfile(widget.token!); // لازم يتم استدعاؤه عند تحميل الصفحة
     }
   }
 
@@ -100,8 +114,9 @@ class _ProfileBodyState extends State<ProfileBody> {
                   arguments: {'token': widget.token},
                 );
 
-                if (result != null && result == true) {
-                  await fetchUserProfile(widget.token!);
+                if (result == true) {
+                  await fetchUserProfile(
+                      widget.token!); // ✅ اعمل refresh للبيانات
                 }
               }),
           ProfileItem(

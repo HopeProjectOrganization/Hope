@@ -37,8 +37,14 @@ class _EditProfileFormState extends State<EditProfileForm> {
   @override
   void initState() {
     super.initState();
-    selectedAvatarId = widget.userProfile.avatarId ?? "5";
-    selectedAvatarAsset = Avatar.getAvatarById(selectedAvatarId!);
+
+    if (widget.userProfile != null) {
+      selectedAvatarId = widget.userProfile!.avatarId ?? "5";
+      selectedAvatarAsset = Avatar.getAvatarById(selectedAvatarId!);
+      userNameController.text = widget.userProfile!.name ?? "";
+      emailController.text = widget.userProfile!.email ?? "";
+      phoneController.text = widget.userProfile!.phone ?? "";
+    }
   }
 
   Future<void> showAvatarSheet(
@@ -118,6 +124,8 @@ class _EditProfileFormState extends State<EditProfileForm> {
             CustomButton(
               title: appLocalizations.updateAccount,
               onClick: () async {
+                print("⬅️ Trying to update and pop...");
+
                 final avatarService = AvatarService(token: widget.token);
 
                 await avatarService.updateAvatar(
@@ -134,6 +142,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                       : phoneController.text.trim(),
                   context: context,
                 );
+                print("✅ Done, now popping");
 
                 Navigator.pop(context, true);
               },

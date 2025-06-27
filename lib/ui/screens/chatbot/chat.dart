@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hope/Api/chat/chatApi.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/model/avatar.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -36,6 +38,27 @@ class _ChatScreenState extends State<ChatScreen> {
         isTyping = false;
       });
     }
+  }
+
+  String? avatarAsset;
+
+  @override
+  void initState() {
+    super.initState();
+    loadAvatar();
+  }
+
+  void loadAvatar() async {
+    final prefs = await SharedPreferences.getInstance();
+    final avatarId = prefs.getString("avatarId") ?? "5";
+    print("📥 Loaded avatarId from prefs: $avatarId");
+
+    final asset = Avatar.getAvatarById(avatarId);
+    print("🖼️ Mapped avatarId to asset: $asset");
+
+    setState(() {
+      avatarAsset = asset;
+    });
   }
 
   @override
@@ -88,7 +111,10 @@ class _ChatScreenState extends State<ChatScreen> {
                             CircleAvatar(
                               radius: 26,
                               backgroundImage: AssetImage(
-                                isUser ? AppAssets.chatbot1 : AppAssets.chatbot,
+                                isUser
+                                    ? (avatarAsset ??
+                                        'assets/avatar/avatar5.png')
+                                    : AppAssets.chatbot,
                               ),
                               backgroundColor: Colors.transparent,
                             ),

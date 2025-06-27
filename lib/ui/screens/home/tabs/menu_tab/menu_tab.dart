@@ -74,8 +74,14 @@ class _MenuTabState extends State<MenuTab> {
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
     localeProvider = Provider.of<LocaleProvider>(context);
-
     appLocalizations = AppLocalizations.of(context)!;
+
+    // ✅ تحديث البيانات بعد أول رسم للشاشة
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (token != null && !isLoading) {
+        fetchUserProfile(token!);
+      }
+    });
 
     return CustomScaffold(
       title: "Profile",
@@ -88,8 +94,8 @@ class _MenuTabState extends State<MenuTab> {
                   child: Text("Failed to load profile"),
                 )
               : ProfileBody(
-                  localeProvider: LocaleProvider(),
-                  themeProvider: ThemeProvider(),
+                  localeProvider: localeProvider,
+                  themeProvider: themeProvider,
                   appLocalizations: appLocalizations,
                   token: token,
                   userProfile: userProfile,
