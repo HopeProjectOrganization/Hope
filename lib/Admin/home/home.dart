@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Admin/add/admin_product_screen.dart';
 import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab/menu_tab.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
@@ -16,10 +16,10 @@ class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
 
   @override
-  State<AdminHomeScreen> createState() => _HomeScreenState();
+  State<AdminHomeScreen> createState() => _AdminHomeScreenState();
 }
 
-class _HomeScreenState extends State<AdminHomeScreen> {
+class _AdminHomeScreenState extends State<AdminHomeScreen> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
@@ -49,7 +49,8 @@ class _HomeScreenState extends State<AdminHomeScreen> {
 
   List<Widget> tabs = [
     const HomeTab(),
-    const AddTab(),
+    const AdminProductManagementScreen(),
+    const Placeholder(), // عشان نحافظ على الـ index == 2 للزر سكان (مش هيظهر)
     AdminAwareTab(),
     MenuTab(),
   ];
@@ -71,6 +72,7 @@ class _HomeScreenState extends State<AdminHomeScreen> {
     themeProvider = Provider.of<ThemeProvider>(context);
 
     Color color = themeProvider.isDark() ? AppColors.dark : AppColors.white;
+    Color iconColor = themeProvider.isDark() ? AppColors.white : AppColors.dark;
 
     appLocalizations = AppLocalizations.of(context)!;
 
@@ -85,29 +87,42 @@ class _HomeScreenState extends State<AdminHomeScreen> {
               FloatingActionButtonLocation.centerDocked,
           floatingActionButton: keyboardIsOpen
               ? null
-              : FloatingActionButton(
-                  heroTag: 'scan',
-                  backgroundColor: AppColors.Teal,
-                  shape: CircleBorder(
-                    side: BorderSide(color: AppColors.white, width: 5),
-                  ),
-                  onPressed: () {
-                    // Navigator.pushNamed(
-                    //   context,
-                    //   ScanTab.routeName,
-                    // );
-                    startScan();
-                  },
-                  child: ImageIcon(
-                    const AssetImage(AppIcons.scanIcon),
-                    color: color,
-                  ),
+              : Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).size.height * 0.04),
+                        child: FloatingActionButton(
+                          heroTag: 'scan-main-button',
+                          backgroundColor: color,
+                          shape: CircleBorder(
+                            side: BorderSide(color: AppColors.Teal, width: 5),
+                          ),
+                          onPressed: () {
+                            startScan();
+                          },
+                          child: ImageIcon(
+                            const AssetImage(AppIcons.scanIcon),
+                            color: iconColor,
+                          ),
+                        ),
                 ),
+                    ),
+                  ],
+                ),
+
           bottomNavigationBar: BottomNavigationBar(
             onTap: (index) {
-              setState(() {
-                currentIndex = index;
-              });
+              if (index == 2) {
+                startScan(); // زر السكان، لا يغير التاب
+              } else {
+                setState(() {
+                  currentIndex = index;
+                });
+              }
             },
             currentIndex: currentIndex,
             type: BottomNavigationBarType.fixed,
@@ -131,6 +146,17 @@ class _HomeScreenState extends State<AdminHomeScreen> {
                 ),
               ),
               BottomNavigationBarItem(
+                icon: const Opacity(
+                  opacity: 0,
+                  child: Icon(Icons.ac_unit), // أي أيقونة مؤقتة
+                ),
+                label: "Scan",
+                activeIcon: const Opacity(
+                  opacity: 0,
+                  child: Icon(Icons.ac_unit), // أي أيقونة مؤقتة
+                ),
+              ),
+              BottomNavigationBarItem(
                 icon: const ImageIcon(
                   AssetImage(AppIcons.awareIcon),
                 ),
@@ -141,11 +167,11 @@ class _HomeScreenState extends State<AdminHomeScreen> {
               ),
               BottomNavigationBarItem(
                 icon: const ImageIcon(
-                  AssetImage(AppIcons.menuIcon),
+                  AssetImage(AppIcons.userIcon),
                 ),
                 label: appLocalizations.menu,
                 activeIcon: const ImageIcon(
-                  AssetImage(AppIcons.menuFilled),
+                  AssetImage(AppIcons.userIcon),
                 ),
               ),
             ],

@@ -1,7 +1,10 @@
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:hope/Admin/add/admin_product_screen.dart';
+import 'package:hope/Admin/aware/alternative/alternative_screen.dart';
 import 'package:hope/Admin/aware/awareness/addNewsScreen.dart';
 import 'package:hope/Admin/aware/awareness/news_screen.dart';
 import 'package:hope/Admin/aware/healthy_diet/exercises/exercises_screen.dart';
@@ -61,33 +64,77 @@ import 'package:workmanager/workmanager.dart';
 
 import 'ui/screens/aware/meal_sence/meals.dart';
 
-main() async {
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  _showNotification(message);
+}
+
+Future<void> _showNotification(RemoteMessage message) async {
+  final notification = message.notification;
+  final android = message.notification?.android;
+
+  if (notification != null) {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'your_channel_id',
+      'your_channel_name',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      notification.title,
+      notification.body,
+      platformChannelSpecifics,
+    );
+  }
+}
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.debug, // لتجربة بدون مشاكل
-  );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid);
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    _showNotification(message); // إشعار في foreground
+  });
+
+  FirebaseMessaging.instance.subscribeToTopic("users");
+
+  // 🛠 تفعيل Workmanager
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
-  // جدولة المهمة اليومية
-  Workmanager().registerPeriodicTask(
-    "mealReminderTask",
-    "mealReminderTask",
-    frequency: Duration(hours: 24),
-    initialDelay: Duration(minutes: 1), // للتجربة
+  // ✅ مهمة لمرة واحدة بعد 10 ثواني فقط (للاختبار)
+  Workmanager().registerOneOffTask(
+    "testTask", // unique name
+    "mealReminderTask", // نفس اسم المهمة
+    initialDelay: Duration(seconds: 10),
   );
+
   runApp(
-    MultiProvider(providers: [
-      ChangeNotifierProvider(
-        create: (context) => ThemeProvider(),
-      ),
-      ChangeNotifierProvider(
-        create: (context) => LocaleProvider(),
-      ),
-      //   ChangeNotifierProvider(create: (_) => RecentScannedProductsProvider())
-    ], child: MyApp()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => LocaleProvider()),
+      ],
+      child: MyApp(),
+    ),
   );
 }
 
@@ -147,6 +194,8 @@ class MyApp extends StatelessWidget {
         AdminHighRiskPeople.routeName: (_) => AdminHighRiskPeople(),
         AdminHealthyDiet.routeName: (_) => AdminHealthyDiet(),
         AdminVeganScreen.routeName: (_) => AdminVeganScreen(),
+        AdminProductManagementScreen.routeName: (_) =>
+            AdminProductManagementScreen(),
         AddVeganRecipeScreen.routeName: (_) => AddVeganRecipeScreen(),
         AdminMeals.routeName: (_) => AdminMeals(),
         AdminMealDetails.routeName: (context) {
@@ -154,6 +203,8 @@ class MyApp extends StatelessWidget {
           return AdminMealDetails(meal: meal);
         },
         AddMeal.routeName: (_) => AddMeal(),
+        AdminSuggestedReplacementsScreen.routeName: (_) =>
+            AdminSuggestedReplacementsScreen(),
         Recipes.routeName: (_) => Recipes(),
         BodyPartScreen.routeName: (_) => BodyPartScreen(),
         VeganScreen.routeName: (_) => VeganScreen(),
@@ -211,11 +262,18 @@ class MyApp extends StatelessWidget {
             selectedDate: selectedDate, // ✅ استخدمه هنا
           );
         },
+        // ProgressScreen.routeName: (context) {
+        //   final args = ModalRoute.of(context)?.settings.arguments
+        //       as Map<String, dynamic>?;
+        //   final Meal selectedMeal = args?['meal'] as Meal;
+        //   return ProgressScreen(meal: selectedMeal);
+        // },
+        //  FilterScreen.routeName: (_) => const FilterScreen(),
         PlacesAdminScreen.routeName: (_) => PlacesAdminScreen(),
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen(),
         ExploreScreen.routeName: (_) => ExploreScreen()
       },
-      initialRoute: LoginScreen.routeName,
+      initialRoute: AdminHomeScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

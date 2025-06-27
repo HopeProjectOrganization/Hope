@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/Api/healthy_diet/vegan_service.dart';
 import 'package:hope/model/vegan_details.dart';
+import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddVeganRecipeScreen extends StatefulWidget {
@@ -155,10 +156,10 @@ class _AddVeganRecipeScreenState extends State<AddVeganRecipeScreen> {
                     _buildField(_stepsController, "Steps (use | between steps)",
                         maxLines: 4),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _submitForm,
-                      child: const Text("Add Recipe"),
-                    ),
+                    CustomButton(
+                      title: "Add Recipe",
+                      onClick: _submitForm,
+                    )
                   ],
                 ),
               ),

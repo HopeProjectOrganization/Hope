@@ -113,7 +113,7 @@ class _NewsScreenState extends State<AdminNewsScreen>
         backgroundColor: AppColors.Teal,
         child: const Icon(
           Icons.add,
-          color: AppColors.lavender,
+          color: AppColors.yellow,
         ),
       ),
     );

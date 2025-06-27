@@ -27,7 +27,8 @@ class NotificationApiService {
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(notification.toJson()),
     );
-
+    print("Notification sent to topic users, response: ${response.statusCode}");
+    print("Body: ${response.body}");
     if (response.statusCode != 200) {
       throw Exception('فشل في إرسال الإشعار للتوبك');
     }

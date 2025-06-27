@@ -469,7 +469,7 @@ Return the result as a JSON array. Each item must include:
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: AppColors.dark,
+                color: AppColors.Teal,
                 blurRadius: 6,
                 offset: Offset(0, 2),
               )
@@ -532,7 +532,7 @@ Return the result as a JSON array. Each item must include:
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("البدائل لـ: $_productName",
+        Text("Alternative for $_productName",
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         ..._alternatives.map((alt) => Card(
@@ -582,7 +582,7 @@ Return the result as a JSON array. Each item must include:
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Icon(Icons.local_fire_department,
-                              color: Colors.redAccent),
+                              color: AppColors.red),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -590,7 +590,7 @@ Return the result as a JSON array. Each item must include:
                               style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.teal),
+                                  color: AppColors.Teal),
                             ),
                           ),
                         ],
@@ -616,7 +616,7 @@ Return the result as a JSON array. Each item must include:
       _controller.text = name;
       await handleSearch(name);
     } else {
-      showErrorDialog("المنتج غير موجود. حاول إدخاله يدويًا.");
+      showErrorDialog("Product doesnot exist , Try to enter name of product");
     }
   }
 

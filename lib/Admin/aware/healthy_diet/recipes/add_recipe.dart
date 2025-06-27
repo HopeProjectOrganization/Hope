@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hope/Api/healthy_diet/healthy_recipe_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/healthy_recipes.dart';
+import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AdminMealFormScreen extends StatefulWidget {
@@ -155,14 +156,14 @@ class _AdminMealFormScreenState extends State<AdminMealFormScreen> {
                   maxLines: 5),
 
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: isSaving ? null : saveMeal,
-                child: Text(isSaving
+              CustomButton(
+                title: isSaving
                     ? "Saving..."
                     : isEdit
                         ? "Update"
-                        : "Save"),
-              ),
+                        : "Save",
+                onClick: isSaving ? () {} : saveMeal,
+              )
             ],
           ),
         ),

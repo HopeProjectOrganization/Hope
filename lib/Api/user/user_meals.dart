@@ -4,6 +4,7 @@ import 'package:hope/Api/recipes/recipe_service.dart';
 import 'package:hope/main.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserMeal {
   final String category;
@@ -60,6 +61,9 @@ class UserMealService {
     if (response.statusCode != 200) {
       throw Exception('❌ Failed to submit meals: ${response.body}');
     }
+    final prefs = await SharedPreferences.getInstance();
+    final todayKey = "${dateTime.year}-${dateTime.month}-${dateTime.day}";
+    await prefs.setBool("mealAdded_$todayKey", true);
   }
 
   // ✅ GET: استرجاع الوجبات كـ UserMeal (مع date و mealId)

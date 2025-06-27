@@ -5,16 +5,16 @@ import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/shared_widgets/custome_tab.dart';
 import 'package:http/http.dart' as http;
 
-class SuggestedReplacementsScreen extends StatefulWidget {
+class AdminSuggestedReplacementsScreen extends StatefulWidget {
   static const routeName = '/adminAlternative';
 
   @override
-  State<SuggestedReplacementsScreen> createState() =>
+  State<AdminSuggestedReplacementsScreen> createState() =>
       _SuggestedReplacementsScreenState();
 }
 
 class _SuggestedReplacementsScreenState
-    extends State<SuggestedReplacementsScreen>
+    extends State<AdminSuggestedReplacementsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 

@@ -36,7 +36,7 @@ class AdminAwareTab extends StatelessWidget {
       CategoryModel(
           image: AppAssets.alternative,
           id: appLocalizations.alternative,
-          route: '/adminAlternative'),
+          route: '/alternative'),
       CategoryModel(
           image: AppAssets.highRiskPeople,
           id: appLocalizations.highRiskPeople,

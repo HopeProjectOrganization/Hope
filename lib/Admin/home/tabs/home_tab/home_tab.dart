@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hope/Admin/add/admin_product_screen.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/chatbot/chat.dart';
@@ -135,8 +136,8 @@ class _HomeTabState extends State<HomeTab> {
                             CustomHomeButton(
                               image: AppAssets.addButton,
                               onClick: () {
-                                Navigator.pushNamed(
-                                    context, HomeScreen.routeName,
+                                Navigator.pushNamed(context,
+                                    AdminProductManagementScreen.routeName,
                                     arguments: 1);
                               },
                             ),

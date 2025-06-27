@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hope/Api/healthy_diet/exercises_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/exercises.dart';
+import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AdminAddExerciseScreen extends StatefulWidget {
@@ -204,14 +205,14 @@ class _AdminAddExerciseScreenState extends State<AdminAddExerciseScreen> {
               const SizedBox(height: 8),
               buildImagePickerField(),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: isSaving ? null : saveExercise,
-                child: Text(isSaving
+              CustomButton(
+                title: isSaving
                     ? "Saving..."
                     : isEdit
                         ? "Update"
-                        : "Save"),
-              ),
+                        : "Save",
+                onClick: isSaving ? () {} : saveExercise,
+              )
             ],
           ),
         ),
