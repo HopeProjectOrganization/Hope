@@ -24,10 +24,30 @@ class _NewsScreenState extends State<AdminNewsScreen>
   // ✅ أنواع السرطان اللي موجودة في الـ API فقط
   final List<String> cancerTypes = [
     "ALL",
-    "BREAST",
-    "OVARIAN",
-    "PROSTATE",
-    "MELANOMA",
+    'BREAST',
+    'OVARIAN',
+    'PROSTATE',
+    'COLORECTAL',
+    'MELANOMA',
+    'LUNG',
+    'SKIN',
+    'PANCREATIC',
+    'LEUKEMIA',
+    'LYMPHOMA',
+    'BRAIN',
+    'LIVER',
+    'STOMACH',
+    'ESOPHAGEAL',
+    'BLADDER',
+    'KIDNEY',
+    'THYROID',
+    'BONE',
+    'TESTICULAR',
+    'ENDOMETRIAL',
+    'CERVICAL',
+    'GALLBLADDER',
+    'MULTIPLE_MYELOMA',
+    'ORAL'
   ];
 
   String selectedCancerType = "ALL";
@@ -88,7 +108,7 @@ class _NewsScreenState extends State<AdminNewsScreen>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, AdminNewsEditorScreen.routeName);
+          Navigator.pushNamed(context, AdminNewsEditor.routeName);
         },
         backgroundColor: AppColors.Teal,
         child: const Icon(

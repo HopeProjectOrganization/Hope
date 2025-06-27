@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Admin/aware/high_risk/addHighRiskScreen.dart';
+import 'package:hope/Admin/aware/high_risk/AdminAddArticleScreen.dart';
 import 'package:hope/Admin/aware/high_risk/high_people_list.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -21,7 +21,6 @@ class _HighRiskPeopleState extends State<AdminHighRiskPeople>
 
   late TabController _tabController;
 
-  // ✅ أنواع السرطان اللي موجودة في الـ API فقط
   final List<String> cancerTypes = [
     'ALL',
     'ELDERLY',
@@ -94,12 +93,12 @@ class _HighRiskPeopleState extends State<AdminHighRiskPeople>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, AdminHighEditorScreen.routeName);
+          Navigator.pushNamed(context, AdminAddArticleScreen.routeName);
         },
         backgroundColor: AppColors.Teal,
         child: const Icon(
           Icons.add,
-          color: AppColors.lavender,
+          color: AppColors.yellow,
         ),
       ),
     );

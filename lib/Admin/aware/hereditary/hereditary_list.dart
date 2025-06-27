@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hope/Admin/aware/hereditary/hereditary_article_item.dart';
+import 'package:hope/Api/hereditary/hereditary_service.dart';
 import 'package:hope/main.dart';
 import 'package:hope/model/article.dart';
 import 'package:http/http.dart' as http;
@@ -17,73 +18,52 @@ class AdminHereditaryList extends StatefulWidget {
 }
 
 class _AdminNewsListState extends State<AdminHereditaryList> {
-  late Future<List<Article>> futureNews;
+  late Future<List<Article>> futureArticles;
 
   @override
   void initState() {
     super.initState();
-    futureNews = fetchNewsFromLocalAPI(widget.type);
+    futureArticles = fetchArticles(widget.type);
   }
 
-  Future<List<Article>> fetchNewsFromLocalAPI(String type) async {
-    late Uri url;
-
+  Future<List<Article>> fetchArticles(String type) {
     if (type == 'ALL') {
-      url = Uri.parse('https://${MyApp.IP}/api/hereditary');
+      return HereditaryService.getAllNews();
     } else {
-      url = Uri.parse('https://${MyApp.IP}/api/hereditary/category/$type');
-    }
-
-    final response = await http.get(
-      url,
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((item) => Article.fromJson(item)).toList();
-    } else {
-      throw Exception('Failed to load Hereditary');
+      return HereditaryService.getByCategory(type);
     }
   }
 
-  Future<void> refreshNews() async {
+  Future<void> refreshArticles() async {
     setState(() {
-      futureNews = fetchNewsFromLocalAPI(widget.type);
+      futureArticles = fetchArticles(widget.type);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Article>>(
-      future: futureNews,
+      future: futureArticles,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(
-              child:
-                  Text("Error fetching Hereditary posts : \${snapshot.error}"));
+              child: Text("Error fetching articles: ${snapshot.error}"));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text("No Hereditary posts available."));
+          return const Center(child: Text("No articles available."));
         } else {
           final articles = snapshot.data!;
-          return buildListView(articles);
+          return ListView.separated(
+            itemCount: articles.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            itemBuilder: (context, index) => BuildArticleItem(
+              article: articles[index],
+              onDelete: refreshArticles,
+            ),
+          );
         }
       },
     );
   }
-
-  Widget buildListView(List<Article> articles) => ListView.separated(
-        itemBuilder: (context, index) {
-          Article article = articles[index];
-          return BuildArticleItem(
-            article: article,
-            onDelete: refreshNews, // ← يعمل تحديث بعد الحذف
-            showAllFields: true, // عرض كل الحقول الجديدة
-          );
-        },
-        separatorBuilder: (context, index) => const SizedBox(height: 10),
-        itemCount: articles.length,
-      );
 }

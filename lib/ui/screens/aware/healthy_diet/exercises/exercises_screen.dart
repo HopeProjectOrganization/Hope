@@ -53,7 +53,7 @@ class BodyPartScreen extends StatelessWidget {
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Color(0xffe7e1f6),
+              color: AppColors.cloudi,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(

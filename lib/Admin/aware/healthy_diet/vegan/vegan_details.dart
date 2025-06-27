@@ -8,10 +8,10 @@ import 'package:hope/model/vegan_details.dart';
 import 'package:hope/ui/shared_widgets/favorite_button.dart';
 import 'package:provider/provider.dart';
 
-class RecipeDetailsScreen extends StatelessWidget {
+class AdminRecipeDetailsScreen extends StatelessWidget {
   final int id;
 
-  const RecipeDetailsScreen({super.key, required this.id});
+  const AdminRecipeDetailsScreen({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class RecipeDetailsScreen extends StatelessWidget {
             onTap: () {}, // ممكن تسيبيه فاضي أو تشيليه لو مش محتاجاه
             child: FavoriteButton(
               id: id.toString(),
-              category: 'HEALTHY_DIET',
+              category: 'VEGAN',
               type: 'meal',
             ),
           ),
@@ -211,15 +211,11 @@ class RecipeDetailsScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(entry.value.stepTitle,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 4),
-                            Text(entry.value.stepDescription),
-                          ],
+                        child: Text(
+                          entry.value.stepDescription.replaceAll(
+                            RegExp(r'Step\s*\d*:?\s*', caseSensitive: false),
+                            '',
+                          ),
                         ),
                       ),
                     ],

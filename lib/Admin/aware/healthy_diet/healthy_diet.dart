@@ -8,7 +8,7 @@ import 'package:hope/ui/shared_widgets/utils/healthy_diet_category.dart';
 import 'package:provider/provider.dart';
 
 class AdminHealthyDiet extends StatelessWidget {
-  static const routeName = '/healthyDiet';
+  static const routeName = '/adminHealthyDiet';
 
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
@@ -24,15 +24,15 @@ class AdminHealthyDiet extends StatelessWidget {
       CategoryModel(
           image: AppAssets.recipes,
           id: appLocalizations.recipes,
-          route: '/RECIPES'),
+          route: '/ADMINRECIPES'),
       CategoryModel(
           image: AppAssets.recommended,
           id: appLocalizations.veganRecipes,
-          route: '/Vegan'),
+          route: '/AdminVegan'),
       CategoryModel(
           image: AppAssets.exer1,
           id: appLocalizations.exercises,
-          route: '/Exercises'),
+          route: '/AdminExercises'),
     ];
 
     return CustomScaffold(

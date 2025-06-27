@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Admin/aware/healthy_diet/recipes/add_recipe.dart';
 import 'package:hope/Api/healthy_diet/healthy_recipe_service.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -8,14 +9,14 @@ import 'package:hope/ui/screens/aware/healthy_diet/recipes/recipe_by_category.da
 import 'package:hope/ui/screens/aware/healthy_diet/recipes/recipe_details.dart';
 import 'package:provider/provider.dart';
 
-class Recipes extends StatefulWidget {
-  static const routeName = '/RECIPES';
+class AdminRecipes extends StatefulWidget {
+  static const routeName = '/ADMINRECIPES';
 
   @override
-  State<Recipes> createState() => _RecipesState();
+  State<AdminRecipes> createState() => _AdminRecipesState();
 }
 
-class _RecipesState extends State<Recipes> {
+class _AdminRecipesState extends State<AdminRecipes> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
@@ -98,7 +99,6 @@ class _RecipesState extends State<Recipes> {
       });
     } catch (e) {
       setState(() => isLoadingAll = false);
-      print("Error fetching recipes: $e");
     }
   }
 
@@ -115,7 +115,19 @@ class _RecipesState extends State<Recipes> {
     return Scaffold(
       appBar: AppBar(
         title: Text(appLocalizations.recipes),
-        iconTheme: IconThemeData(color: AppColors.Teal), // ← لون الأيقونة
+        iconTheme: IconThemeData(color: AppColors.Teal),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add, color: AppColors.Teal),
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AdminMealFormScreen()),
+              );
+              if (result == true) fetchAllMeals();
+            },
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -127,9 +139,7 @@ class _RecipesState extends State<Recipes> {
               children: [
                 buildTab(appLocalizations.all, 0,
                     MediaQuery.of(context).size.width * .94),
-                SizedBox(
-                  width: 16,
-                ),
+                const SizedBox(width: 16),
                 buildTab(
                     "Categories", 1, MediaQuery.of(context).size.width * .94),
               ],
@@ -177,19 +187,50 @@ class _RecipesState extends State<Recipes> {
               itemCount: meals.length,
               itemBuilder: (context, index) {
                 final item = meals[index];
-                return buildMealCard(
-                  item.name ?? '',
-                  item.area ?? '',
-                  item.imageUrl ?? '',
-                  () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            RecipeDetailScreen(mealId: item.recipeId!),
+                return Stack(
+                  children: [
+                    buildMealCard(
+                      item.name ?? '',
+                      item.area ?? '',
+                      item.imageUrl ?? '',
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                RecipeDetailScreen(mealId: item.recipeId!),
+                          ),
+                        );
+                      },
+                    ),
+                    Positioned(
+                      top: 6,
+                      right: 6,
+                      child: Row(
+                        children: [
+                          // IconButton(
+                          //   icon: const Icon(Icons.edit, color: Colors.orange),
+                          //   onPressed: () async {
+                          //     final result = await Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //         builder: (_) => AdminMealFormScreen(mealId: item.recipeId),
+                          //       ),
+                          //     );
+                          //     if (result == true) fetchAllMeals();
+                          //   },
+                          // ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              await RecipeService.deleteRecipe(item.recipeId!);
+                              fetchAllMeals();
+                            },
+                          ),
+                        ],
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 );
               },
             ),
@@ -269,7 +310,6 @@ class _RecipesState extends State<Recipes> {
       onTap: () => setState(() => selectedTabIndex = index),
       child: Container(
         width: width / 2,
-        // نصف الشاشة
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.lavender : Colors.transparent,

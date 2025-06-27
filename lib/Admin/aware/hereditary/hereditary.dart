@@ -30,6 +30,7 @@ class _HereditaryState extends State<AdminHereditary>
     "OVARIAN",
     "PROSTATE",
     "MELANOMA",
+    "PANCREATIC"
   ];
 
   String selectedCancerType = "ALL";
@@ -96,7 +97,7 @@ class _HereditaryState extends State<AdminHereditary>
         backgroundColor: AppColors.Teal,
         child: const Icon(
           Icons.add,
-          color: AppColors.lavender,
+          color: AppColors.yellow,
         ),
       ),
     );

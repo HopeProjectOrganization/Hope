@@ -1,48 +1,37 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/Admin/aware/awareness/addNewsScreen.dart';
+import 'package:hope/Admin/aware/shared_widgets/article/article_screen.dart';
+import 'package:hope/Api/news/news_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/main.dart';
-import 'package:hope/model/news_model.dart';
-import 'package:hope/ui/screens/aware/shared_widgets/article/article_screen.dart';
+import 'package:hope/model/article.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
-import 'package:http/http.dart' as http;
 
-class BuildArticleItem extends StatefulWidget {
+class BuildArticleItemN extends StatefulWidget {
   final VoidCallback? onDelete;
+  final Article article;
 
-  const BuildArticleItem({
+  const BuildArticleItemN({
     super.key,
     required this.article,
     this.onDelete,
   });
 
-  final NewsModel article;
-
   @override
-  State<BuildArticleItem> createState() => _BuildArticleItemState();
+  State<BuildArticleItemN> createState() => _BuildArticleItemState();
 }
 
-class _BuildArticleItemState extends State<BuildArticleItem> {
+class _BuildArticleItemState extends State<BuildArticleItemN> {
   bool isDeleting = false;
 
   Future<void> deleteArticle(int id) async {
     setState(() => isDeleting = true);
-    final url = Uri.parse('https://${MyApp.IP}/api/news/delete/$id');
-
     try {
-      final response = await http.delete(url);
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Deleted successfully')),
-        );
-        if (widget.onDelete != null) widget.onDelete!();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Delete failed: ${response.statusCode}')),
-        );
-      }
+      await NewsApiService.deleteNews(id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Deleted successfully')),
+      );
+      widget.onDelete?.call();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
@@ -56,9 +45,9 @@ class _BuildArticleItemState extends State<BuildArticleItem> {
   Widget build(BuildContext context) {
     final article = widget.article;
     final String image = article.imageUrl ?? '';
-    final String title = (article.title != null && article.title!.length > 70)
-        ? "${article.title!.substring(0, 70)}..."
-        : article.title ?? '';
+    final String title = article.title.length > 70
+        ? "${article.title.substring(0, 70)}..."
+        : article.title;
     final String description =
         (article.content != null && article.content!.length > 50)
             ? "${article.content!.substring(0, 35)}..."
@@ -67,7 +56,7 @@ class _BuildArticleItemState extends State<BuildArticleItem> {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.Teal),
+        side: const BorderSide(color: AppColors.Teal),
       ),
       child: Container(
         height: MediaQuery.of(context).size.height * 0.46,
@@ -81,22 +70,22 @@ class _BuildArticleItemState extends State<BuildArticleItem> {
                 onTap: () {
                   Navigator.pushNamed(
                     context,
-                    NewsArticleScreen.routeName,
-                    arguments: article,
+                    AdminNewsArticleScreen.routeName,
+                    arguments: {
+                      'article': article,
+                      'type': 'HIGH_RISK',
+                    },
                   );
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: CachedNetworkImage(
                     imageUrl: image,
-                    height: 200,
-                    width: double.infinity,
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => const Icon(
-                      Icons.image_not_supported,
-                      size: 100,
-                    ),
-                    placeholder: (context, url) =>
+                    width: double.infinity,
+                    errorWidget: (_, __, ___) =>
+                        const Icon(Icons.image_not_supported, size: 100),
+                    placeholder: (_, __) =>
                         const Center(child: CircularProgressIndicator()),
                   ),
                 ),
@@ -108,10 +97,7 @@ class _BuildArticleItemState extends State<BuildArticleItem> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
+                  Text(title, style: Theme.of(context).textTheme.labelSmall),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -130,18 +116,30 @@ class _BuildArticleItemState extends State<BuildArticleItem> {
                       Expanded(
                         child: CustomButton(
                           title: 'Edit',
-                          onClick: () {
-                            Navigator.pushNamed(
+                          onClick: () async {
+                            final result = await Navigator.pushNamed(
                               context,
-                              AdminNewsEditorScreen.routeName,
+                              AdminNewsEditor.routeName,
                               arguments: {
                                 'id': article.id,
+                                'articleId': article.articleId,
                                 'title': article.title,
+                                'link': article.link,
+                                'creator': article.creator,
+                                'description': article.description,
                                 'content': article.content,
-                                'category': article.category,
+                                'pubDate': article.pubDate,
                                 'imageUrl': article.imageUrl,
+                                'sourceName': article.sourceName,
+                                'sourceUrl': article.sourceUrl,
+                                'sourceIcon': article.sourceIcon,
+                                'category': article.category,
                               },
                             );
+
+                            if (result == true) {
+                              widget.onDelete?.call(); // يعمل refresh للبيانات
+                            }
                           },
                         ),
                       ),
@@ -155,21 +153,21 @@ class _BuildArticleItemState extends State<BuildArticleItem> {
                                   showDialog(
                                     context: context,
                                     builder: (_) => AlertDialog(
-                                      title: Text("Confirm Delete"),
-                                      content: Text(
+                                      title: const Text("Confirm Delete"),
+                                      content: const Text(
                                           "Are you sure you want to delete this article?"),
                                       actions: [
                                         TextButton(
                                           onPressed: () =>
                                               Navigator.pop(context),
-                                          child: Text("Cancel"),
+                                          child: const Text("Cancel"),
                                         ),
                                         TextButton(
                                           onPressed: () {
                                             Navigator.pop(context);
                                             deleteArticle(article.id!);
                                           },
-                                          child: Text("Delete",
+                                          child: const Text("Delete",
                                               style:
                                                   TextStyle(color: Colors.red)),
                                         ),

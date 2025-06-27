@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:hope/Admin/aware/high_risk/addHighRiskScreen.dart';
+import 'package:hope/Admin/aware/high_risk/AdminAddArticleScreen.dart';
+import 'package:hope/Admin/aware/shared_widgets/article/article_screen.dart';
 import 'package:hope/Api/high_risk/highrisk_serivce.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/article.dart';
-import 'package:hope/ui/screens/aware/shared_widgets/article/article_screen.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 
 class BuildArticleHigh extends StatefulWidget {
@@ -70,8 +70,11 @@ class _BuildArticleItemState extends State<BuildArticleHigh> {
                 onTap: () {
                   Navigator.pushNamed(
                     context,
-                    NewsArticleScreen.routeName,
-                    arguments: article,
+                    AdminNewsArticleScreen.routeName,
+                    arguments: {
+                      'article': article,
+                      'type': 'HIGH_RISK',
+                    },
                   );
                 },
                 child: ClipRRect(
@@ -113,18 +116,30 @@ class _BuildArticleItemState extends State<BuildArticleHigh> {
                       Expanded(
                         child: CustomButton(
                           title: 'Edit',
-                          onClick: () {
-                            Navigator.pushNamed(
+                          onClick: () async {
+                            final result = await Navigator.pushNamed(
                               context,
-                              AdminHighEditorScreen.routeName,
+                              AdminAddArticleScreen.routeName,
                               arguments: {
                                 'id': article.id,
+                                'articleId': article.articleId,
                                 'title': article.title,
+                                'link': article.link,
+                                'creator': article.creator,
+                                'description': article.description,
                                 'content': article.content,
-                                'category': article.category,
+                                'pubDate': article.pubDate,
                                 'imageUrl': article.imageUrl,
+                                'sourceName': article.sourceName,
+                                'sourceUrl': article.sourceUrl,
+                                'sourceIcon': article.sourceIcon,
+                                'category': article.category,
                               },
                             );
+
+                            if (result == true) {
+                              widget.onDelete?.call(); // يعمل refresh للبيانات
+                            }
                           },
                         ),
                       ),
