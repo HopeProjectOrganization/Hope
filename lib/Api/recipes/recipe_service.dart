@@ -35,7 +35,6 @@ class MealApiService {
     }
   }
 
-  // POST: save new meal
   Future<Meal> saveMeal(Meal meal) async {
     final response = await http.post(
       Uri.parse(_baseUrl),
@@ -43,21 +42,34 @@ class MealApiService {
       body: json.encode(meal.toJson()),
     );
 
-    if (response.statusCode == 200) {
+    print("POST BODY: ${json.encode(meal.toJson())}");
+    print("STATUS CODE: ${response.statusCode}");
+    print("RESPONSE BODY: ${response.body}");
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final jsonData = json.decode(response.body);
       return Meal.fromJson(jsonData);
     } else {
-      throw Exception('Failed to save meal');
+      throw Exception('Failed to save meal. Code: ${response.statusCode}');
     }
   }
 
-  // PUT: update existing meal
   Future<Meal> updateMeal(String id, Meal updatedMeal) async {
+    final url = Uri.parse('$_baseUrl/$id');
+    final payload = json.encode(updatedMeal.toJson());
+
+    print("📤 Updating meal with ID: $id");
+    print("➡️ URL: $url");
+    print("➡️ Payload: $payload");
+
     final response = await http.put(
-      Uri.parse('$_baseUrl/$id'),
+      url,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode(updatedMeal.toJson()),
+      body: payload,
     );
+
+    print("📬 Status Code: ${response.statusCode}");
+    print("📬 Response Body: ${response.body}");
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);

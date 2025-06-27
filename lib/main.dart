@@ -14,6 +14,9 @@ import 'package:hope/Admin/aware/hereditary/addHereditaryScreen.dart';
 import 'package:hope/Admin/aware/hereditary/hereditary.dart';
 import 'package:hope/Admin/aware/high_risk/AdminAddArticleScreen.dart';
 import 'package:hope/Admin/aware/high_risk/high_risk_people.dart';
+import 'package:hope/Admin/aware/mealsense/add_meal.dart';
+import 'package:hope/Admin/aware/mealsense/admin_meal_details.dart';
+import 'package:hope/Admin/aware/mealsense/admin_meals.dart';
 import 'package:hope/Admin/aware/places/admin_places_edit.dart';
 import 'package:hope/Admin/aware/places/places_screen.dart';
 import 'package:hope/Admin/aware/shared_widgets/article/article_screen.dart';
@@ -145,6 +148,12 @@ class MyApp extends StatelessWidget {
         AdminHealthyDiet.routeName: (_) => AdminHealthyDiet(),
         AdminVeganScreen.routeName: (_) => AdminVeganScreen(),
         AddVeganRecipeScreen.routeName: (_) => AddVeganRecipeScreen(),
+        AdminMeals.routeName: (_) => AdminMeals(),
+        AdminMealDetails.routeName: (context) {
+          final meal = ModalRoute.of(context)!.settings.arguments as Meal;
+          return AdminMealDetails(meal: meal);
+        },
+        AddMeal.routeName: (_) => AddMeal(),
         Recipes.routeName: (_) => Recipes(),
         BodyPartScreen.routeName: (_) => BodyPartScreen(),
         VeganScreen.routeName: (_) => VeganScreen(),
@@ -213,7 +222,7 @@ class MyApp extends StatelessWidget {
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen(),
         ExploreScreen.routeName: (_) => ExploreScreen()
       },
-      initialRoute: AdminHomeScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
