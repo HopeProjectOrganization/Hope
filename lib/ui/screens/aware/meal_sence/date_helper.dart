@@ -4,32 +4,49 @@ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class DateHelper {
-  static String getMonthName(int month) {
-    const months = [
-      "", // index 0 placeholder
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
-    ];
-    return months[month];
+  static String getMonthName(BuildContext context, int month) {
+    final applocalizations = AppLocalizations.of(context)!;
+
+    final months = {
+      1: applocalizations.january,
+      2: applocalizations.february,
+      3: applocalizations.march,
+      4: applocalizations.april,
+      5: applocalizations.may,
+      6: applocalizations.june,
+      7: applocalizations.july,
+      8: applocalizations.august,
+      9: applocalizations.september,
+      10: applocalizations.october,
+      11: applocalizations.november,
+      12: applocalizations.december,
+    };
+
+    return months[month] ?? '';
   }
 
-  static String getWeekdayName(int weekday) {
+  static String getWeekdayName(BuildContext context, int weekday) {
+    final applocalizations = AppLocalizations.of(context)!;
+
     switch (weekday) {
       case DateTime.monday:
-        return "Mon";
+        return applocalizations.mondayShort; // Example: "Mon"
       case DateTime.tuesday:
-        return "Tue";
+        return applocalizations.tuesdayShort;
       case DateTime.wednesday:
-        return "Wed";
+        return applocalizations.wednesdayShort;
       case DateTime.thursday:
-        return "Thu";
+        return applocalizations.thursdayShort;
       case DateTime.friday:
-        return "Fri";
+        return applocalizations.fridayShort;
       case DateTime.saturday:
-        return "Sat";
+        return applocalizations.saturdayShort;
       case DateTime.sunday:
-        return "Sun";
+        return applocalizations.sundayShort;
       default:
         return "";
     }
@@ -116,7 +133,7 @@ class MyCalendarWidgetState extends State<MyCalendarWidget> {
       {bool isToday = false}) {
     return Container(
       width: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 8),
       decoration: BoxDecoration(
         color: isSelected ? AppColors.lavender : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
@@ -149,7 +166,7 @@ class MyCalendarWidgetState extends State<MyCalendarWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Text(
-        "${DateHelper.getMonthName(selectedDate.month)} ${selectedDate.year}",
+        "${DateHelper.getMonthName(context, selectedDate.month)} ${selectedDate.year}",
         style: const TextStyle(
             fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.Teal),
       ),
@@ -160,7 +177,7 @@ class MyCalendarWidgetState extends State<MyCalendarWidget> {
     int daysCount = DateHelper.getDaysInMonth(year, month);
     DateTime today = DateTime.now();
 
-    return SizedBox(
+    return Container(
       height: 80,
       child: ListView.builder(
         controller: _scrollController,
@@ -169,7 +186,7 @@ class MyCalendarWidgetState extends State<MyCalendarWidget> {
         itemBuilder: (context, index) {
           int day = index + 1;
           DateTime date = DateTime(year, month, day);
-          String dayName = DateHelper.getWeekdayName(date.weekday);
+          String dayName = DateHelper.getWeekdayName(context, date.weekday);
           String dayDate = day.toString().padLeft(2, '0');
 
           bool isSelected = day == selectedDay;

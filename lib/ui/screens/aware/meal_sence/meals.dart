@@ -199,10 +199,23 @@ class _MealsState extends State<Meals> {
                                 final sel = selectedMeals[meal.id] ?? false;
 
                                 return InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, RecipeDetails.routeName,
-                            arguments: meal.id);
-                      },
+                                  onTap: () async {
+                                    final result = await Navigator.pushNamed(
+                                      context,
+                                      RecipeDetails.routeName,
+                                      arguments: meal.id,
+                                    );
+
+                                    if (result != null && result is Meal) {
+                                      final meal = result;
+
+                                      setState(() {
+                                        selectedMeals[meal.id] = true;
+                                        selectedMealList.add(meal);
+                                        selectedMealsCount++;
+                                      });
+                                    }
+                                  },
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 20),
                         child: Container(

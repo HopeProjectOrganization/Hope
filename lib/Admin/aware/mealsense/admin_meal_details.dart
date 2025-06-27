@@ -1,11 +1,15 @@
 import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/recipes/recipe_service.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:provider/provider.dart';
 
 class AdminMealDetails extends StatefulWidget {
   static const routeName = '/EditMeal';
@@ -32,6 +36,9 @@ class _AdminMealDetailsState extends State<AdminMealDetails> {
   late TextEditingController _fatController;
   late TextEditingController _tagsController;
   late Future<Meal> mealFuture;
+
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   File? _imageFile;
   String? _imageUrl;
@@ -133,9 +140,12 @@ class _AdminMealDetailsState extends State<AdminMealDetails> {
 
   @override
   Widget build(BuildContext context) {
+    late ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
+
+    late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Meal"),
+        title: Text(appLocalizations.editeMeal),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.Teal),
           // ✅ لون الأيقونة
@@ -157,26 +167,27 @@ class _AdminMealDetailsState extends State<AdminMealDetails> {
                           : Image.network(_imageUrl!, height: 180),
                     ),
                     const SizedBox(height: 16),
-                    _buildField(_nameController, "Meal Name"),
-                    _buildField(_prepareTimeController, "Prepare Time (min)"),
-                    _buildField(_cookTimeController, "Cook Time (min)"),
-                    _buildField(_servingsController, "Servings"),
-                    _buildField(_descriptionController, "Description",
-                        maxLines: 3),
+                    _buildField(_nameController, appLocalizations.mealName),
                     _buildField(
-                        _ingredientsController, "Ingredients (comma separated)",
+                        _prepareTimeController, appLocalizations.prepareTime),
+                    _buildField(_cookTimeController, appLocalizations.cookTime),
+                    _buildField(_servingsController, appLocalizations.servings),
+                    _buildField(
+                        _descriptionController, appLocalizations.description,
+                        maxLines: 3),
+                    _buildField(_ingredientsController,
+                        appLocalizations.ingredientsComma,
                         maxLines: 2),
-                    _buildField(_stepsController, "Steps (use | between steps)",
+                    _buildField(_stepsController, appLocalizations.mealSteps,
                         maxLines: 2),
-                    _buildField(_tagsController, "Tags (comma separated)"),
-                    _buildField(_caloriesController, "Calories"),
-                    _buildField(_carbsController, "Net Carbs"),
-                    _buildField(_proteinController, "Protein"),
-                    _buildField(_fatController, "Fat"),
+                    _buildField(_caloriesController, appLocalizations.calories),
+                    _buildField(_carbsController, appLocalizations.carbs),
+                    _buildField(_proteinController, appLocalizations.protein),
+                    _buildField(_fatController, appLocalizations.fat),
                     const SizedBox(height: 20),
                     CustomButton(
                       onClick: _submitForm,
-                      title: "Update Meal",
+                      title: appLocalizations.updateMeal,
                     ),
                   ],
                 ),

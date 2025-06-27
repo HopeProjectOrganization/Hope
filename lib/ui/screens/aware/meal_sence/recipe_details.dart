@@ -268,18 +268,12 @@ class _RecipeDetailsState extends State<RecipeDetails>
                               ],
                             ),
                           ),
-                          CustomButton(
-                            title: appLocalizations.add,
-                            onClick: () {
-                              // Navigator.pushNamed(
-                              //   context,
-                              //   ProgressScreen.routeName,
-                              //   arguments: {
-                              //     'meal': meal,
-                              //   },
-                              // );
-                            },
-                          )
+                          // CustomButton(
+                          //   title: appLocalizations.add,
+                          //   onClick: () {
+                          //     Navigator.pop(context, meal); // نرجّع الوجبة للشاشة اللي قبل
+                          //   },
+                          // ),
                         ],
                       ),
                     )

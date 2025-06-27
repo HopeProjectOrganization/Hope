@@ -2,10 +2,13 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/recipes/recipe_service.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class AddMeal extends StatefulWidget {
   static const routeName = '/AddMeal';
@@ -17,6 +20,9 @@ class AddMeal extends StatefulWidget {
 }
 
 class _AddMealState extends State<AddMeal> {
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
+
   final _formKey = GlobalKey<FormState>();
   final _idController = TextEditingController();
   final _nameController = TextEditingController();
@@ -56,9 +62,6 @@ class _AddMealState extends State<AddMeal> {
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
     if (_imageFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select an image.")),
-      );
       return;
     }
 
@@ -90,9 +93,6 @@ class _AddMealState extends State<AddMeal> {
       Navigator.pop(context);
     } catch (e) {
       debugPrint("Error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Something went wrong.')),
-      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -133,8 +133,11 @@ class _AddMealState extends State<AddMeal> {
 
   @override
   Widget build(BuildContext context) {
+    late ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
+
+    late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Meal")),
+      appBar: AppBar(title: Text(appLocalizations.addMeal)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
@@ -150,34 +153,35 @@ class _AddMealState extends State<AddMeal> {
                           : Container(
                               height: 180,
                               color: Colors.grey[300],
-                              child: const Center(
-                                child: Text("Tap to select image"),
+                              child: Center(
+                                child: Text(appLocalizations.tapToSelectImage),
                               ),
                             ),
                     ),
                     const SizedBox(height: 16),
                     _buildField(_idController, "ID"),
-                    _buildField(_nameController, "Name"),
-                    _buildField(_descriptionController, "Description",
+                    _buildField(_nameController, appLocalizations.mealName),
+                    _buildField(
+                        _descriptionController, appLocalizations.description,
                         maxLines: 3),
                     _buildField(
-                        _prepareTimeController, "Prepare Time (minutes)"),
-                    _buildField(_cookTimeController, "Cook Time (minutes)"),
-                    _buildField(_servingsController, "Servings"),
+                        _prepareTimeController, appLocalizations.prepareTime),
+                    _buildField(_cookTimeController, appLocalizations.cookTime),
+                    _buildField(_servingsController, appLocalizations.servings),
                     _buildField(_ingredientsController,
-                        "Ingredients (name:unit:desc:qty:grams:scale,...)",
+                        appLocalizations.ingredientsComma,
                         maxLines: 3),
-                    _buildField(_stepsController, "Steps (use | to separate)",
+                    _buildField(_stepsController, appLocalizations.mealSteps,
                         maxLines: 3),
                     const Divider(),
-                    _buildField(_caloriesController, "Calories"),
-                    _buildField(_netCarbsController, "Net Carbs"),
-                    _buildField(_proteinController, "Protein"),
-                    _buildField(_fatController, "Fat"),
+                    _buildField(_caloriesController, appLocalizations.calories),
+                    _buildField(_netCarbsController, appLocalizations.carbs),
+                    _buildField(_proteinController, appLocalizations.protein),
+                    _buildField(_fatController, appLocalizations.fat),
                     const SizedBox(height: 20),
                     CustomButton(
                       onClick: _submitForm,
-                      title: "Add Meal",
+                      title: appLocalizations.addMeal,
                     ),
                   ],
                 ),

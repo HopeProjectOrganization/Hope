@@ -211,14 +211,14 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                       }
 
                       // الرجوع للشاشة السابقة
-                      final result = await Navigator.pushNamed(
+                      final result = await Navigator.pushNamedAndRemoveUntil(
                         context,
                         MealSenceScreen.routeName,
+                        (Route<dynamic> route) => false,
                         arguments: {
                           'selectedMeals': _selectedMeals,
                           'title': _title,
                           'selectedDate': widget.selectedDate,
-                          // ✅ إرسال التاريخ هنا
                         },
                       );
 

@@ -146,7 +146,7 @@ class _AdminMealsState extends State<AdminMeals> {
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      backgroundColor: Color(0xFFF8F8FF),
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
