@@ -126,7 +126,7 @@ class _ProfileBodyState extends State<ProfileBody> {
               onTap: () {}),
           ProfileItem(
               icon: Icons.playlist_add_check,
-              title: "Saved List",
+              title: widget.appLocalizations.savedList,
               context: context,
               onTap: () {
                 Navigator.pushNamed(context, SavedListScreen.routeName);
