@@ -115,91 +115,101 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
 
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator(color: AppColors.Teal)),
+      );
+    }
+
+    if (recipe == null) {
+      return const Scaffold(
+        body: Center(child: Text('No recipe found')),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          InkWell(
-            onTap: () {}, // ممكن تسيبيه فاضي أو تشيليه لو مش محتاجاه
-            child: FavoriteButton(
-              id: recipe!.recipeId,
-              category: 'HEALTHY_DIET',
-              type: 'meal',
-            ),
-          ),
-        ],
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: AppColors.Teal),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(appLocalizations.recipeDetails,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 26)),
+        title: Text(
+          appLocalizations.recipeDetails,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
+        ),
         centerTitle: true,
+        actions: [
+          FavoriteButton(
+            id: recipe!.recipeId,
+            category: 'HEALTHY_DIET',
+            type: 'meal',
+          ),
+        ],
       ),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.Teal))
-          : SafeArea(
-              child: Column(children: [
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(50),
-                          bottomRight: Radius.circular(50),
-                        ),
-                        child: Image.network(
-                          recipe?.imageUrl ?? '',
-                          height: MediaQuery.of(context).size.height * 0.4,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            height: 150,
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.broken_image, size: 40),
-                          ),
-                        ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(50),
+                      bottomRight: Radius.circular(50),
+                    ),
+                    child: Image.network(
+                      recipe!.imageUrl ?? '',
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        height: 150,
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.broken_image, size: 40),
                       ),
-                      const SizedBox(height: 24),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          recipe?.name ?? '',
-                          style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.Teal),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: buildIngredientsList(),
-                      ),
-                      const SizedBox(height: 30),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
-                        child: CustomButton(
-                          title: appLocalizations.startCooking,
-                          onClick: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => RecipeStepsScreen(
-                                instructions: recipe?.instructions ?? '',
-                                youtubeUrl: recipe?.youtubeUrl,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ]),
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      recipe!.name,
+                      style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.Teal),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: buildIngredientsList(),
+                  ),
+                  const SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: CustomButton(
+                      title: appLocalizations.startCooking,
+                      onClick: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => RecipeStepsScreen(
+                            instructions: recipe!.instructions,
+                            youtubeUrl: recipe!.youtubeUrl,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
+          ],
+        ),
+      ),
     );
   }
 }

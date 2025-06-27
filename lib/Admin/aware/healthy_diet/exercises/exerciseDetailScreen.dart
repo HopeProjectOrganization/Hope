@@ -121,7 +121,7 @@ class ExerciseDetailScreen extends StatelessWidget {
                                 Container(
                                   width: 2,
                                   height: 50,
-                                  color: Colors.purple.shade100,
+                                  color: AppColors.cloudi,
                                 ),
                             ],
                           ),

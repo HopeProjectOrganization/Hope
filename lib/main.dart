@@ -4,13 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/aware/awareness/addNewsScreen.dart';
 import 'package:hope/Admin/aware/awareness/news_screen.dart';
+import 'package:hope/Admin/aware/healthy_diet/exercises/exercises_screen.dart';
 import 'package:hope/Admin/aware/healthy_diet/healthy_diet.dart';
+import 'package:hope/Admin/aware/healthy_diet/recipes/healthy_recipes.dart';
+import 'package:hope/Admin/aware/healthy_diet/vegan/add_vegan.dart';
+import 'package:hope/Admin/aware/healthy_diet/vegan/edit_vegan.dart';
+import 'package:hope/Admin/aware/healthy_diet/vegan/vegan_screen.dart';
 import 'package:hope/Admin/aware/hereditary/addHereditaryScreen.dart';
 import 'package:hope/Admin/aware/hereditary/hereditary.dart';
-import 'package:hope/Admin/aware/high_risk/addHighRiskScreen.dart';
+import 'package:hope/Admin/aware/high_risk/AdminAddArticleScreen.dart';
 import 'package:hope/Admin/aware/high_risk/high_risk_people.dart';
 import 'package:hope/Admin/aware/places/admin_places_edit.dart';
 import 'package:hope/Admin/aware/places/places_screen.dart';
+import 'package:hope/Admin/aware/shared_widgets/article/article_screen.dart';
 import 'package:hope/Admin/home/home.dart';
 import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/Api/notification/check_meals.dart';
@@ -19,6 +25,7 @@ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_theme.dart';
 import 'package:hope/fruit.dart';
 import 'package:hope/model/meal_dm.dart';
+import 'package:hope/model/vegan_details.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/verify/verification.dart';
@@ -126,19 +133,29 @@ class MyApp extends StatelessWidget {
         AdminHomeScreen.routeName: (_) => const AdminHomeScreen(),
         AdminAwareTab.routeName: (_) => AdminAwareTab(),
         AdminNewsScreen.routeName: (_) => AdminNewsScreen(),
-        AdminNewsEditorScreen.routeName: (_) => AdminNewsEditorScreen(),
+        AdminNewsEditor.routeName: (_) => AdminNewsEditor(),
         AdminHereditary.routeName: (_) => const AdminHereditary(),
         AdminHereditaryEditorScreen.routeName: (_) =>
             AdminHereditaryEditorScreen(),
-        AdminHighEditorScreen.routeName: (_) => AdminHighEditorScreen(),
+        AdminNewsArticleScreen.routeName: (_) => AdminNewsArticleScreen(),
+        AdminAddArticleScreen.routeName: (context) => AdminAddArticleScreen(),
+        AdminBodyPartScreen.routeName: (_) => AdminBodyPartScreen(),
+        AdminRecipes.routeName: (_) => AdminRecipes(),
         AdminHighRiskPeople.routeName: (_) => AdminHighRiskPeople(),
         AdminHealthyDiet.routeName: (_) => AdminHealthyDiet(),
+        AdminVeganScreen.routeName: (_) => AdminVeganScreen(),
+        AddVeganRecipeScreen.routeName: (_) => AddVeganRecipeScreen(),
         Recipes.routeName: (_) => Recipes(),
         BodyPartScreen.routeName: (_) => BodyPartScreen(),
         VeganScreen.routeName: (_) => VeganScreen(),
         RecipeDetails.routeName: (context) {
           final id = ModalRoute.of(context)!.settings.arguments as String;
           return RecipeDetails(id: id);
+        },
+        EditVeganRecipeScreen.routeName: (context) {
+          final args =
+              ModalRoute.of(context)!.settings.arguments as VeganRecipeModel;
+          return EditVeganRecipeScreen(recipe: args);
         },
         MyMealsScreen.routeName: (context) {
           final args = ModalRoute.of(context)?.settings.arguments
@@ -196,7 +213,7 @@ class MyApp extends StatelessWidget {
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen(),
         ExploreScreen.routeName: (_) => ExploreScreen()
       },
-      initialRoute: LoginScreen.routeName,
+      initialRoute: AdminHomeScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

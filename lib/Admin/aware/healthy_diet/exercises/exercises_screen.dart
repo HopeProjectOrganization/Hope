@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Admin/aware/healthy_diet/exercises/exerciseListScreen.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/ui/screens/aware/healthy_diet/exercises/exerciseListScreen.dart';
 import 'package:provider/provider.dart';
 
-class BodyPartScreen extends StatelessWidget {
-  static const routeName = '/Exercises';
+class AdminBodyPartScreen extends StatelessWidget {
+  static const routeName = '/AdminExercises';
 
-  BodyPartScreen({super.key});
+  AdminBodyPartScreen({super.key});
 
   final Map<String, String> bodyPartImages = {
     "back": AppAssets.ex1,
@@ -53,7 +53,7 @@ class BodyPartScreen extends StatelessWidget {
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Color(0xffe7e1f6),
+              color: AppColors.cloudi,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -83,7 +83,7 @@ class BodyPartScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ExerciseListScreen(
+                              builder: (_) => AdminExerciseListScreen(
                                   bodyPart: bodyParts[index]),
                             ),
                           );

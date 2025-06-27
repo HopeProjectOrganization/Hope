@@ -1,7 +1,7 @@
 
 
 class VeganRecipeModel {
-  final int id;
+  final int? id;
   final String veganId;
   final String title;
   final String difficulty;
@@ -13,7 +13,7 @@ class VeganRecipeModel {
   final List<StepModel> steps;
 
   VeganRecipeModel({
-    required this.id,
+    this.id,
     required this.veganId,
     required this.title,
     required this.difficulty,

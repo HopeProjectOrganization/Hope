@@ -49,7 +49,7 @@ class NewsList extends StatelessWidget {
       final categoryEnum = type.toUpperCase().replaceAll(" ", "_");
       return HighRiskService.getByCategory(categoryEnum);
     } else {
-      return NewsApiService().getNewsByCategory(type == "All" ? "all" : type);
+      return NewsApiService.getNewsByCategory(type == "All" ? "all" : type);
     }
   }
 

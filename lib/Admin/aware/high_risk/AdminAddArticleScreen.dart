@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/main.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:http/http.dart' as http;
@@ -17,8 +18,24 @@ class AdminAddArticleScreen extends StatefulWidget {
 
 class _AdminAddArticleScreenState extends State<AdminAddArticleScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _article = <String, dynamic>{};
+  final Map<String, dynamic> _article = {};
   File? _pickedImage;
+  String? _existingImageUrl;
+  int? _articleId;
+  String _category = 'ELDERLY';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final data =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+    if (data != null) {
+      _article.addAll(data);
+      _articleId = data['id'];
+      _existingImageUrl = data['imageUrl'];
+    }
+  }
 
   Future<void> _pickImage() async {
     final pickedFile =
@@ -45,25 +62,40 @@ class _AdminAddArticleScreenState extends State<AdminAddArticleScreen> {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
+    _article['category'] = _category; // ✅ ضيفي دا هنا
+
     if (_pickedImage != null) {
       final imageUrl = await _uploadImage(_pickedImage!);
       _article['imageUrl'] = imageUrl;
+    } else if (_existingImageUrl != null) {
+      _article['imageUrl'] = _existingImageUrl;
     }
 
-    final response = await http.post(
-      Uri.parse('https://${MyApp.IP}/api/highrisk'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(_article),
+    final url = Uri.parse(
+      _articleId != null
+          ? 'https://${MyApp.IP}/api/highrisk/$_articleId'
+          : 'https://${MyApp.IP}/api/highrisk',
     );
+
+    final response = await (_articleId != null
+        ? http.put(url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(_article))
+        : http.post(url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(_article)));
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Article added successfully')),
+        SnackBar(
+            content: Text(_articleId != null
+                ? 'Updated successfully'
+                : 'Added successfully')),
       );
-      Navigator.pop(context);
+      Navigator.pop(context, true); // يرجّع قيمة تدل على نجاح التعديل
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add article: ${response.body}')),
+        SnackBar(content: Text('Failed: ${response.body}')),
       );
     }
   }
@@ -71,109 +103,133 @@ class _AdminAddArticleScreenState extends State<AdminAddArticleScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Article")),
+      appBar: AppBar(
+          title: Text(_articleId != null ? 'Edit Article' : 'Add Article')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Article ID'),
-                onSaved: (val) => _article['articleId'] = val,
+              DropdownButtonFormField<String>(
+                value: _category,
+                onChanged: (val) => setState(() => _category = val!),
+                items: [
+                  'ELDERLY',
+                  'PREGNANT',
+                  'WEAK_IMMUNE_SYSTEM',
+                  'SMOKERS',
+                  'OBESE',
+                  'GENETIC_MUTATION',
+                  'INACTIVE',
+                  'CHEMICAL_EXPOSURE',
+                  'POLLUTED_AREAS',
+                ]
+                    .map(
+                      (e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(
+                          e,
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                decoration: InputDecoration(
+                  labelText: 'Category',
+                  labelStyle: const TextStyle(color: AppColors.Teal),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.Teal),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.Teal),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide:
+                        const BorderSide(color: AppColors.gray, width: 2),
+                  ),
+                ),
+                dropdownColor: AppColors.white,
+                iconEnabledColor: AppColors.Teal,
+                style: const TextStyle(color: Colors.black),
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Title'),
-                onSaved: (val) => _article['title'] = val,
-                validator: (val) =>
-                    val == null || val.isEmpty ? 'Required' : null,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Link'),
-                onSaved: (val) => _article['link'] = val,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Keywords (comma separated)'),
-                onSaved: (val) => _article['keywords'] =
-                    val?.split(',').map((e) => e.trim()).toList(),
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Creator (comma separated)'),
-                onSaved: (val) => _article['creator'] =
-                    val?.split(',').map((e) => e.trim()).toList(),
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Description'),
-                onSaved: (val) => _article['description'] = val,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Content'),
-                onSaved: (val) => _article['content'] = val,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Published Date'),
-                onSaved: (val) => _article['pubDate'] = val,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Video URL'),
-                onSaved: (val) => _article['videoUrl'] = val,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Source ID'),
-                onSaved: (val) => _article['sourceId'] = val,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Source Name'),
-                onSaved: (val) => _article['sourceName'] = val,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Source Priority'),
-                keyboardType: TextInputType.number,
-                onSaved: (val) =>
-                    _article['sourcePriority'] = int.tryParse(val ?? '0'),
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Source URL'),
-                onSaved: (val) => _article['sourceUrl'] = val,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Source Icon'),
-                onSaved: (val) => _article['sourceIcon'] = val,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Language'),
-                onSaved: (val) => _article['language'] = val,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                    labelText: 'Country (comma separated)'),
-                onSaved: (val) => _article['country'] =
-                    val?.split(',').map((e) => e.trim()).toList(),
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Category'),
-                onSaved: (val) => _article['category'] = val,
-              ),
-              CheckboxListTile(
-                title: const Text("Is Duplicate"),
-                value: _article['duplicate'] ?? false,
-                onChanged: (val) => setState(() => _article['duplicate'] = val),
-              ),
+              const SizedBox(height: 10),
+              _buildField('title', required: true),
+              _buildField('articleId'),
+              _buildField('description'),
+              _buildField('content'),
+              _buildField('link'),
+              _buildField('creator'),
+              _buildField('pubDate'),
+              _buildField('sourceName'),
+              _buildField('sourceUrl'),
+              _buildField('sourceIcon'),
               const SizedBox(height: 12),
-              if (_pickedImage != null) Image.file(_pickedImage!, height: 150),
+              if (_pickedImage != null)
+                Image.file(_pickedImage!, height: 150)
+              else if (_existingImageUrl != null)
+                Image.network(_existingImageUrl!, height: 150),
               TextButton.icon(
                 onPressed: _pickImage,
                 icon: const Icon(Icons.image),
                 label: const Text("Pick Image"),
               ),
               const SizedBox(height: 16),
-              CustomButton(title: 'Submit', onClick: _submit),
+              CustomButton(
+                title: _articleId != null ? 'Update' : 'Submit',
+                onClick: _submit,
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildField(String key,
+      {bool required = false, bool isNumber = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: TextFormField(
+        initialValue: _article[key]?.toString() ?? '',
+        decoration: InputDecoration(
+          labelText: key.capitalize(),
+          labelStyle: const TextStyle(color: AppColors.gray),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: AppColors.gray),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: AppColors.gray),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: AppColors.gray, width: 2),
+          ),
+        ),
+        keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+        onSaved: (val) {
+          if (val != null) {
+            if (key == 'creator') {
+              _article[key] = val.split(',').map((e) => e.trim()).toList();
+            } else if (isNumber) {
+              _article[key] = int.tryParse(val);
+            } else {
+              _article[key] = val;
+            }
+          }
+        },
+        validator: (val) =>
+            required && (val == null || val.isEmpty) ? 'Required' : null,
+      ),
+    );
+  }
+}
+
+extension on String {
+  String capitalize() => this[0].toUpperCase() + substring(1);
 }

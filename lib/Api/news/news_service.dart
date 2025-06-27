@@ -8,7 +8,8 @@ class NewsApiService {
   final String baseUrl = 'https://${MyApp.IP}/api/news';
 
   // إضافة خبر جديد
-  Future<Article> addNews(Article article) async {
+  static Future<Article> addNews(Article article) async {
+    final String baseUrl = 'https://${MyApp.IP}/api/news';
     final response = await http.post(
       Uri.parse('$baseUrl/add'),
       headers: {"Content-Type": "application/json"},
@@ -23,7 +24,9 @@ class NewsApiService {
   }
 
   // جلب الأخبار حسب الكاتيجوري
-  Future<List<Article>> getNewsByCategory(String category) async {
+  static Future<List<Article>> getNewsByCategory(String category) async {
+    final String baseUrl = 'https://${MyApp.IP}/api/news';
+
     final response = await http.get(Uri.parse('$baseUrl/$category'));
 
     if (response.statusCode == 200) {
@@ -36,7 +39,8 @@ class NewsApiService {
   }
 
   // حذف خبر
-  Future<void> deleteNews(int id) async {
+  static Future<void> deleteNews(int id) async {
+    final String baseUrl = 'https://${MyApp.IP}/api/news';
     final response = await http.delete(Uri.parse('$baseUrl/delete/$id'));
 
     if (response.statusCode != 200) {

@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 class HereditaryService {
   static final String baseUrl = "https://${MyApp.IP}/api/hereditary";
 
-  Future<List<Article>> getAllNews() async {
+  static Future<List<Article>> getAllNews() async {
     final response = await http.get(Uri.parse(baseUrl));
 
     if (response.statusCode == 200) {

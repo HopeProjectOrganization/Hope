@@ -1,265 +1,206 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:hope/Admin/utlis/news.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/main.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:lottie/lottie.dart';
 
 // ignore: must_be_immutable
-class AdminNewsEditorScreen extends StatefulWidget {
+class AdminNewsEditor extends StatefulWidget {
   Map<String, dynamic>? newsData;
 
   static const String routeName = '/adminNewsEditor';
 
-  AdminNewsEditorScreen({Key? key, this.newsData}) : super(key: key);
+  AdminNewsEditor({Key? key, this.newsData}) : super(key: key);
 
   @override
-  State<AdminNewsEditorScreen> createState() => _AdminNewsEditorScreenState();
+  State<AdminNewsEditor> createState() => _AdminNewsEditorState();
 }
 
-class _AdminNewsEditorScreenState extends State<AdminNewsEditorScreen> {
+class _AdminNewsEditorState extends State<AdminNewsEditor> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _titleController;
-  late TextEditingController _contentController;
-
-  String _category = "OVARIAN";
+  final Map<String, dynamic> _article = {};
   File? _pickedImage;
   String? _existingImageUrl;
-
+  int? _articleId;
+  String _category = 'BREAST';
 
   @override
-  void initState() {
-    super.initState();
-    _titleController = TextEditingController();
-    _contentController = TextEditingController();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final data =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final args =
-          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      if (args != null) {
-        setState(() {
-          _titleController.text = args['title'] ?? '';
-          _contentController.text = args['content'] ?? '';
-          _category = args['category'] ?? 'OVARIAN';
-          _existingImageUrl = args['imageUrl'];
-          widget.newsData = args;
-        });
-      }
-    });
+    if (data != null) {
+      _article.addAll(data);
+      _articleId = data['id'];
+      _existingImageUrl = data['imageUrl'];
+    }
   }
 
   Future<void> _pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _pickedImage = File(pickedFile.path);
-      });
+      setState(() => _pickedImage = File(pickedFile.path));
     }
   }
 
-  Future<String?> _uploadImageToFirebase(File imageFile) async {
+  Future<String?> _uploadImage(File file) async {
     try {
-      final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      final ref =
-          FirebaseStorage.instance.ref().child('news_images/$fileName.jpg');
-      final downloadUrl = await ref.getDownloadURL();
-      print("Image uploaded successfully: $downloadUrl");
-      return downloadUrl;
-    } on FirebaseException catch (e) {
-      print("FirebaseException: ${e.code} - ${e.message}");
-      return null;
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('articles/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      await ref.putFile(file);
+      return await ref.getDownloadURL();
     } catch (e) {
-      print("General Error uploading image: $e");
+      print("Image upload error: $e");
       return null;
     }
   }
 
-  void _submitNews() async {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
 
-    String imageUrl = _existingImageUrl ?? '';
+    _article['category'] = _category; // ✅ ضيفي دا هنا
 
     if (_pickedImage != null) {
-      final uploadedUrl = await _uploadImageToFirebase(_pickedImage!);
-      if (uploadedUrl != null) {
-        imageUrl = uploadedUrl;
-      }
+      final imageUrl = await _uploadImage(_pickedImage!);
+      _article['imageUrl'] = imageUrl;
+    } else if (_existingImageUrl != null) {
+      _article['imageUrl'] = _existingImageUrl;
     }
 
-    final news = {
-      "title": _titleController.text,
-      "content": _contentController.text,
-      "category": _category,
-      "imageUrl": imageUrl,
-    };
+    final url = Uri.parse(
+      _articleId != null
+          ? 'https://${MyApp.IP}/api/news/edit/$_articleId'
+          : 'https://${MyApp.IP}/api/news/add',
+    );
 
-    final isEdit = widget.newsData != null && widget.newsData!['id'] != null;
-    final id = widget.newsData?['id'];
-    final url = isEdit
-        ? 'http://${MyApp.IP}/api/news/edit/$id'
-        : 'http://${MyApp.IP}/api/news/add';
+    final response = await (_articleId != null
+        ? http.put(url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(_article))
+        : http.post(url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(_article)));
 
-    final response = await (isEdit ? putNews(news, url) : postNews(news, url));
-
-    if (response) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(isEdit ? 'News updated' : 'News added'),
-      ));
-      Navigator.pop(context, true);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(_articleId != null
+                ? 'Updated successfully'
+                : 'Added successfully')),
+      );
+      Navigator.pop(context, true); // يرجّع قيمة تدل على نجاح التعديل
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed: ${response.body}')),
+      );
     }
-  }
-
-  Future<bool> postNews(Map<String, dynamic> data, String url) async {
-    return await Uri.parse(url).sendJsonPost(data);
-  }
-
-  Future<bool> putNews(Map<String, dynamic> data, String url) async {
-    return await Uri.parse(url).sendJsonPut(data);
   }
 
   @override
   Widget build(BuildContext context) {
-    final isEdit = widget.newsData != null;
-
     return Scaffold(
-      appBar: AppBar(title: Text(isEdit ? 'Edit News' : 'Add News')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: AppBar(
+          title: Text(_articleId != null ? 'Edit Article' : 'Add Article')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
-          child: ListView(
+          child: Column(
             children: [
               DropdownButtonFormField<String>(
                 value: _category,
-                onChanged: (val) {
-                  if (val != null) {
-                    setState(() => _category = val);
-                  }
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Category',
-                  filled: true,
-                  fillColor: AppColors.white,
-                  border: OutlineInputBorder(),
-                ),
-                dropdownColor: AppColors.lavender,
-                style: const TextStyle(
-                  color: AppColors.dark,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                onChanged: (val) => setState(() => _category = val!),
                 items: [
-                  'ALL',
                   'BREAST',
                   'OVARIAN',
                   'PROSTATE',
-                  'MELANOMA',
                   'COLORECTAL',
+                  'MELANOMA',
+                  'LUNG',
+                  'SKIN',
+                  'PANCREATIC',
+                  'LEUKEMIA',
+                  'LYMPHOMA',
+                  'BRAIN',
+                  'LIVER',
+                  'STOMACH',
+                  'ESOPHAGEAL',
+                  'BLADDER',
+                  'KIDNEY',
+                  'THYROID',
+                  'BONE',
+                  'TESTICULAR',
+                  'ENDOMETRIAL',
+                  'CERVICAL',
+                  'GALLBLADDER',
+                  'MULTIPLE_MYELOMA',
+                  'ORAL'
                 ]
-                    .map((type) => DropdownMenuItem(
-                          value: type,
-                          child: Text(
-                            type,
-                            style: TextStyle(
-                              color: _category == type
-                                  ? Colors.deepPurple
-                                  : AppColors.dark,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ))
-                    .toList(),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
-                validator: (val) =>
-                    val == null || val.isEmpty ? 'Required' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _contentController,
-                decoration: const InputDecoration(
-                  labelText: 'Content',
-                  alignLabelWithHint: true,
-                ),
-                maxLines: 4,
-                validator: (val) =>
-                    val == null || val.isEmpty ? 'Required' : null,
-              ),
-              const SizedBox(height: 16),
-              Card(
-                elevation: 3,
-                color: AppColors.lavender,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: TextButton.icon(
-                          onPressed: _pickImage,
-                          icon:
-                              const Icon(Icons.image, color: Colors.deepPurple),
-                          label: const Text(
-                            'Pick Image from Gallery',
-                            style: TextStyle(color: Colors.deepPurple),
-                          ),
+                    .map(
+                      (e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(
+                          e,
+                          style: const TextStyle(color: Colors.black),
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      if (_pickedImage != null)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            _pickedImage!,
-                            height: 150,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      else if (_existingImageUrl != null)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            _existingImageUrl!,
-                            height: 150,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      else
-                        GestureDetector(
-                          onTap: _pickImage,
-                          child: SizedBox(
-                            height: 200,
-                            child: Center(
-                              child: Lottie.asset(
-                                'assets/lottie/imagePicker.json',
-                                repeat: true,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+                    )
+                    .toList(),
+                decoration: InputDecoration(
+                  labelText: 'Category',
+                  labelStyle: const TextStyle(color: AppColors.Teal),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.Teal),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.Teal),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide:
+                        const BorderSide(color: AppColors.gray, width: 2),
                   ),
                 ),
+                dropdownColor: AppColors.white,
+                iconEnabledColor: AppColors.Teal,
+                style: const TextStyle(color: Colors.black),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 10),
+              _buildField('title', required: true),
+              _buildField('articleId'),
+              _buildField('description'),
+              _buildField('content'),
+              _buildField('link'),
+              _buildField('creator'),
+              _buildField('pubDate'),
+              _buildField('sourceName'),
+              _buildField('sourceUrl'),
+              _buildField('sourceIcon'),
+              const SizedBox(height: 12),
+              if (_pickedImage != null)
+                Image.file(_pickedImage!, height: 150)
+              else if (_existingImageUrl != null)
+                Image.network(_existingImageUrl!, height: 150),
+              TextButton.icon(
+                onPressed: _pickImage,
+                icon: const Icon(Icons.image),
+                label: const Text("Pick Image"),
+              ),
+              const SizedBox(height: 16),
               CustomButton(
-                title: isEdit ? "Update News" : 'Add News',
-                onClick: _submitNews,
+                title: _articleId != null ? 'Update' : 'Submit',
+                onClick: _submit,
               ),
             ],
           ),
@@ -267,4 +208,48 @@ class _AdminNewsEditorScreenState extends State<AdminNewsEditorScreen> {
       ),
     );
   }
+
+  Widget _buildField(String key,
+      {bool required = false, bool isNumber = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: TextFormField(
+        initialValue: _article[key]?.toString() ?? '',
+        decoration: InputDecoration(
+          labelText: key.capitalize(),
+          labelStyle: const TextStyle(color: AppColors.gray),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: AppColors.gray),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: AppColors.gray),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: AppColors.gray, width: 2),
+          ),
+        ),
+        keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+        onSaved: (val) {
+          if (val != null) {
+            if (key == 'creator') {
+              _article[key] = val.split(',').map((e) => e.trim()).toList();
+            } else if (isNumber) {
+              _article[key] = int.tryParse(val);
+            } else {
+              _article[key] = val;
+            }
+          }
+        },
+        validator: (val) =>
+            required && (val == null || val.isEmpty) ? 'Required' : null,
+      ),
+    );
+  }
+}
+
+extension on String {
+  String capitalize() => this[0].toUpperCase() + substring(1);
 }
