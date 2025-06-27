@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:hope/Api/history/history_service.dart';
 import 'package:hope/main.dart';
 import 'package:hope/ui/screens/home/home.dart';
+import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:http/http.dart' as http;
@@ -20,11 +21,20 @@ class AddService {
     return prefs.getString('auth_token');
   }
 
-  static Future<void> addProduct(BuildContext context, String productName,
-    String barcode,
-    String ingredientsText,
-    String productType,
-  ) async {
+  static String cleanValue(String value) {
+    return value
+        .replaceAll(RegExp(r'^I\s*'), '')
+        .replaceAll('mog', 'mg')
+        .trim();
+  }
+
+  static Future<void> addProduct(
+      BuildContext context,
+      String productName,
+      String barcode,
+      String ingredientsText, // ← هذا ممكن نستخدمه لو مش Food
+      String productType,
+      [String? nutrientText]) async {
     final url = Uri.parse("https://${MyApp.IP}/products/add");
 
     String? token = await getToken();
@@ -39,14 +49,39 @@ class AddService {
       "Authorization": "Bearer $token",
     };
 
-    final ingredientsList = extractIngredients(ingredientsText, productType);
-
-    final body = {
+    // ✅ نجهّز الـ body مبدئيًا
+    final Map<String, dynamic> body = {
       "productName": productName,
       "barcode": barcode,
-      "ingredients": ingredientsList,
       "productType": productType,
     };
+
+    if (productType.toUpperCase() == "FOOD" && nutrientText != null) {
+      final rawNutrients = parseTextToNutrientMap(nutrientText);
+      final cleanedNutrients = rawNutrients.map(
+        (key, value) => MapEntry(key, cleanValue(value)),
+      );
+
+      print("✅ Nutrient Map to send: $cleanedNutrients");
+
+      // ✅ نرسل العناصر الغذائية داخل حقل ingredients
+      final ingredientsList = cleanedNutrients.entries.map((entry) {
+        return {
+          "ingredientName": entry.key,
+          "percentage": entry.value,
+        };
+      }).toList();
+
+      body["ingredients"] = ingredientsList;
+      body["nutrients"] =
+          cleanedNutrients; // ← optional if your backend uses it too
+    } else {
+      // لو مش طعام (مثلاً: Beauty)، استخرج المكونات بالطريقة العادية
+      final ingredientsList = extractIngredients(ingredientsText, productType);
+      body["ingredients"] = ingredientsList;
+    }
+
+    print("📦 Body to send: ${jsonEncode(body)}");
 
     try {
       showLoading(context);
@@ -61,46 +96,33 @@ class AddService {
       print("Response body: ${response.body}");
 
       if (response.statusCode == 200 && response.body.isNotEmpty) {
-        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
-        print(responseData['highRiskIngredients']);
-
         final scanResult = await fetchScanResult(barcode);
+        await HistoryApiService.addToHistory(barcode, "ADDED");
 
-        if (responseData['id'] != null) {
-          print("Product added successfully!");
-
-          await HistoryApiService.addToHistory(barcode, "ADDED");
-
-          showMessage(
-            context,
-            "Product added successfully!",
-            title: "Success",
-            posButtonTitle: "Go to result",
-            posButtonClick: () {
-              Navigator.pushNamed(
-                context,
-                ResultScreen.routeName,
-                arguments: {
-                  'message': "Product successfully added!",
-                  'product': {
-                    'productName': productName,
-                    'barcode': barcode,
-                  },
-                  'highRiskIngredients':
-                      scanResult?['highRiskIngredients'] ?? [],
+        showMessage(
+          context,
+          "Product added successfully!",
+          title: "Success",
+          posButtonTitle: "Go to result",
+          posButtonClick: () {
+            Navigator.pushNamed(
+              context,
+              ResultScreen.routeName,
+              arguments: {
+                'message': "Product successfully added!",
+                'product': {
+                  'productName': productName,
+                  'barcode': barcode,
                 },
-              );
-            },
-            negativeButtonTitle: "OK",
-            negativeButtonClick: () {
-              Navigator.pushNamed(context, HomeScreen.routeName);
-            },
-          );
-        } else {
-          print("Error adding product: ${response.statusCode}");
-          showMessage(context, "Error adding product: ${response.statusCode}",
-              title: "Error");
-        }
+                'highRiskIngredients': scanResult?['highRiskIngredients'] ?? [],
+              },
+            );
+          },
+          negativeButtonTitle: "OK",
+          negativeButtonClick: () {
+            Navigator.pushNamed(context, HomeScreen.routeName);
+          },
+        );
       } else {
         showMessage(
           context,
@@ -115,72 +137,54 @@ class AddService {
     }
   }
 
-  static Future<void> addProductAfterScan(BuildContext context,
-      String productName,
-      String barcode,
-      String ingredientsText,
-      String productType) async {
-    final url = Uri.parse("https://${MyApp.IP}/products/add");
+  static List<Map<String, String>> extractIngredients(
+      String text, String productType) {
+    final List<Map<String, String>> ingredients = [];
 
-    String? token = await getToken();
-    if (token == null) {
-      showMessage(context, "Not found!", title: "Error");
-      print("Token not found!");
-      return;
-    }
+    final items = text.split(RegExp(r'[,-]'));
 
-    final headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    };
+    for (var item in items) {
+      final trimmed = item.trim();
+      if (trimmed.isEmpty) continue;
 
-    final ingredientsList = extractIngredients(ingredientsText, productType);
+      final parts = trimmed.split(':');
+      final ingredientName = parts[0].trim();
 
-    final body = {
-      "productName": productName,
-      "barcode": barcode,
-      "ingredients": ingredientsList,
-      "productType": productType,
-    };
+      final map = <String, String>{
+        "ingredientName": ingredientName,
+      };
 
-    try {
-      showLoading(context);
-      final response = await http.post(
-        url,
-        headers: headers,
-        body: json.encode(body),
-      );
-      hideLoading(context);
-
-      if (response.statusCode == 200 && response.body.isNotEmpty) {
-        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
-
-        // Assuming highRiskIngredients is part of responseData after product addition
-        final highRiskIngredients = responseData['highRiskIngredients'] ?? [];
-
-        // Show result screen
-        Navigator.pushNamed(
-          context,
-          ResultScreen.routeName,
-          arguments: {
-            'message': "Product added successfully!",
-            'product': {
-              'productName': productName,
-              'barcode': barcode,
-            },
-            'highRiskIngredients': highRiskIngredients,
-          },
-        );
-      } else {
-        showMessage(context, "Error adding product: ${response.statusCode}",
-            title: "Error");
+      if (parts.length > 1) {
+        final percentage = parts[1].trim();
+        if (percentage.isNotEmpty) {
+          map["percentage"] = percentage;
+        }
       }
-    } catch (e) {
-      hideLoading(context);
-      print("Error: $e");
-      showMessage(context, "Error: $e", title: "Exception");
+
+      ingredients.add(map);
     }
+
+    return ingredients;
   }
+
+  // static Map<String, String> parseTextToNutrientMap(String input) {
+  //   final lines = input
+  //       .split('\n')
+  //       .map((e) => e.trim())
+  //       .where((e) => e.isNotEmpty)
+  //       .toList();
+  //
+  //   final result = <String, String>{};
+  //   final mid = (lines.length / 2).floor();
+  //   final keys = lines.sublist(0, mid);
+  //   final values = lines.sublist(mid);
+  //
+  //   for (int i = 0; i < keys.length && i < values.length; i++) {
+  //     result[keys[i]] = values[i];
+  //   }
+  //
+  //   return result;
+  // }
 
   static Future<Map<String, dynamic>?> fetchScanResult(String barcode) async {
     try {
@@ -195,22 +199,6 @@ class AddService {
     } catch (e) {
       return {'message': 'Error occurred during fetching scan result: $e'};
     }
-  }
-
-  static String extractIngredients(String text, String productType) {
-    //TextRecognitionService text = TextRecognitionService();
-    // final List<Map<String, dynamic>> ingredients = [];
-    //   final ingredientNames = text.split(RegExp(r'[,-]'));
-    //   for (var name in ingredientNames) {
-    //     final ingredient = {
-    //       "ingredientName": name.trim(),
-    //     };
-    //     ingredients.add(ingredient);
-    //  }
-    // } if (productType == 'FOOD'){
-    //
-    // }
-    return '';
   }
 
   Future<List<dynamic>?> getAddedProducts() async {
@@ -242,4 +230,97 @@ class AddService {
       return null;
     }
   }
+
+  static Future<void> addProductAfterScan(
+    BuildContext context,
+    String productName,
+      String barcode,
+      String ingredientsText,
+    String productType,
+  ) async {
+    final url = Uri.parse("https://${MyApp.IP}/products/add");
+
+    String? token = await getToken();
+    if (token == null) {
+      showMessage(context, "Not found!", title: "Error");
+      print("Token not found!");
+      return;
+    }
+
+    final headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    };
+
+    final ingredientsList = extractIngredients(ingredientsText, productType);
+
+    final body = {
+      "productName": productName,
+      "barcode": barcode,
+      "ingredients": ingredientsList,
+      "productType": productType,
+    };
+
+    if (productType.toUpperCase() == "FOOD") {
+      final rawNutrients = parseTextToNutrientMap(ingredientsText);
+      final cleanedNutrients = rawNutrients.map(
+        (key, value) => MapEntry(key, cleanValue(value)),
+      );
+      body["nutrients"] = cleanedNutrients;
+    }
+
+    try {
+      showLoading(context);
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: json.encode(body),
+      );
+      hideLoading(context);
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+
+        final scanResult = await fetchScanResult(barcode);
+
+        await HistoryApiService.addToHistory(barcode, "ADDED");
+
+        showMessage(
+          context,
+          "Product added successfully!",
+          title: "Success",
+          posButtonTitle: "Go to result",
+          posButtonClick: () {
+            Navigator.pushNamed(
+              context,
+              ResultScreen.routeName,
+              arguments: {
+                'message': "Product successfully added!",
+                'product': {
+                  'productName': productName,
+                  'barcode': barcode,
+                },
+                'highRiskIngredients': scanResult?['highRiskIngredients'] ?? [],
+              },
+            );
+          },
+          negativeButtonTitle: "OK",
+          negativeButtonClick: () {
+            Navigator.pushNamed(context, HomeScreen.routeName);
+          },
+        );
+      } else {
+        showMessage(
+          context,
+          "Error adding product: ${response.statusCode}",
+          title: "Error",
+        );
+      }
+    } catch (e) {
+      hideLoading(context);
+      print("Error: $e");
+      showMessage(context, "Error: $e", title: "Exception");
+    }
+  }
+
 }

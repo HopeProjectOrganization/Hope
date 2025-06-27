@@ -211,13 +211,6 @@ class MyApp extends StatelessWidget {
             selectedDate: selectedDate, // ✅ استخدمه هنا
           );
         },
-        // ProgressScreen.routeName: (context) {
-        //   final args = ModalRoute.of(context)?.settings.arguments
-        //       as Map<String, dynamic>?;
-        //   final Meal selectedMeal = args?['meal'] as Meal;
-        //   return ProgressScreen(meal: selectedMeal);
-        // },
-        //  FilterScreen.routeName: (_) => const FilterScreen(),
         PlacesAdminScreen.routeName: (_) => PlacesAdminScreen(),
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen(),
         ExploreScreen.routeName: (_) => ExploreScreen()

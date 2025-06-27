@@ -86,8 +86,29 @@ class AddTabState extends State<AddTab> {
   }
 
   Future<void> addProduct() async {
-    await AddService.addProduct(context, productName.text, barCode.text,
-        ingredients.text, selectedType ?? "Beauty");
+    if (isFood) {
+      final nutrientMap = parseTextToNutrientMap(
+          scannedText); // ✅ النص الأصلي المستخلص من الصورة
+      print("Nutrient Map to send:");
+      print(nutrientMap);
+
+      await AddService.addProduct(
+        context,
+        productName.text,
+        barCode.text,
+        ingredients.text, // ده يحتوي على المكونات بشكل يدوي أو من الصورة
+        "Food",
+        scannedText, // ده اللي فيه القيم الغذائية فقط
+      );
+    } else {
+      await AddService.addProduct(
+        context,
+        productName.text,
+        barCode.text,
+        ingredients.text,
+        selectedType ?? "Beauty",
+      );
+    }
   }
 
   Future<Map<String, dynamic>?> scanBarcode(BuildContext context) async {
@@ -243,4 +264,32 @@ class AddTabState extends State<AddTab> {
           ),
         ));
   }
+}
+
+Map<String, String> parseTextToNutrientMap(String input) {
+  final lines = input
+      .split('\n')
+      .map((e) => e.trim())
+      .where((e) => e.isNotEmpty)
+      .toList();
+
+  final result = <String, String>{};
+
+  final mid = (lines.length / 2).floor();
+  final keys = lines.sublist(0, mid);
+  final values = lines.sublist(mid);
+
+  for (int i = 0; i < keys.length && i < values.length; i++) {
+    final numberOnly = _extractNumberAsString(values[i]);
+    if (numberOnly != null) {
+      result[keys[i]] = numberOnly;
+    }
+  }
+
+  return result;
+}
+
+String? _extractNumberAsString(String text) {
+  final match = RegExp(r'[\d.]+').firstMatch(text);
+  return match?.group(0);
 }

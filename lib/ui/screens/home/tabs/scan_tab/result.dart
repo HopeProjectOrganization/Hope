@@ -34,8 +34,6 @@ class ResultScreen extends StatelessWidget {
     final data =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
             {};
-    print("Data received: $data");
-
     final String message = data['message'] ?? "Unknown result";
     final product = data['product'] ?? {};
     final String productName = product['productName'] ?? "Unknown product";
@@ -45,7 +43,6 @@ class ResultScreen extends StatelessWidget {
     ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
     AppLocalizations appLocalizations = AppLocalizations.of(context)!;
 
-    // ✅ Get image based on first ingredient's riskCategory
     final String imageToShow = getRiskImage(
       highRiskIngredients.isNotEmpty
           ? highRiskIngredients[0]['riskCategory']
@@ -56,13 +53,8 @@ class ResultScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Result"),
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_outlined,
-            color: AppColors.Teal,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          icon: const Icon(Icons.arrow_back_outlined, color: AppColors.Teal),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
@@ -70,91 +62,128 @@ class ResultScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              "Risk rate",
-              style: Theme.of(context).textTheme.labelLarge,
+            // صورة تقييم الخطر
+            Card(
+              elevation: 4,
+              color: AppColors.cloudi,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Text(
+                      "Risk Rate",
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium!
+                          .copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 12),
+                    Image.asset(
+                      imageToShow,
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height * 0.18,
+                      fit: BoxFit.contain,
+                    ),
+                  ],
+                ),
+              ),
             ),
-            Image.asset(
-              imageToShow,
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.2,
-            ),
-            const SizedBox(height: 15),
-            Text(
-              message,
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
+
+            const SizedBox(height: 16),
+
+            const SizedBox(height: 16),
+
+            // معلومات المنتج
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 20),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: const BoxDecoration(
-                color: AppColors.Teal,
-                borderRadius: BorderRadius.all(Radius.circular(16)),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.Teal.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.Teal, width: 1.5),
               ),
-              width: double.infinity,
-              child: Text(
-                "Product: $productName (Barcode: $barcode)",
-                style: Theme.of(context).textTheme.bodyLarge,
+              child: Row(
+                children: [
+                  const Icon(Icons.qr_code, color: AppColors.yellow),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      "Product Name: $productName\nBarcode: $barcode",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
+                          .copyWith(color: AppColors.Teal),
+                    ),
+                  ),
+                ],
               ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Text(
+              "High-Risk Ingredients",
+              style: Theme.of(context)
+                  .textTheme
+                  .labelLarge!
+                  .copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            if (highRiskIngredients.isNotEmpty) ...[
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: const BoxDecoration(
-                  color: Colors.redAccent,
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-                child: Text(
-                  "High-Risk Ingredients",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Colors.white),
-                ),
-              ),
-              Expanded(
-                child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    final ingredient = highRiskIngredients[index];
-                    return ExpansionTile(
-                      title: Text(
-                        ingredient['ingredientName'] ?? '',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      children: [
-                        if (ingredient['englishDescription'] != null)
-                          ListTile(
-                            title: Text("${ingredient['englishDescription']}"),
+
+            Expanded(
+              child: highRiskIngredients.isNotEmpty
+                  ? ListView.separated(
+                      itemCount: highRiskIngredients.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final ingredient = highRiskIngredients[index];
+                        return Card(
+                          elevation: 4,
+                          color: AppColors.cloudi,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                      ],
-                    );
-                  },
-                  separatorBuilder: (context, index) => const Divider(
-                    color: Colors.grey,
-                    thickness: 1,
-                    height: 10,
-                  ),
-                  itemCount: highRiskIngredients.length,
-                ),
-              ),
-            ] else ...[
-              const SizedBox(height: 20),
-              Text(
-                "No high-risk ingredients found.",
-                style: Theme.of(context).textTheme.titleMedium,
-                textAlign: TextAlign.center,
-              ),
-              const Spacer(),
-            ],
-            const SizedBox(height: 15),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  ingredient['ingredientName'] ?? '',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                const SizedBox(height: 8),
+                                if (ingredient['englishDescription'] != null)
+                                  Text(
+                                    ingredient['englishDescription'],
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : Center(
+                      child: Text(
+                        "No high-risk ingredients found.",
+                        style: Theme.of(context).textTheme.titleMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+            ),
+
+            const SizedBox(height: 20),
             CustomButton(
-              onClick: () {
-                Navigator.pushNamed(context, HomeScreen.routeName);
-              },
+              onClick: () => Navigator.pushNamed(context, HomeScreen.routeName),
               title: "Done",
             ),
           ],

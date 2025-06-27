@@ -27,8 +27,6 @@ class GetUserProfile {
         await prefs.setInt("userId", profileData.id!);
         await prefs.setString("avatarId", profileData.avatarId ?? "5");
 
-        print("✅ Saved userId: ${profileData.id}");
-        print("✅ Saved avatarId: ${profileData.avatarId}");
 
         return profileData;
       } else {
