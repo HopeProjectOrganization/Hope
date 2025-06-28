@@ -11,6 +11,7 @@ import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_text_field.dart';
 import 'package:hope/ui/shared_widgets/language_switch.dart';
+import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -24,19 +25,10 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   late AppLocalizations appLocalizations;
-
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
-
-  final AuthApiService authService =
-      AuthApiService(); // إنشاء كائن من AuthService
-
+  final AuthApiService authService = AuthApiService();
   bool _obscurePassword = true;
-  String? _emptyFieldError;
-
-  String? emailError;
-  String? passwordError;
-
   var formKey = GlobalKey<FormState>();
 
   @override
@@ -47,54 +39,78 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Form(
           key: formKey,
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: [
-              const SizedBox(height: 32),
-              Image.asset(
-                AppAssets.login,
-                height: MediaQuery.of(context).size.height * 0.3,
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 32),
+                      Image.asset(
+                        AppAssets.login,
+                        height: constraints.maxHeight * 0.25,
+                      ),
+                      const SizedBox(height: 32),
+                      buildEmailTextField(),
+                      const SizedBox(height: 16),
+                      buildPasswordTextField(),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                                context, ForgetpasswordScreen.routeName);
+                          },
+                          child: Text(appLocalizations.forgetPassword),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      buildLoginButton(),
+                      const SizedBox(height: 16),
+                      buildSignUpRow(),
+                      const SizedBox(height: 8),
+                      buildORText(),
+                      const SizedBox(height: 16),
+                      buildGoogleSignInButton(),
+                      const Spacer(),
+                      const SizedBox(height: 16),
+                      Center(child: LanguageSwitch()),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
               ),
-              const SizedBox(height: 32),
-              buildEmailTextField(context),
-              const SizedBox(height: 16),
-              buildPasswordTextField(context),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                          context, ForgetpasswordScreen.routeName);
-                    },
-                    child: Text(appLocalizations.forgetPassword),
-                  )
-                ],
-              ),
-              const SizedBox(height: 16),
-              buildLoginButton(context),
-              const SizedBox(height: 16),
-              buildSignUpRow(context),
-              const SizedBox(height: 8),
-              buildORText(context),
-              const SizedBox(height: 16),
-              buildGoogleSignInButton(context),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  LanguageSwitch(),
-                ],
-              )
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget buildPasswordTextField(BuildContext context) {
+  Widget buildEmailTextField() {
+    return CustomTextField(
+      controller: emailController,
+      hint: appLocalizations.email,
+      prefixIcon: const ImageIcon(AssetImage(AppIcons.emailIcon)),
+      validator: (email) {
+        if (email == null || email.isEmpty) {
+          return appLocalizations.emailRequired;
+        }
+        final bool emailValid = RegExp(
+          r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$",
+        ).hasMatch(email);
+        if (!emailValid) {
+          return appLocalizations.invalidEmail;
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget buildPasswordTextField() {
     return TextFormField(
       controller: passwordController,
       style: Theme.of(context).textTheme.bodyLarge,
@@ -104,126 +120,62 @@ class _LoginScreenState extends State<LoginScreen> {
         hintText: appLocalizations.password,
         prefixIcon: const ImageIcon(AssetImage(AppIcons.passwordIcon)),
         suffixIcon: IconButton(
-          icon: Icon(
-            _obscurePassword ? Icons.visibility_off : Icons.visibility,
-          ),
+          icon:
+              Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
           onPressed: () {
             setState(() {
               _obscurePassword = !_obscurePassword;
             });
           },
         ),
-        errorText: passwordError,
         errorStyle: const TextStyle(color: AppColors.red),
       ),
-    );
-  }
-
-  Widget buildEmailTextField(BuildContext context) {
-    return CustomTextField(
-      controller: emailController,
-      hint: appLocalizations.email,
-      prefixIcon: const ImageIcon(AssetImage(AppIcons.emailIcon)),
-      error: emailError,
-      validator: (email) {
-        if (email == null || email.isEmpty) {
-          return "Please enter email";
-        }
-        final bool emailValid = RegExp(
-                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-            .hasMatch(email);
-        if (!emailValid) {
-          return "The email address is badly formatted";
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return appLocalizations.password;
         }
         return null;
       },
     );
   }
 
-  // Widget buildLoginButton(BuildContext context) {
-  //   return CustomButton(
-  //     onClick: () async {
-  //       if (formKey.currentState!.validate()) {
-  //         try {
-  //           final response = await authService.loginAndRedirectUser(
-  //             email: emailController.text.trim(),
-  //             password: passwordController.text.trim(), context: null,
-  //           );
-  //
-  //           if (response.statusCode == 200) {
-  //             final responseData = jsonDecode(response.body);
-  //             final token = responseData['token'];
-  //
-  //             // خزن التوكن في SharedPreferences
-  //             await authService.storeToken(token);
-  //
-  //             // ادخله على الصفحة الرئيسية
-  //             Navigator.pushReplacementNamed(context, HomeScreen.routeName);
-  //           } else if (response.statusCode == 401) {
-  //             ScaffoldMessenger.of(context).showSnackBar(
-  //               SnackBar(content: Text('Invalid credentials')),
-  //             );
-  //           } else {
-  //             ScaffoldMessenger.of(context).showSnackBar(
-  //               SnackBar(content: Text('Login failed: ${response.body}')),
-  //             );
-  //           }
-  //         } catch (e) {
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             SnackBar(content: Text('An error occurred: $e')),
-  //           );
-  //         }
-  //       }
-  //     },
-  //     title: appLocalizations.login,
-  //   );
-  // }
-  Widget buildLoginButton(BuildContext context) {
+  Widget buildLoginButton() {
     return CustomButton(
+      title: appLocalizations.login,
       onClick: () async {
         if (formKey.currentState!.validate()) {
-          try {
-            await authService.loginAndRedirectUser(
-              context: context,
-              email: emailController.text.trim(),
-              password: passwordController.text.trim(),
-            );
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('An error occurred: $e')),
-            );
+          final success = await authService.loginAndRedirectUser(
+            context: context,
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          );
+          if (!success) {
+            showMessage(context, appLocalizations.loginFailed,
+                type: MessageType.error);
           }
         }
       },
-      title: appLocalizations.login,
     );
   }
 
-  Widget buildSignUpRow(BuildContext context) {
+  Widget buildSignUpRow() {
     return Row(
       children: [
         Expanded(
-          flex: 1,
-          child: Text(
-            appLocalizations.dontHaveAccount,
-          style: Theme.of(context).textTheme.bodyLarge,
-          ),
+          child: Text(appLocalizations.dontHaveAccount,
+              style: Theme.of(context).textTheme.bodyLarge),
         ),
-        Expanded(
-            flex: 1,
-            child: TextButton(
-              onPressed: () {
+        TextButton(
+          onPressed: () {
             Navigator.pushNamed(context, RegisterScreen.routeName);
           },
-          child: Text(
-            appLocalizations.createAccount,
-          ),
-            ))
+          child: Text(appLocalizations.createAccount),
+        ),
       ],
     );
   }
 
-  Padding buildORText(BuildContext context) {
+  Widget buildORText() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0),
       child: Row(
@@ -231,10 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
           const Expanded(child: Divider()),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              "or",
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
+            child: Text(appLocalizations.or,
+                style: Theme.of(context).textTheme.labelMedium),
           ),
           const Expanded(child: Divider()),
         ],
@@ -242,29 +192,22 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  FilledButton buildGoogleSignInButton(BuildContext context) {
+  Widget buildGoogleSignInButton() {
     return FilledButton(
       onPressed: () async {
-        final provider = GoogleSignInProvider();
         try {
+          final provider = GoogleSignInProvider();
           final userCredential = await provider.signInWithGoogle();
 
           if (userCredential != null) {
-            print("Logged in as ${userCredential.user?.displayName}");
-            // هنا مثلاً اعمل تنقل أو حدث ال state لتوجيه المستخدم للشاشة الرئيسية
             Navigator.pushReplacementNamed(context, HomeScreen.routeName);
           } else {
-            // المستخدم ألغى تسجيل الدخول أو حدث خطأ
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text('Google sign-in was cancelled or failed.')),
-            );
+            showMessage(context, appLocalizations.loginFailed,
+                type: MessageType.error);
           }
         } catch (e) {
-          // خطأ عام غير متوقع
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error during Google sign-in: $e')),
-          );
+          showMessage(context, '${appLocalizations.error}: $e',
+              type: MessageType.error);
         }
       },
       style: FilledButton.styleFrom(
@@ -275,24 +218,13 @@ class _LoginScreenState extends State<LoginScreen> {
           side: BorderSide(color: Theme.of(context).primaryColor),
         ),
       ),
-      child: SizedBox(
-        width: double.infinity,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              flex: 1,
-              child: Brand(Brands.google),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 3,
-              child: Text(
-                appLocalizations.googleLogin,
-              ),
-            ),
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Brand(Brands.google),
+          const SizedBox(width: 8),
+          Text(appLocalizations.googleLogin),
+        ],
       ),
     );
   }

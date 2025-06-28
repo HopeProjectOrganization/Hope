@@ -33,47 +33,67 @@ hideLoading(BuildContext context) {
   Navigator.pop(context);
 }
 
-showMessage(BuildContext context,
-    String message, {
-      String? title,
-      String? posButtonTitle,
-      Function? posButtonClick,
-      String? negativeButtonTitle,
-      Function? negativeButtonClick,
-      MessageType type = MessageType.info, // ← ضف هذا السطر
-
-    }) {
-  void showMessage(BuildContext context,
-      String message, {
-        String? title,
-        String? posButtonTitle,
-        Function? posButtonClick,
-        String? negativeButtonTitle,
-        Function? negativeButtonClick,
-        MessageType type = MessageType.info, // ← ضف هذا السطر
-      }) {
-    // ممكن تغيّر لون أو تنسيق الرسالة بناءً على `type` إذا حبيت
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: title != null ? Text(title) : null,
-          content: Text(
+void showMessage(
+  BuildContext context,
+  String message, {
+  String? title,
+  String? posButtonTitle,
+  Function? posButtonClick,
+  String? negativeButtonTitle,
+  Function? negativeButtonClick,
+  MessageType type = MessageType.info,
+}) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return CupertinoAlertDialog(
+        title: title != null
+            ? Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: AppColors.Teal,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : null,
+        content: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text(
             message,
             style: const TextStyle(
               fontSize: 16,
               color: AppColors.Teal,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(posButtonTitle ?? 'OK'),
-            )
-          ],
-        );
-      },
-    );
-  }
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () {
+              Navigator.pop(context);
+              if (posButtonClick != null) posButtonClick();
+            },
+            isDefaultAction: true,
+            child: Text(
+              posButtonTitle ?? 'OK',
+              style: const TextStyle(color: AppColors.Teal),
+            ),
+          ),
+          if (negativeButtonTitle != null)
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.pop(context);
+                if (negativeButtonClick != null) negativeButtonClick();
+              },
+              isDestructiveAction: true,
+              child: Text(
+                negativeButtonTitle,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
+        ],
+      );
+    },
+  );
 }

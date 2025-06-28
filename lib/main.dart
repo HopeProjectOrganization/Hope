@@ -126,7 +126,7 @@ void main() async {
   Workmanager().registerOneOffTask(
     "testTask", // unique name
     "mealReminderTask", // نفس اسم المهمة
-    initialDelay: Duration(seconds: 10),
+    initialDelay: const Duration(seconds: 10),
   );
 
   runApp(
@@ -172,7 +172,7 @@ class MyApp extends StatelessWidget {
         HomeScreen.routeName: (_) => const HomeScreen(),
         ScanTab.routeName: (_) => const ScanTab(),
         SuggestedReplacementsScreen.routeName: (_) =>
-            SuggestedReplacementsScreen(),
+            const SuggestedReplacementsScreen(),
         AddTab.routeName: (_) => const AddTab(),
         ResultScreen.routeName: (_) => const ResultScreen(),
         NewsScreen.routeName: (_) => NewsScreen(),
@@ -181,37 +181,37 @@ class MyApp extends StatelessWidget {
         HealthyDiet.routeName: (_) => HealthyDiet(),
         EditProfile.routeName: (_) => const EditProfile(),
         ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
-        SavedListScreen.routeName: (_) => SavedListScreen(),
+        SavedListScreen.routeName: (_) => const SavedListScreen(),
         AdminHomeScreen.routeName: (_) => const AdminHomeScreen(),
         AdminAwareTab.routeName: (_) => AdminAwareTab(),
         AdminNewsScreen.routeName: (_) => AdminNewsScreen(),
         AdminNewsEditor.routeName: (_) => AdminNewsEditor(),
         AdminHereditary.routeName: (_) => const AdminHereditary(),
         AdminHereditaryEditorScreen.routeName: (_) =>
-            AdminHereditaryEditorScreen(),
-        AdminNewsArticleScreen.routeName: (_) => AdminNewsArticleScreen(),
+            const AdminHereditaryEditorScreen(),
+        AdminNewsArticleScreen.routeName: (_) => const AdminNewsArticleScreen(),
         AdminAddArticleScreen.routeName: (context) => AdminAddArticleScreen(),
         AdminBodyPartScreen.routeName: (_) => AdminBodyPartScreen(),
         AdminRecipes.routeName: (_) => AdminRecipes(),
         AdminHighRiskPeople.routeName: (_) => AdminHighRiskPeople(),
         AdminHealthyDiet.routeName: (_) => AdminHealthyDiet(),
-        AdminVeganScreen.routeName: (_) => AdminVeganScreen(),
+        AdminVeganScreen.routeName: (_) => const AdminVeganScreen(),
         AdminProductManagementScreen.routeName: (_) =>
-            AdminProductManagementScreen(),
-        AddVeganRecipeScreen.routeName: (_) => AddVeganRecipeScreen(),
-        AdminMeals.routeName: (_) => AdminMeals(),
+            const AdminProductManagementScreen(),
+        AddVeganRecipeScreen.routeName: (_) => const AddVeganRecipeScreen(),
+        AdminMeals.routeName: (_) => const AdminMeals(),
         AdminMealDetails.routeName: (context) {
           final meal = ModalRoute.of(context)!.settings.arguments as Meal;
           return AdminMealDetails(meal: meal);
         },
-        AddMeal.routeName: (_) => AddMeal(),
+        AddMeal.routeName: (_) => const AddMeal(),
         AdminSuggestedReplacementsScreen.routeName: (_) =>
             AdminSuggestedReplacementsScreen(),
-        AdminHighRiskScreen.routeName: (_) => AdminHighRiskScreen(),
-        AdminProductsScreen.routeName: (_) => AdminProductsScreen(),
+        AdminHighRiskScreen.routeName: (_) => const AdminHighRiskScreen(),
+        AdminProductsScreen.routeName: (_) => const AdminProductsScreen(),
         Recipes.routeName: (_) => Recipes(),
         BodyPartScreen.routeName: (_) => BodyPartScreen(),
-        VeganScreen.routeName: (_) => VeganScreen(),
+        VeganScreen.routeName: (_) => const VeganScreen(),
         RecipeDetails.routeName: (context) {
           final id = ModalRoute.of(context)!.settings.arguments as String;
           return RecipeDetails(id: id);
@@ -274,10 +274,10 @@ class MyApp extends StatelessWidget {
         // },
         //  FilterScreen.routeName: (_) => const FilterScreen(),
         PlacesAdminScreen.routeName: (_) => PlacesAdminScreen(),
-        AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen(),
-        ExploreScreen.routeName: (_) => ExploreScreen()
+        AdminAddHospitalScreen.routeName: (_) => const AdminAddHospitalScreen(),
+        ExploreScreen.routeName: (_) => const ExploreScreen()
       },
-      initialRoute: SplashScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

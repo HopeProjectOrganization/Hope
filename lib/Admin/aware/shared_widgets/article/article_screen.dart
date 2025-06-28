@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/saved/saved_postcons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/article.dart';
@@ -31,17 +30,6 @@ class _NewsArticleScreenState extends State<AdminNewsArticleScreen> {
   late String category;
   bool isInitialized = false;
 
-  void checkIfFavorite(String articleId) async {
-    try {
-      final savedArticles = await SavedPostService.fetchSavedArticles(type);
-      final isInFavorites = savedArticles.any((a) => a.articleId == articleId);
-      setState(() {
-        isSaved = isInFavorites;
-      });
-    } catch (e) {
-      print("Failed to check favorite: $e");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +48,6 @@ class _NewsArticleScreenState extends State<AdminNewsArticleScreen> {
       }
 
       isInitialized = true;
-      checkIfFavorite(article.articleId);
     }
 
     final String image =

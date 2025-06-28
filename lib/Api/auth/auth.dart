@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/home/home.dart';
 import 'package:hope/Api/profile/profile_service.dart';
 import 'package:hope/main.dart';
@@ -43,11 +44,13 @@ class AuthApiService {
 
   /// ==================== LoginUserOrAdmin ====================
 
-  Future<void> loginAndRedirectUser({
-    required context,
+  Future<bool> loginAndRedirectUser({
+    required BuildContext context,
     required String email,
     required String password,
   }) async {
+    final localizations = AppLocalizations.of(context)!;
+
     try {
       showLoading(context);
 
@@ -58,12 +61,10 @@ class AuthApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final token = data['token'];
-        await GetUserProfile().fetchUserProfile(token!);
 
         if (token != null) {
           await storeToken(token);
 
-          // جلب معلومات المستخدم
           final profileService = GetUserProfile();
           final userData = await profileService.fetchUserProfile(token);
 
@@ -71,27 +72,39 @@ class AuthApiService {
             final role = userData.role.toUpperCase();
 
             if (role == 'ADMIN') {
-              print("Malak is Admin");
               Navigator.pushReplacementNamed(
                   context, AdminHomeScreen.routeName);
             } else if (role == 'USER') {
-              print("Malak is User");
               Navigator.pushReplacementNamed(context, HomeScreen.routeName);
             } else {
-              showMessage(context, 'Unknown role: $role');
+              showMessage(context, "Unknown role: {role}");
             }
+
+            return true;
           } else {
-            showMessage(context, 'Failed to fetch user profile.');
+            showMessage(context, localizations.failedToLoadUserData);
+            return false;
           }
         } else {
-          showMessage(context, 'Token not found in response.');
+          showMessage(context, localizations.tokenNotFound);
+          return false;
         }
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        showMessage(
+          context,
+          localizations.invalidEmailOrPassword,
+          title: localizations.loginFailed,
+          type: MessageType.error,
+        );
+        return false;
       } else {
-        showMessage(context, 'Email or password may be incorrect.');
+        showMessage(context, localizations.loginErrorTryAgain);
+        return false;
       }
     } catch (e) {
       hideLoading(context);
-      showMessage(context, 'An error occurred: $e');
+      showMessage(context, '${localizations.errorOccurred}: $e');
+      return false;
     }
   }
 

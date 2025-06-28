@@ -287,6 +287,16 @@
   "pleaseFillAllFields": "Please fill all fields.",
   "chatTitle": "Chat",
   "askYourQuestion": "Ask your question...",
-  "errorSendingMessage": "An error occurred while sending your message. Please try again."
-
+  "errorSendingMessage": "An error occurred while sending your message. Please try again.",
+  "invalidCredentials": "Email or password may be incorrect.",
+  "fetchProfileFailed": "Failed to fetch user profile.",
+  "unexpectedError": "An unexpected error occurred",
+  "unknownRole": "Unknown role: {role}",
+  "failedToLoadUserData": "Failed to load user data.",
+  "invalidEmailOrPassword": "Invalid email or password.",
+  "loginFailed": "Login Failed",
+  "loginErrorTryAgain": "Login failed. Please try again later.",
+  "emailRequired": "Please enter your email",
+  "invalidEmail": "The email address is badly formatted",
+  "or": "or"
 }

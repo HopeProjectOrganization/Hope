@@ -285,6 +285,15 @@
   "pleaseFillAllFields": "يرجى تعبئة جميع الحقول.",
   "chatTitle": "الدردشة",
   "askYourQuestion": "اسأل سؤالك...",
-  "errorSendingMessage": "حدث خطأ أثناء إرسال رسالتك. حاول مرة أخرى."
-
+  "errorSendingMessage": "حدث خطأ أثناء إرسال رسالتك. حاول مرة أخرى.",
+  "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "fetchProfileFailed": "فشل في جلب معلومات المستخدم.",
+  "unexpectedError": "حدث خطأ غير متوقع",
+  "failedToLoadUserData": "فشل في تحميل بيانات المستخدم.",
+  "invalidEmailOrPassword": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "loginFailed": "فشل تسجيل الدخول",
+  "loginErrorTryAgain": "حدث خطأ أثناء تسجيل الدخول. حاول لاحقًا.",
+  "emailRequired": "يرجى إدخال البريد الإلكتروني",
+  "invalidEmail": "البريد الإلكتروني غير صالح",
+  "or": "أو"
 }
