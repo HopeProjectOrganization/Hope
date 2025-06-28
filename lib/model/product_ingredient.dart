@@ -1,27 +1,28 @@
-import 'package:hope/Admin/add/admin_product_screen.dart';
+
 
 class ProductWithIngredient {
-  final int id;
+  final int id; // ده ID المكون
+  final int productId; // ➕ أضيفي ده
   final String productName;
   final String barcode;
   final String productType;
   final String ingredientName;
   final String percentage;
-  final List<IngredientEntry> ingredients;
 
   ProductWithIngredient({
     required this.id,
+    required this.productId, // ➕
     required this.productName,
     required this.barcode,
     required this.productType,
     required this.ingredientName,
     required this.percentage,
-    this.ingredients = const [],
   });
 
   factory ProductWithIngredient.fromJson(Map<String, dynamic> json) {
     return ProductWithIngredient(
       id: json['id'],
+      productId: json['product']['id'],
       productName: json['product']['productName'],
       barcode: json['product']['barcode'],
       productType: json['product']['productType'],
@@ -34,13 +35,12 @@ class ProductWithIngredient {
     return {
       'id': id,
       'product': {
+        'id': productId, // ✅ ضيفي ده لو هتبعتيه مع التعديل
         'productName': productName,
         'barcode': barcode,
         'productType': productType,
       },
-      'ingredient': {
-        'ingredientName': ingredientName,
-      },
+      'ingredientName': ingredientName,
       'percentage': percentage,
     };
   }

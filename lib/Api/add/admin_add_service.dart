@@ -54,8 +54,8 @@ class ProductService {
   }
 
   Future<void> deleteProductIngredient(int id) async {
-    final res = await http.delete(Uri.parse('$baseUrl/delete/$id'));
-    if (res.statusCode != 200) {
+    final res = await http.delete(Uri.parse('$baseUrl/delete/product/$id'));
+    if (res.statusCode != 200 && res.statusCode != 204) {
       throw Exception("Failed to delete");
     }
   }

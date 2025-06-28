@@ -40,6 +40,18 @@ class RecipeService {
     }
   }
 
+  static Future<void> updateRecipe(int id, RecipeModel recipe) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/$id'), // ⬅️ ده id الأوتوماتيك
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(recipe.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update recipe');
+    }
+  }
+
   static Future<void> deleteRecipe(String recipeId) async {
     final response = await http.delete(Uri.parse('$baseUrl/$recipeId'));
     if (response.statusCode != 204) {

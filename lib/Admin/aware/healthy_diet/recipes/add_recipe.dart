@@ -95,7 +95,8 @@ class _AdminMealFormScreenState extends State<AdminMealFormScreen> {
       if (widget.meal == null) {
         await RecipeService.createRecipe(meal);
       } else {
-        // await RecipeService.updateRecipe(meal.recipeId!, meal);
+        await RecipeService.updateRecipe(
+            widget.meal!.id!, meal); // ⬅️ استخدمي id هنا
       }
       Navigator.pop(context, true);
     } catch (e) {

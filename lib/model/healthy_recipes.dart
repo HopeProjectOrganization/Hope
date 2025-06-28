@@ -1,4 +1,5 @@
 class RecipeModel {
+  final int? id;
   final String recipeId;
   final String name;
   final String category;
@@ -10,6 +11,7 @@ class RecipeModel {
   final Map<String, String> ingredients;
 
   RecipeModel({
+    this.id,
     required this.recipeId,
     required this.name,
     required this.category,
@@ -28,6 +30,7 @@ class RecipeModel {
         {};
 
     return RecipeModel(
+      id: json['id'],
       recipeId: json['recipeId'] ?? '',
       name: json['name'] ?? '',
       category: json['category'] ?? '',
@@ -42,6 +45,7 @@ class RecipeModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'recipeId': recipeId,
       'name': name,
       'category': category,

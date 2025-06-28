@@ -23,14 +23,14 @@ class IngredientEntry {
 }
 
 class GroupedProduct {
-  final int id; // ممكن يمثل أول ProductIngredient ID (مش مهم هنا)
+  final int productId; // ✅ ده ID المنتج مش المكون
   final String productName;
   final String barcode;
   final String productType;
   final List<IngredientEntry> ingredients;
 
   GroupedProduct({
-    required this.id,
+    required this.productId,
     required this.productName,
     required this.barcode,
     required this.productType,
@@ -77,7 +77,8 @@ class _AdminProductManagementScreenState
       final first = items.first;
 
       return GroupedProduct(
-        id: first.id,
+        productId: first.productId,
+        // ✅ استخدمي ID المنتج الحقيقي
         productName: first.productName,
         barcode: first.barcode,
         productType: first.productType,
@@ -164,8 +165,9 @@ class _AdminProductManagementScreenState
                               ),
                             );
                             if (confirm == true) {
-                              await ProductService()
-                                  .deleteProductIngredient(product.id);
+                              await ProductService().deleteProductIngredient(
+                                  product.productId); // ✅ ID المنتج
+
                               refresh();
                             }
                           },

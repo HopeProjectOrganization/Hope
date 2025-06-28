@@ -208,18 +208,19 @@ class _AdminRecipesState extends State<AdminRecipes> {
                       right: 6,
                       child: Row(
                         children: [
-                          // IconButton(
-                          //   icon: const Icon(Icons.edit, color: Colors.orange),
-                          //   onPressed: () async {
-                          //     final result = await Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (_) => AdminMealFormScreen(mealId: item.recipeId),
-                          //       ),
-                          //     );
-                          //     if (result == true) fetchAllMeals();
-                          //   },
-                          // ),
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.orange),
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => AdminMealFormScreen(
+                                      meal: item), // ✅ هنا التعديل
+                                ),
+                              );
+                              if (result == true) fetchAllMeals();
+                            },
+                          ),
                           IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
                             onPressed: () async {
