@@ -3,7 +3,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:hope/Admin/add/add_high_ingredient.dart';
 import 'package:hope/Admin/add/admin_product_screen.dart';
+import 'package:hope/Admin/add/admin_products_screen.dart';
 import 'package:hope/Admin/aware/alternative/alternative_screen.dart';
 import 'package:hope/Admin/aware/awareness/addNewsScreen.dart';
 import 'package:hope/Admin/aware/awareness/news_screen.dart';
@@ -205,6 +207,8 @@ class MyApp extends StatelessWidget {
         AddMeal.routeName: (_) => AddMeal(),
         AdminSuggestedReplacementsScreen.routeName: (_) =>
             AdminSuggestedReplacementsScreen(),
+        AdminHighRiskScreen.routeName: (_) => AdminHighRiskScreen(),
+        AdminProductsScreen.routeName: (_) => AdminProductsScreen(),
         Recipes.routeName: (_) => Recipes(),
         BodyPartScreen.routeName: (_) => BodyPartScreen(),
         VeganScreen.routeName: (_) => VeganScreen(),
@@ -273,7 +277,7 @@ class MyApp extends StatelessWidget {
         AdminAddHospitalScreen.routeName: (_) => AdminAddHospitalScreen(),
         ExploreScreen.routeName: (_) => ExploreScreen()
       },
-      initialRoute: AdminHomeScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

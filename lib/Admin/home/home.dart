@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Admin/add/admin_product_screen.dart';
+import 'package:hope/Admin/add/admin_products_screen.dart';
 import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
@@ -49,7 +49,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   List<Widget> tabs = [
     const HomeTab(),
-    const AdminProductManagementScreen(),
+    const AdminProductsScreen(),
     const Placeholder(), // عشان نحافظ على الـ index == 2 للزر سكان (مش هيظهر)
     AdminAwareTab(),
     MenuTab(),
