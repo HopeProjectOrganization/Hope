@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hope/Admin/add/admin_product_screen.dart';
+import 'package:hope/Admin/home/home.dart';
+import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/chatbot/chat.dart';
-import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/screens/home/tabs/home_tab/recently_scan.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
 import 'package:hope/ui/shared_widgets/custom_home_button.dart';
@@ -13,14 +14,14 @@ import 'package:hope/ui/shared_widgets/utils/theme_button.dart';
 
 import 'recently_add.dart';
 
-class HomeTab extends StatefulWidget {
-  const HomeTab({super.key});
+class AdminHomeTab extends StatefulWidget {
+  const AdminHomeTab({super.key});
 
   @override
-  _HomeTabState createState() => _HomeTabState();
+  _AdminHomeTabState createState() => _AdminHomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
+class _AdminHomeTabState extends State<AdminHomeTab> {
   String scannedBarcode = "Not scanned yet";
 
   @override
@@ -113,8 +114,8 @@ class _HomeTabState extends State<HomeTab> {
                               image: AppAssets.awareButton,
                               onClick: () {
                                 Navigator.pushNamed(
-                                    context, HomeScreen.routeName,
-                                    arguments: 2);
+                                    context, AdminHomeScreen.routeName,
+                                    arguments: 3);
                               },
                             ),
                             CustomHomeButton(
@@ -136,8 +137,7 @@ class _HomeTabState extends State<HomeTab> {
                             CustomHomeButton(
                               image: AppAssets.addButton,
                               onClick: () {
-                                Navigator.pushNamed(context,
-                                    AdminProductManagementScreen.routeName,
+                                Navigator.pushNamed(context, AdminHomeScreen.routeName,
                                     arguments: 1);
                               },
                             ),

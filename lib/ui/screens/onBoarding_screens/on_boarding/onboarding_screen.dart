@@ -165,7 +165,7 @@ class OnBoardingScreenState extends State<OnBoardingScreen> {
             ),
             TextButton(
                 onPressed: () {
-                  if (currentIndex < onboardingData.length) {
+                  if (currentIndex < onboardingData.length - 1) {
                     pageController.nextPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,

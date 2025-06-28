@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Admin/home/tabs/menu_tab/profileDetails/custom_item.dart';
+import 'package:hope/Admin/home/tabs/menu_tab/profileDetails/profile_item.dart';
 import 'package:hope/Api/auth/auth.dart';
 import 'package:hope/Api/profile/profile_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
@@ -11,9 +13,6 @@ import 'package:hope/model/get_profile.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab/edit_profile.dart';
-import 'package:hope/ui/screens/profileDetails/custom_item.dart';
-import 'package:hope/ui/screens/profileDetails/profile_item.dart';
-import 'package:hope/ui/screens/profileDetails/saved/saved_list.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -128,22 +127,6 @@ class _ProfileBodyState extends State<ProfileBody> {
               if (result == true && widget.token != null) {
                 await fetchUserProfile(widget.token!);
               }
-            },
-          ),
-          ProfileItem(
-            icon: Icons.notifications,
-            title: widget.appLocalizations.notification,
-            context: context,
-            onTap: () {
-              showMessage(context, widget.appLocalizations.comingSoon);
-            },
-          ),
-          ProfileItem(
-            icon: Icons.playlist_add_check,
-            title: widget.appLocalizations.savedList,
-            context: context,
-            onTap: () {
-              Navigator.pushNamed(context, SavedListScreen.routeName);
             },
           ),
           ProfileItem(

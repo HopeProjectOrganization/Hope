@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/saved/favorite_service.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/favorite.dart';
 import 'package:hope/ui/screens/profileDetails/saved/favorite_article.dart';
 import 'package:hope/ui/screens/profileDetails/saved/favorite_exercise.dart';
 import 'package:hope/ui/screens/profileDetails/saved/favorite_meal.dart';
 import 'package:hope/ui/shared_widgets/custome_tab.dart';
+import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
+import 'package:provider/provider.dart';
 
 class SavedListScreen extends StatefulWidget {
   static const String routeName = "savedlist";
+
+  const SavedListScreen({super.key});
 
   @override
   State<SavedListScreen> createState() => _SavedListScreenState();
@@ -16,9 +22,13 @@ class SavedListScreen extends StatefulWidget {
 
 class _SavedListScreenState extends State<SavedListScreen>
     with TickerProviderStateMixin {
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
+
   List<FavoriteMeal> favorites = [];
   bool isLoading = false;
   late TabController _tabController;
+
   final Map<String, String> articleCategories = {
     'NEWS': 'News',
     'HIGH_RISK': 'High risk people',
@@ -43,15 +53,14 @@ class _SavedListScreenState extends State<SavedListScreen>
     try {
       favorites = await FavoriteApiService.getAllFavorites();
     } catch (e) {
-      _showError("Failed to load favorites");
+      _showError(appLocalizations.failedToLoadFavorites);
     } finally {
       setState(() => isLoading = false);
     }
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    showMessage(context, message, posButtonTitle: appLocalizations.ok);
   }
 
   List<FavoriteMeal> filterByType(String type) {
@@ -65,12 +74,16 @@ class _SavedListScreenState extends State<SavedListScreen>
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: AppColors.Teal,
-        title:
-            const Text("Saved List", style: TextStyle(color: AppColors.white)),
+        title: Text(
+          appLocalizations.savedList,
+          style: TextStyle(color: AppColors.white),
+        ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(50),
           child: AnimatedBuilder(
@@ -81,10 +94,14 @@ class _SavedListScreenState extends State<SavedListScreen>
                 controller: _tabController,
                 indicatorSize: TabBarIndicatorSize.label,
                 indicator: const BoxDecoration(),
-                labelPadding: const EdgeInsets.symmetric(horizontal: 6),
+                labelPadding: const EdgeInsets.symmetric(horizontal: 16),
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 tabs: List.generate(3, (index) {
-                  final titles = ['Posts', 'Meals', 'Exercises'];
+                  final titles = [
+                    appLocalizations.posts,
+                    appLocalizations.meals,
+                    appLocalizations.exercises
+                  ];
                   return CustomeTab(
                     text: titles[index],
                     isSelected:

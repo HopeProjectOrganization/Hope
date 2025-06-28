@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/main.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/verify/circle_input.dart';
+import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:http/http.dart' as http;
 
 class VerficationScreen extends StatefulWidget {
@@ -43,7 +43,7 @@ class _VerficationScreenState extends State<VerficationScreen> {
         });
       } else {
         setState(() {
-          _isCodeValid = false; // Code becomes invalid
+          _isCodeValid = false;
         });
         _timer?.cancel();
       }
@@ -52,10 +52,7 @@ class _VerficationScreenState extends State<VerficationScreen> {
 
   Future<void> resendCode() async {
     if (!_isCodeValid) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text("Code expired. Please request a new code.")),
-      );
+      showMessage(context, appLocalizations.codeExpired);
       return;
     }
 
@@ -66,62 +63,52 @@ class _VerficationScreenState extends State<VerficationScreen> {
       );
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Code sent again successfully")),
-        );
+        showMessage(context, appLocalizations.codeResentSuccess);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to resend code")),
-        );
+        showMessage(context, appLocalizations.codeResentFail);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Network error")),
-      );
+      showMessage(context, appLocalizations.networkError);
     }
   }
 
   Future<void> verifyCode() async {
     if (!_isCodeValid) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text("The code has expired. Please request a new one.")),
-      );
+      showMessage(context, appLocalizations.codeExpired);
       return;
     }
 
     String code = controllers.map((controller) => controller.text).join();
     if (code.length != 4) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Invalid code")),
-      );
+      showMessage(context, appLocalizations.invalidCode);
       return;
     }
 
     try {
+      showLoading(context);
+
       final response = await http.post(
         Uri.parse('https://${MyApp.IP}/api/v1/auth/Verify'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'code': code}),
       );
 
+      hideLoading(context);
+
       if (response.statusCode == 200) {
         Navigator.pushNamed(context, ResetpasswordScreen.routeName);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Verification failed")),
-        );
+        showMessage(context, appLocalizations.verificationFailed);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Network error")),
-      );
+      hideLoading(context);
+      showMessage(context, appLocalizations.networkError);
     }
   }
 
   @override
   void dispose() {
-    _timer?.cancel(); // Cancel timer when leaving the screen
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -185,8 +172,8 @@ class _VerficationScreenState extends State<VerficationScreen> {
               children: [
                 Text(
                   _isCodeValid
-                      ? "Time left: $_remainingTime seconds"
-                      : "Code expired! Please resend.",
+                      ? appLocalizations.timeLeft(_remainingTime.toString())
+                      : appLocalizations.codeExpiredShort,
                   style: const TextStyle(color: Colors.red),
                 ),
               ],
@@ -203,9 +190,7 @@ class _VerficationScreenState extends State<VerficationScreen> {
                 ),
                 Expanded(
                   child: TextButton(
-                    onPressed: () {
-                      resendCode(); // Call the resend code API when pressed
-                    },
+                    onPressed: resendCode,
                     child: Text(appLocalizations.sendAgain),
                   ),
                 ),
@@ -213,9 +198,7 @@ class _VerficationScreenState extends State<VerficationScreen> {
             ),
             const SizedBox(height: 32),
             FilledButton(
-              onPressed: () {
-                verifyCode();
-              },
+              onPressed: verifyCode,
               child: Text(appLocalizations.verify),
             ),
           ],

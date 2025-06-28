@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/scan/scan_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
@@ -14,13 +15,12 @@ class ScanTab extends StatefulWidget {
 }
 
 class _ScanTabState extends State<ScanTab> {
-  String scannedBarcode = "Not scanned yet";
+  String? scannedBarcode;
   final ScanService _scanService = ScanService();
 
   Future<void> scanBarcode() async {
     showLoading(context);
 
-    // Call the ScanService to perform scanning and fetch the API result
     var result = await _scanService.scanBarcode(context);
 
     if (!mounted) return;
@@ -29,26 +29,35 @@ class _ScanTabState extends State<ScanTab> {
 
     if (result != null) {
       setState(() {
-        scannedBarcode = result['message'] ?? "No message";
+        scannedBarcode =
+            result['message'] ?? AppLocalizations.of(context)!.noMessage;
       });
 
       Navigator.pushNamed(
         context,
         ResultScreen.routeName,
-        arguments: result, // Pass the entire result data to the next screen
+        arguments: result,
       );
     } else {
       setState(() {
-        scannedBarcode = "Error: No result from scanning";
+        scannedBarcode = null;
       });
+
+      showMessage(
+        context,
+        AppLocalizations.of(context)!.noScanResult,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Barcode Scanner"),
+        title: Text(appLocalizations.barcodeScanner),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_outlined,
@@ -64,13 +73,17 @@ class _ScanTabState extends State<ScanTab> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Result: $scannedBarcode",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              scannedBarcode == null
+                  ? appLocalizations.noScanYet
+                  : "${appLocalizations.scanResult}: $scannedBarcode",
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: scanBarcode,
-              child: const Text("Start Scanning"),
+              child: Text(appLocalizations.startScanning),
             ),
           ],
         ),

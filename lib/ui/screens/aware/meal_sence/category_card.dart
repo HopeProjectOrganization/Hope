@@ -73,6 +73,7 @@ class _CategoryCardState extends State<CategoryCard> {
         category: widget.category,
         date: date,
       );
+
       final meals = await UserMealService.fetchMealsFromUserMeals(userMeals);
 
       setState(() {
@@ -132,7 +133,7 @@ class _CategoryCardState extends State<CategoryCard> {
                   style: TextStyle(color: widget.kcalColor)),
               InkWell(
                 onTap: () async {
-                  final result = await Navigator.pushNamed(
+                  final result = await Navigator.pushReplacementNamed(
                       context, Meals.routeName, arguments: {
                     'title': widget.title,
                     'selectedDate': widget.selectedDate
@@ -217,11 +218,15 @@ class _CategoryCardState extends State<CategoryCard> {
                                 ),
                                 GestureDetector(
                                   onTap: () async {
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    final userId = prefs.getInt("userId") ?? 1;
                                     await UserMealService.deleteUserMeal(
-                                      userId: 5,
-                                      date: '2025-06-27',
-                                      category: 'Lunch',
-                                      mealId: 'abc123',
+                                      userId: userId,
+                                      date: DateFormat('yyyy-MM-dd')
+                                          .format(meal.date!),
+                                      category: widget.category, // مش title
+                                      mealId: meal.id,
                                     );
 
                                     setState(() {

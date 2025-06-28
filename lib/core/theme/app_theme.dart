@@ -20,12 +20,19 @@ class AppTheme {
     dividerColor: AppColors.Teal,
     primaryColor: AppColors.Teal,
     primaryColorDark: AppColors.dark,
+
     appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-        foregroundColor: AppColors.Teal,
-        centerTitle: true,
+      backgroundColor: AppColors.white,
+      foregroundColor: AppColors.Teal,
+      centerTitle: true,
       elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.white)),
+      titleTextStyle: TextStyle(
+        color: AppColors.Teal, // عكس الفاتح
+        fontSize: 30,
+        fontWeight: FontWeight.bold,
+      ),
+      iconTheme: IconThemeData(color: AppColors.cloudi), // أيقونات أبيض
+    ),
     radioTheme: RadioThemeData(
       fillColor: WidgetStateProperty.resolveWith<Color>((states) {
         if (states.contains(MaterialState.selected)) {
@@ -165,17 +172,17 @@ class AppTheme {
       ),
       appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.dark,
-        foregroundColor: AppColors.Teal,
+        foregroundColor: AppColors.cloudi,
         centerTitle: true,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.dark)),
     primaryColor: AppColors.Teal,
     textTheme: const TextTheme(
       titleLarge: TextStyle(
-          color: AppColors.white,
-          fontSize: 40,
-          fontWeight: FontWeight.bold,
-          height: 1),
+        color: AppColors.cloudi,
+        fontSize: 30,
+        fontWeight: FontWeight.bold,
+      ),
       titleMedium: TextStyle(
           color: AppColors.gray, fontSize: 26, fontWeight: FontWeight.bold),
       bodyLarge: TextStyle(

@@ -6,7 +6,6 @@ import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/healthy_recipes.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
-import 'package:hope/ui/shared_widgets/favorite_button.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -139,13 +138,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
         ),
         centerTitle: true,
-        actions: [
-          FavoriteButton(
-            id: recipe!.recipeId,
-            category: 'HEALTHY_DIET',
-            type: 'meal',
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(

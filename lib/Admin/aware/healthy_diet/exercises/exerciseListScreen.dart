@@ -5,7 +5,7 @@ import 'package:hope/Api/healthy_diet/exercises_service.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/exercises.dart';
-import 'package:hope/ui/screens/aware/healthy_diet/exercises/exerciseDetailScreen.dart';
+import 'package:hope/Admin/aware/healthy_diet/exercises/exerciseDetailScreen.dart';
 import 'package:provider/provider.dart';
 
 class AdminExerciseListScreen extends StatefulWidget {

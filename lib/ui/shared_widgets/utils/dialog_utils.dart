@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/core/theme/app_colors.dart';
 
-showLoading(
-  BuildContext context,
-) {
+enum MessageType { success, error, warning, info }
+
+showLoading(BuildContext context,) {
   showDialog(
       context: context,
       barrierDismissible: false,
@@ -33,53 +33,47 @@ hideLoading(BuildContext context) {
   Navigator.pop(context);
 }
 
-showMessage(
-  BuildContext context,
-  String message, {
-  String? title,
-  String? posButtonTitle,
-  Function? posButtonClick,
-  String? negativeButtonTitle,
-  Function? negativeButtonClick,
-}) {
-  showDialog(
+showMessage(BuildContext context,
+    String message, {
+      String? title,
+      String? posButtonTitle,
+      Function? posButtonClick,
+      String? negativeButtonTitle,
+      Function? negativeButtonClick,
+      MessageType type = MessageType.info, // ← ضف هذا السطر
+
+    }) {
+  void showMessage(BuildContext context,
+      String message, {
+        String? title,
+        String? posButtonTitle,
+        Function? posButtonClick,
+        String? negativeButtonTitle,
+        Function? negativeButtonClick,
+        MessageType type = MessageType.info, // ← ضف هذا السطر
+      }) {
+    // ممكن تغيّر لون أو تنسيق الرسالة بناءً على `type` إذا حبيت
+    showDialog(
       context: context,
       builder: (context) {
-        return CupertinoAlertDialog(
+        return AlertDialog(
           title: title != null ? Text(title) : null,
           content: Text(
             message,
-            style: TextStyle(
-                color: AppColors.Teal,
-                fontSize: 20,
-                fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 16,
+              color: AppColors.Teal,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           actions: [
-            if (posButtonTitle != null)
-              TextButton(
-                  style: FilledButton.styleFrom(
-                    textStyle: TextStyle(fontSize: 16, color: AppColors.Teal),
-                    padding: const EdgeInsets.all(16),
-                  ),
-                  onPressed: () {
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
-                    if (posButtonClick != null) posButtonClick();
-                  },
-                  child: Text(posButtonTitle)),
-            if (negativeButtonTitle != null)
-              TextButton(
-                  style: FilledButton.styleFrom(
-                    textStyle: TextStyle(fontSize: 16, color: AppColors.Teal),
-                    padding: const EdgeInsets.all(16),
-                  ),
-                  onPressed: () {
-                    hideLoading(context);
-                    if (negativeButtonClick != null) negativeButtonClick();
-                  },
-                  child: Text(negativeButtonTitle))
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(posButtonTitle ?? 'OK'),
+            )
           ],
         );
-      });
+      },
+    );
+  }
 }

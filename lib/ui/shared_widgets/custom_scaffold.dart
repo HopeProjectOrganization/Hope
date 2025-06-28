@@ -25,14 +25,14 @@ class CustomScaffold extends StatelessWidget {
       backgroundColor:
           backgroundColor ?? (isDarkMode ? AppColors.dark : backgroundColor),
       appBar: AppBar(
-        backgroundColor: isDarkMode ? AppColors.dark : AppColors.white,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_outlined,
-              color: isDarkMode ? AppColors.white : AppColors.dark),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        //   backgroundColor: Colors.transparent,
+        //   leading: IconButton(
+        //     icon: Icon(Icons.arrow_back_outlined,
+        //         color: isDarkMode ? AppColors.white : AppColors.dark),
+        //     onPressed: () {
+        //       Navigator.of(context).pop();
+        //     },
+        //   ),
         title: Text(title),
         centerTitle: true,
         actions: actions,

@@ -23,15 +23,24 @@ class ResetpasswordScreenState extends State<ResetpasswordScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  bool _obscureOldPassword = true;
-
   @override
   Widget build(BuildContext context) {
     appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(appLocalizations.resetPassword),
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            appLocalizations.resetPassword,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Form(
         key: _formKey,

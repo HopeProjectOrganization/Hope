@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/chatbot/chat.dart';
@@ -8,7 +9,6 @@ import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
 import 'package:hope/ui/shared_widgets/custom_home_button.dart';
 import 'package:hope/ui/shared_widgets/utils/language_button.dart';
 import 'package:hope/ui/shared_widgets/utils/theme_button.dart';
-
 import 'recently_add.dart';
 
 class HomeTab extends StatefulWidget {
@@ -20,15 +20,13 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   String scannedBarcode = "Not scanned yet";
-
+  late BarcodeScannerService barcodeScanner;
 
   @override
   void initState() {
     super.initState();
     barcodeScanner = BarcodeScannerService(context);
   }
-
-  late BarcodeScannerService barcodeScanner;
 
   void startScan() {
     barcodeScanner.scanBarcode((result) {
@@ -39,8 +37,9 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+
     return DefaultTabController(
       length: 4,
       child: Stack(
@@ -64,17 +63,18 @@ class _HomeTabState extends State<HomeTab> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Welcome Back ✨',
-                                  style: TextStyle(color: AppColors.white),
+                                  '${appLocalizations.welcomeBack} ✨',
+                                  style:
+                                      const TextStyle(color: AppColors.white),
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Text(
-                                  'Cura Scan',
-                                  style: TextStyle(
+                                  "CuraScan",
+                                  style: const TextStyle(
                                     color: AppColors.white,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 24,
@@ -111,24 +111,25 @@ class _HomeTabState extends State<HomeTab> {
                             CustomHomeButton(
                               image: AppAssets.awareButton,
                               onClick: () {
-                                Navigator.pushNamed(
-                                    context, HomeScreen.routeName,
-                                    arguments: 2);
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  HomeScreen.routeName,
+                                  arguments: 3,
+                                );
                               },
                             ),
                             CustomHomeButton(
                               image: AppAssets.scanButton,
-                              onClick: () {
-                                startScan();
-                              },
+                              onClick: startScan,
                             ),
                             CustomHomeButton(
                               image: AppAssets.chatbotButton,
                               onClick: () {
-                                Navigator.push(
+                                Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ChatScreen()),
+                                    builder: (context) => ChatScreen(),
+                                  ),
                                 );
                               },
                             ),
@@ -136,8 +137,10 @@ class _HomeTabState extends State<HomeTab> {
                               image: AppAssets.addButton,
                               onClick: () {
                                 Navigator.pushNamed(
-                                    context, HomeScreen.routeName,
-                                    arguments: 1);
+                                  context,
+                                  HomeScreen.routeName,
+                                  arguments: 1,
+                                );
                               },
                             ),
                           ],

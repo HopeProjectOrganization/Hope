@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/saved/saved_post.dart';
-import 'package:hope/core/assets/app_icons.dart';
+import 'package:hope/Api/saved/saved_postcons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/article.dart';
@@ -90,55 +89,7 @@ class _NewsArticleScreenState extends State<AdminNewsArticleScreen> {
           icon: const Icon(Icons.arrow_back_outlined),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        actions: [
-          IconButton(
-            icon: Image.asset(
-              AppIcons.save,
-              color: isSaved ? AppColors.yellow : null,
-            ),
-            onPressed: () async {
-              if (article.articleId == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Article ID is missing")),
-                );
-                return;
-              }
 
-              try {
-                if (isSaved) {
-                  final success = await SavedPostService.deleteFavorite(
-                    postId: article.id,
-                    postType: type,
-                  );
-                  if (success) {
-                    setState(() => isSaved = false);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text("Removed from saved articles")),
-                    );
-                  }
-                } else {
-                  final success = await SavedPostService.addToSaved(
-                    postId: article.id,
-                    postStringId: article.articleId,
-                    postType: type,
-                  );
-                  if (success) {
-                    setState(() => isSaved = true);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Saved to your articles")),
-                    );
-                  }
-                }
-              } catch (e) {
-                print(e);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Action failed")),
-                );
-              }
-            },
-          ),
-        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

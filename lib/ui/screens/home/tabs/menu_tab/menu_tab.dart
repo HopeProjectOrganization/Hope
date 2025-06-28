@@ -7,6 +7,7 @@ import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/get_profile.dart';
 import 'package:hope/ui/screens/profileDetails/profile_body.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
+import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,14 +23,9 @@ class _MenuTabState extends State<MenuTab> {
   late LocaleProvider localeProvider;
   late AppLocalizations appLocalizations;
 
-  String? selectedAvatarId;
-  String? selectedAvatarAsset;
-
   Data? userProfile;
   bool isLoading = true;
   String? token;
-  int historyCount = 0;
-  int wishListCount = 0;
 
   @override
   void initState() {
@@ -45,27 +41,43 @@ class _MenuTabState extends State<MenuTab> {
       setState(() {
         token = storedToken;
       });
-      fetchUserProfile(storedToken);
+      await fetchUserProfile(storedToken);
     } else {
       setState(() {
         isLoading = false;
       });
+      showMessage(context, appLocalizations.tokenNotFound);
     }
   }
 
   Future<void> fetchUserProfile(String token) async {
-    GetUserProfile fetchUserProfile = GetUserProfile();
-    Data? profileData = await fetchUserProfile.fetchUserProfile(token);
+    try {
+      final GetUserProfile getUserProfile = GetUserProfile();
+      final Data? profileData = await getUserProfile.fetchUserProfile(token);
 
-    if (mounted) {
-      setState(() {
+      if (mounted) {
         if (profileData != null) {
-          userProfile = profileData;
-          isLoading = false;
+          setState(() {
+            userProfile = profileData;
+            isLoading = false;
+          });
         } else {
-          userProfile = null;
-          isLoading = false;
+          showMessage(
+            context,
+            appLocalizations.failedToLoadProfile,
+          );
+          setState(() {
+            isLoading = false;
+          });
         }
+      }
+    } catch (e) {
+      showMessage(
+        context,
+        appLocalizations.errorOccurred,
+      );
+      setState(() {
+        isLoading = false;
       });
     }
   }
@@ -76,7 +88,7 @@ class _MenuTabState extends State<MenuTab> {
     localeProvider = Provider.of<LocaleProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
 
-    // ✅ تحديث البيانات بعد أول رسم للشاشة
+    // ✅ تأكيد تحديث البيانات بعد أول رسم للشاشة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (token != null && !isLoading) {
         fetchUserProfile(token!);
@@ -84,14 +96,17 @@ class _MenuTabState extends State<MenuTab> {
     });
 
     return CustomScaffold(
-      title: "Profile",
+      title: appLocalizations.profile,
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(color: AppColors.Teal),
             )
           : userProfile == null
-              ? const Center(
-                  child: Text("Failed to load profile"),
+              ? Center(
+                  child: Text(
+                    appLocalizations.failedToLoadProfile,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                 )
               : ProfileBody(
                   localeProvider: localeProvider,

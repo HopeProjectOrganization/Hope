@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hope/Api/add/high_ingredients.dart';
 import 'package:hope/model/high_risk_ingredents.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 
 class AddHighIngredientScreen extends StatefulWidget {
   final HighRiskIngredient? ingredient;
@@ -19,6 +22,8 @@ class _AddHighIngredientScreenState extends State<AddHighIngredientScreen> {
   final safeLimitController = TextEditingController();
   final enDescController = TextEditingController();
   final arDescController = TextEditingController();
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   final _formKey = GlobalKey<FormState>();
   bool isSaving = false;
@@ -57,8 +62,6 @@ class _AddHighIngredientScreenState extends State<AddHighIngredientScreen> {
       }
       Navigator.pop(context, true);
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('❌ Error: $e')));
     } finally {
       setState(() => isSaving = false);
     }
@@ -66,10 +69,16 @@ class _AddHighIngredientScreenState extends State<AddHighIngredientScreen> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            widget.ingredient == null ? "Add Ingredient" : "Edit Ingredient"),
+          widget.ingredient == null
+              ? appLocalizations.addIngredient
+              : appLocalizations.editIngredient,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -77,14 +86,16 @@ class _AddHighIngredientScreenState extends State<AddHighIngredientScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              buildField(nameController, "Ingredient Name"),
-              buildField(levelController, "Risk Level"),
-              buildField(safeLimitController, "Safe Limit"),
-              buildField(enDescController, "English Description", maxLines: 3),
-              buildField(arDescController, "Arabic Description", maxLines: 3),
+              buildField(nameController, appLocalizations.ingredientName),
+              buildField(levelController, appLocalizations.riskLevel),
+              buildField(safeLimitController, appLocalizations.safeLimit),
+              buildField(enDescController, appLocalizations.englishDescription,
+                  maxLines: 3),
+              buildField(arDescController, appLocalizations.arabicDescription,
+                  maxLines: 3),
               const SizedBox(height: 24),
               CustomButton(
-                title: 'Save',
+                title: appLocalizations.save,
                 onClick: isSaving ? () {} : saveIngredient,
               ),
             ],
@@ -101,8 +112,9 @@ class _AddHighIngredientScreenState extends State<AddHighIngredientScreen> {
       child: TextFormField(
         controller: controller,
         maxLines: maxLines,
-        validator: (val) =>
-            val == null || val.trim().isEmpty ? "Required" : null,
+        validator: (val) => val == null || val.trim().isEmpty
+            ? appLocalizations.requiredField
+            : null,
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

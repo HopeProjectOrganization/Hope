@@ -59,7 +59,7 @@ class _HomeScreenState extends State<VeganScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            RecipeDetailsScreen(id: int.parse(recipe.veganId)),
+                            RecipeDetailsScreen(id: recipe.id!),
                       ),
                     );
                   },

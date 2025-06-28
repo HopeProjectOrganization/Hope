@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/add/add_service.dart';
 import 'package:hope/ui/shared_widgets/custom_recently_cards.dart';
+import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 
 class RecentlyAddedScreen extends StatefulWidget {
+  const RecentlyAddedScreen({super.key});
+
   @override
   _RecentlyAddedScreenState createState() => _RecentlyAddedScreenState();
 }
@@ -10,6 +14,8 @@ class RecentlyAddedScreen extends StatefulWidget {
 class _RecentlyAddedScreenState extends State<RecentlyAddedScreen> {
   List<dynamic> recentlyAddedProducts = [];
   final AddService _addService = AddService();
+  bool isLoading = true;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -21,22 +27,42 @@ class _RecentlyAddedScreenState extends State<RecentlyAddedScreen> {
     try {
       List<dynamic>? products = await _addService.getAddedProducts();
 
+      if (!mounted) return;
+
       if (products != null) {
         setState(() {
           recentlyAddedProducts = products.reversed.take(5).toList();
+          isLoading = false;
         });
       } else {
-        print("No recently added products found.");
+        setState(() {
+          isLoading = false;
+        });
       }
     } catch (e) {
-      print("Error loading recently added products: $e");
+      if (mounted) {
+        showMessage(
+          context,
+          appLocalizations.failedToLoadRecentlyAdded,
+          type: MessageType.error,
+        );
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    appLocalizations = AppLocalizations.of(context)!;
+
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     if (recentlyAddedProducts.isEmpty) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink(); // لا تعرض شيئاً
     }
 
     return Column(
@@ -45,12 +71,12 @@ class _RecentlyAddedScreenState extends State<RecentlyAddedScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
-            "Recently Added",
+            appLocalizations.recentlyAdded,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
         ),
-        Container(
-          height: MediaQuery.of(context).size.height * .26,
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.26,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: recentlyAddedProducts.length,
@@ -60,11 +86,11 @@ class _RecentlyAddedScreenState extends State<RecentlyAddedScreen> {
               if (product is Map<String, dynamic>) {
                 return CustomRecentlyCard(
                   product: product,
-                  barcode: product['barcode'],
+                  barcode: product['barcode'] ?? '',
                   highRiskIngredients: product['highRiskIngredients'] ?? [],
                 );
               } else {
-                return SizedBox.shrink();
+                return const SizedBox.shrink();
               }
             },
           ),

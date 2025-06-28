@@ -4,9 +4,6 @@ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:provider/provider.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 class DateHelper {
   static String getMonthName(BuildContext context, int month) {
     final applocalizations = AppLocalizations.of(context)!;
@@ -113,7 +110,7 @@ class MyCalendarWidgetState extends State<MyCalendarWidget> {
     final screenWidth = MediaQuery.of(context).size.width;
     final daysCount =
         DateHelper.getDaysInMonth(selectedDate.year, selectedDate.month);
-    final selectedIndex = selectedDate.day - 1;
+    final selectedIndex = selectedDate.day;
 
     final offset = DateHelper.calculateScrollOffset(
       selectedIndex: selectedIndex,

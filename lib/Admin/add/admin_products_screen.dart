@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/theme/app_colors.dart';
 
 class AdminProductsScreen extends StatelessWidget {
@@ -8,21 +9,22 @@ class AdminProductsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text("Products")),
+      appBar: AppBar(title: Text(appLocalizations.products)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             ProductCard(
-              title: "Add Products",
+              title: appLocalizations.addProducts,
               icon: Icons.shopping_bag,
               color: AppColors.Teal,
               onTap: () => Navigator.pushNamed(context, '/adminAdd'),
             ),
             const SizedBox(height: 16),
             ProductCard(
-              title: "Add High Risk Ingredients",
+              title: appLocalizations.addHighRiskIngredients,
               icon: Icons.warning_amber,
               color: AppColors.Teal,
               onTap: () => Navigator.pushNamed(context, '/addHighIngredient'),

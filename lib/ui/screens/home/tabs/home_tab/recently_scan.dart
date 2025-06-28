@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/scan/scan_service.dart';
 import 'package:hope/ui/shared_widgets/custom_recently_cards.dart';
+import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 
 class RecentlyScan extends StatefulWidget {
+  const RecentlyScan({super.key});
+
   @override
   _RecentlyScanState createState() => _RecentlyScanState();
 }
@@ -10,6 +14,8 @@ class RecentlyScan extends StatefulWidget {
 class _RecentlyScanState extends State<RecentlyScan> {
   List<dynamic> recentlyScannedProducts = [];
   final ScanService scanService = ScanService();
+  late AppLocalizations appLocalizations;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -20,6 +26,8 @@ class _RecentlyScanState extends State<RecentlyScan> {
   Future<void> _loadRecentlyScannedProducts() async {
     try {
       List<dynamic>? products = await scanService.getScannedProducts();
+
+      if (!mounted) return;
 
       if (products != null) {
         Map<String, dynamic> uniqueProductsMap = {};
@@ -34,49 +42,70 @@ class _RecentlyScanState extends State<RecentlyScan> {
         setState(() {
           recentlyScannedProducts =
               uniqueProductsMap.values.toList().reversed.take(5).toList();
+          isLoading = false;
         });
       } else {
-        print('No recently scanned products found.');
+        setState(() {
+          isLoading = false;
+        });
       }
     } catch (e) {
-      print("Error loading scanned products: $e");
+      if (mounted) {
+        showMessage(
+          context,
+          appLocalizations.failedToLoadRecentScan,
+          type: MessageType.error,
+        );
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (recentlyScannedProducts.isEmpty) {
-      return SizedBox.shrink();
+    appLocalizations = AppLocalizations.of(context)!;
+
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Text(
-          "Recently Scanned",
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
-      ),
-      Container(
-        height: MediaQuery.of(context).size.height * .26,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: recentlyScannedProducts.length,
-          itemBuilder: (context, index) {
-            final product = recentlyScannedProducts[index];
+    if (recentlyScannedProducts.isEmpty) {
+      return const SizedBox.shrink(); // لا تعرض شيئًا
+    }
 
-            if (product is Map<String, dynamic>) {
-              return CustomRecentlyCard(
-                product: product,
-                barcode: product['barcode'] ?? '',
-                highRiskIngredients: product['highRiskIngredients'] ?? [],
-              );
-            } else {
-              return SizedBox.shrink();
-            }
-          },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            appLocalizations.recentlyScanned,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
         ),
-      )
-    ]);
+        SizedBox(
+          height: MediaQuery.of(context).size.height * .26,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: recentlyScannedProducts.length,
+            itemBuilder: (context, index) {
+              final product = recentlyScannedProducts[index];
+
+              if (product is Map<String, dynamic>) {
+                return CustomRecentlyCard(
+                  product: product,
+                  barcode: product['barcode'] ?? '',
+                  highRiskIngredients: product['highRiskIngredients'] ?? [],
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        )
+      ],
+    );
   }
 }

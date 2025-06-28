@@ -3,6 +3,8 @@ import 'package:hope/Admin/add/add_high.dart';
 import 'package:hope/Api/add/high_ingredients.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/high_risk_ingredents.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 
 class AdminHighRiskScreen extends StatefulWidget {
   const AdminHighRiskScreen({super.key});
@@ -16,6 +18,8 @@ class AdminHighRiskScreen extends StatefulWidget {
 class _AdminHighRiskScreenState extends State<AdminHighRiskScreen> {
   List<HighRiskIngredient> ingredients = [];
   bool isLoading = true;
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -43,9 +47,11 @@ class _AdminHighRiskScreenState extends State<AdminHighRiskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('High Risk Ingredients'),
+        title: Text(appLocalizations.highRiskIngredients),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -75,12 +81,12 @@ class _AdminHighRiskScreenState extends State<AdminHighRiskScreen> {
                           decoration:
                               const BoxDecoration(color: AppColors.yellow),
                           children: [
-                            tableHeader("Name"),
-                            tableHeader("Risk Level"),
-                            tableHeader("Safe Limit"),
-                            tableHeader("English Description"),
-                            tableHeader("Arabic Description"),
-                            tableHeader("Actions"),
+                            tableHeader(appLocalizations.ingredientName),
+                            tableHeader(appLocalizations.riskLevel),
+                            tableHeader(appLocalizations.safeLimit),
+                            tableHeader(appLocalizations.englishDescription),
+                            tableHeader(appLocalizations.arabicDescription),
+                            tableHeader(appLocalizations.actions),
                           ],
                         ),
                         ...ingredients.map((item) => TableRow(children: [

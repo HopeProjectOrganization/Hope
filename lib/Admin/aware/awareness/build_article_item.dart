@@ -54,6 +54,7 @@ class _BuildArticleItemState extends State<BuildArticleItemN> {
             : article.content ?? '';
 
     return Card(
+      color: AppColors.cloudi,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: const BorderSide(color: AppColors.Teal),

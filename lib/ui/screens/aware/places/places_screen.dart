@@ -60,15 +60,13 @@ class _PlacesScreenState extends State<PlacesScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_outlined),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back_outlined, color: AppColors.Teal),
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
         ),
-        backgroundColor: AppColors.Teal,
-        centerTitle: true,
-        title: Text(
-          "Cancer Treatment",
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        title: Text(appLocalizations.cancerTreatmentPlaces),
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -102,13 +100,13 @@ class _PlacesScreenState extends State<PlacesScreen> {
                           color: AppColors.cloudi,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
                                   child: (place.image.isEmpty)
                                       ? Image.asset(
                                           AppAssets.hospital,
@@ -119,18 +117,17 @@ class _PlacesScreenState extends State<PlacesScreen> {
                                       : Image.network(
                                           place.image,
                                           width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                        place.name,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(place.name,
                                           style: Theme.of(context)
                                               .textTheme
                                               .titleSmall),
@@ -157,38 +154,37 @@ class _PlacesScreenState extends State<PlacesScreen> {
                                                   print('No website available');
                                                 }
                                               },
-                                              child: buildRow(
-                                                  Icons.language,
+                                              child: buildRow(Icons.language,
                                                   place.website),
                                             ),
                                       GestureDetector(
-                                  onTap: () async {
+                                        onTap: () async {
                                           final tel = "tel:${place.phone}";
                                           if (await canLaunchUrl(
                                               Uri.parse(tel))) {
                                             await launchUrl(Uri.parse(tel));
                                           }
-                                  },
+                                        },
                                         child:
                                             buildRow(Icons.phone, place.phone),
                                       ),
                                       GestureDetector(
-                                  onTap: () async {
+                                        onTap: () async {
                                           final url = place.location;
                                           if (await canLaunchUrl(
                                               Uri.parse(url))) {
                                             await launchUrl(Uri.parse(url));
-                                    }
-                                  },
+                                          }
+                                        },
                                         child: buildRow(
                                             Icons.location_on, place.address),
                                       ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
                         );
                       },
                     ),

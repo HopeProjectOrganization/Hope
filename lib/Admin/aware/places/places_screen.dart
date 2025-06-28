@@ -53,9 +53,6 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
       setState(() {
         places.removeWhere((place) => place.id == id);
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('تم حذف المستشفى بنجاح')),
-      );
     } catch (e) {
       print('Failed to delete: $e');
     }
@@ -71,15 +68,13 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        title: Text(
+          appLocalizations.cancerTreatmentPlaces,
+        ),
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_outlined),
           onPressed: () => Navigator.of(context).pop(),
-        ),
-        backgroundColor: AppColors.Teal,
-        centerTitle: true,
-        title: Text(
-          appLocalizations.cancerTreatmentPlaces,
-          style: Theme.of(context).textTheme.titleMedium,
         ),
       ),
       body: Padding(
@@ -271,7 +266,7 @@ class _PlacesAdminScreenState extends State<PlacesAdminScreen> {
           }
         },
         backgroundColor: AppColors.Teal,
-        child: const Icon(Icons.add, color: AppColors.yellow),
+        child: const Icon(Icons.add, color: AppColors.white),
       ),
     );
   }

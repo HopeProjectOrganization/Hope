@@ -8,6 +8,7 @@ import 'package:hope/model/favorite.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/recipes/recipe_details.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/vegan/vegan_details.dart';
 import 'package:hope/ui/screens/aware/meal_sence/recipe_details.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MealFavorites extends StatelessWidget {
   final List<FavoriteMeal> favorites;
@@ -21,6 +22,12 @@ class MealFavorites extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+
+    if (favorites.isEmpty) {
+      return Center(child: Text(appLocalizations.noFavoriteMealsYet));
+    }
+
     final Map<String, List<FavoriteMeal>> categorizedMeals = {
       'MEALSENSE': [],
       'HEALTHY_DIET': [],
@@ -33,7 +40,6 @@ class MealFavorites extends StatelessWidget {
       if (fav.type == 'meal' && categorizedMeals.containsKey(categoryKey)) {
         categorizedMeals[categoryKey]!.add(fav);
 
-        print("fav.category: '${fav.category}' (${fav.category.runtimeType})");
       }
     }
 
@@ -49,13 +55,7 @@ class MealFavorites extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
-              category,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.Teal,
-              ),
-            ),
+              category, style: Theme.of(context).textTheme.labelLarge),
           ),
           ...meals.map<Widget>((fav) {
             Future<dynamic> future;
@@ -68,7 +68,6 @@ class MealFavorites extends StatelessWidget {
                 future = RecipeService.getRecipeById(fav.mealId);
                 break;
               case 'VEGAN':
-                print('Calling getByVeganId with id: ${fav.mealId}');
                 future = VeganRecipeService.getById(int.parse(fav.mealId));
                 break;
               default:
@@ -107,8 +106,6 @@ class MealFavorites extends StatelessWidget {
 
                 return GestureDetector(
                   onTap: () async {
-                    Widget detailsPage;
-
                     switch (fav.category) {
                       case 'MEALSENSE':
                         Navigator.pushNamed(context, RecipeDetails.routeName,
@@ -138,7 +135,7 @@ class MealFavorites extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(vertical: 6),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.cloudi,
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
                         BoxShadow(color: Colors.black12, blurRadius: 4),
@@ -170,16 +167,10 @@ class MealFavorites extends StatelessWidget {
                             children: [
                               Text(
                                 title,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
                               ),
                               const SizedBox(height: 4),
                               Text("Category: ${fav.category}",
-                                  style: const TextStyle(color: Colors.grey)),
-                              Text("Type: ${fav.type}",
-                                  style: const TextStyle(color: Colors.grey)),
+                              ),
                             ],
                           ),
                         ),
@@ -189,7 +180,7 @@ class MealFavorites extends StatelessWidget {
                 );
               },
             );
-          }).toList(),
+          }),
           const SizedBox(height: 20),
         ];
       }).toList(),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/category_model.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:hope/ui/shared_widgets/utils/healthy_diet_category.dart';
@@ -35,8 +36,16 @@ class HealthyDiet extends StatelessWidget {
           route: '/Exercises'),
     ];
 
-    return CustomScaffold(
-      title: appLocalizations.healthyDiet,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(appLocalizations.healthyDiet),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_outlined, color: AppColors.Teal),
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -71,14 +80,6 @@ class HealthyDiet extends StatelessWidget {
           ],
         ),
       ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.search_outlined),
-          onPressed: () {
-            // Add search functionality here
-          },
-        ),
-      ],
     );
   }
 }

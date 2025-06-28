@@ -6,6 +6,7 @@ import 'package:hope/model/avatar.dart';
 import 'package:hope/model/get_profile.dart';
 import 'package:hope/ui/screens/profileDetails/avatar_sheet.dart';
 import 'package:hope/ui/screens/profileDetails/edit_body.dart';
+import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfile extends StatefulWidget {
@@ -48,8 +49,13 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         token = storedToken;
       });
-      fetchUserProfile(storedToken);
+      await fetchUserProfile(storedToken);
     } else {
+      showMessage(
+        context,
+        appLocalizations.tokenNotFound,
+        type: MessageType.error,
+      );
       setState(() {
         isLoading = false;
       });
@@ -60,7 +66,7 @@ class _EditProfileState extends State<EditProfile> {
       BuildContext context, String? currentAvatarAsset) async {
     final result = await showModalBottomSheet<Map<String, String?>>(
       context: context,
-      backgroundColor: AppColors.gray,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -78,14 +84,34 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> fetchUserProfile(String token) async {
-    GetUserProfile fetchUserProfile = GetUserProfile();
-    Data? profileData = await fetchUserProfile.fetchUserProfile(token);
+    try {
+      GetUserProfile fetchUserProfile = GetUserProfile();
+      Data? profileData = await fetchUserProfile.fetchUserProfile(token);
 
-    if (mounted) {
+      if (mounted && profileData != null) {
+        setState(() {
+          userProfile = profileData;
+          selectedAvatarId = userProfile!.avatarId ?? "5";
+          selectedAvatarAsset = Avatar.getAvatarById(selectedAvatarId!);
+          isLoading = false;
+        });
+      } else {
+        showMessage(
+          context,
+          appLocalizations.failedToFetchProfile,
+          type: MessageType.error,
+        );
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      showMessage(
+        context,
+        appLocalizations.errorOccurred,
+        type: MessageType.error,
+      );
       setState(() {
-        userProfile = profileData;
-        selectedAvatarId = userProfile!.avatarId ?? "5";
-        selectedAvatarAsset = Avatar.getAvatarById(selectedAvatarId!);
         isLoading = false;
       });
     }
@@ -93,33 +119,31 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    appLocalizations =
-        AppLocalizations.of(context) ?? AppLocalizations.of(context)!;
+    appLocalizations = AppLocalizations.of(context)!;
+
     if (isLoading || selectedAvatarAsset == null || selectedAvatarId == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_outlined,
-            color: AppColors.Teal,
-          ),
+            icon: const Icon(Icons.arrow_back_outlined, color: AppColors.Teal),
             onPressed: () {
-            Navigator.pop(context, true);
-          },
+              Navigator.pop(context, true);
+            },
           ),
           title: Text(appLocalizations.editProfile),
           centerTitle: true,
         ),
-      body: EditProfileForm(
-        userProfile: userProfile!,
-        token: token ?? widget.token,
+        body: EditProfileForm(
+          userProfile: userProfile!,
+          token: token ?? widget.token,
+        ),
       ),
-    ));
+    );
   }
-
 }

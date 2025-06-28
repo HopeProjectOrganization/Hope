@@ -3,7 +3,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/exercises.dart';
-import 'package:hope/ui/shared_widgets/favorite_button.dart';
 import 'package:provider/provider.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {
@@ -20,16 +19,6 @@ class ExerciseDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        actions: [
-          InkWell(
-            onTap: () {}, // ممكن تسيبيه فاضي أو تشيليه لو مش محتاجاه
-            child: FavoriteButton(
-              id: exercise.id.toString(),
-              category: 'EXERCISE',
-              type: 'exercise',
-            ),
-          ),
-        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(

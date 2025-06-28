@@ -171,7 +171,6 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                     color: AppColors.Teal,
                     onClick: () async {
                       try {
-                        // 🔐 استرجاع التوكن وحفظ userId
                         final token = await AuthApiService().getToken();
                         await GetUserProfile().fetchUserProfile(token!);
 
@@ -183,49 +182,59 @@ class _MyMealsScreenState extends State<MyMealsScreen> {
                           return;
                         }
 
-                        // تجهيز قائمة mealIds
-                        final List<String> mealIds =
-                            _selectedMeals.map((meal) => meal.id).toList();
+                        // 1️⃣ استرجاع الوجبات الموجودة بالفعل في هذا التاريخ والفئة
+                        final userMeals =
+                            await UserMealService.fetchUserMealsAsUserMeal(
+                          userId: userId,
+                          category: _title,
+                          date: widget.selectedDate
+                              .toIso8601String()
+                              .split('T')
+                              .first,
+                        );
+                        final existingMeals =
+                            await UserMealService.fetchMealsFromUserMeals(
+                                userMeals);
 
-                        print('📤 Sending meals...');
-                        print('userId: $userId');
-                        print('category: $_title');
-                        print('mealIds: $mealIds');
+                        final existingIds =
+                            existingMeals.map((m) => m.id).toSet();
 
-                        for (Meal meal in _selectedMeals) {
+                        // 2️⃣ احفظ فقط الوجبات الجديدة
+                        final newMeals = _selectedMeals
+                            .where((meal) => !existingIds.contains(meal.id))
+                            .toList();
+
+                        if (newMeals.isEmpty) {
+                          print("⚠️ No new meals to add.");
+                          return;
+                        }
+
+                        for (Meal meal in newMeals) {
                           await MealApiService().saveMeal(meal);
                         }
 
+                        final mealIds =
+                            newMeals.map((meal) => meal.id).toList();
+
                         await UserMealService.submitUserMeals(
                           userId: userId,
-                          category: widget.title,
-                          mealIds: _selectedMeals.map((e) => e.id).toList(),
-                          dateTime:
-                              widget.selectedDate, // ✅ استخدمي التاريخ المختار
+                          category: _title,
+                          mealIds: mealIds,
+                          dateTime: widget.selectedDate,
                         );
 
-                        print(
-                            '✅ Meals sent to backend: $mealIds for category $_title');
+                        // ✅ ارجعي بعد النجاح
+                        Navigator.pushReplacementNamed(
+                          context,
+                          MealSenceScreen.routeName,
+                          arguments: {
+                            'selectedMeals': newMeals,
+                            'title': _title,
+                            'selectedDate': widget.selectedDate,
+                          },
+                        );
                       } catch (e) {
-                        print('❌ Error submitting meals: $e');
-                      }
-
-                      // الرجوع للشاشة السابقة
-                      final result = await Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        MealSenceScreen.routeName,
-                        (Route<dynamic> route) => false,
-                        arguments: {
-                          'selectedMeals': _selectedMeals,
-                          'title': _title,
-                          'selectedDate': widget.selectedDate,
-                        },
-                      );
-
-                      if (result != null && result is Meal) {
-                        setState(() {
-                          _selectedMeals.add(result);
-                        });
+                        print('❌ Error: $e');
                       }
                     },
                     title: "${appLocalizations.addTo} $_title",

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImagePickerService {
@@ -18,18 +19,28 @@ class ImagePickerService {
     return null;
   }
 
-  void showImageSourceActionSheet(
-      BuildContext context, Function(File) onImagePicked) {
+  void showImageSourceActionSheet(BuildContext context,
+      Function(File) onImagePicked,) {
+    final appLocalizations = AppLocalizations.of(context)!;
+    final isDark = Theme
+        .of(context)
+        .brightness == Brightness.dark;
+
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (BuildContext context) {
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Pick from Gallery'),
+                leading: Icon(Icons.photo_library,
+                    color: isDark ? Colors.white : Colors.black),
+                title: Text(appLocalizations.pickFromGallery),
                 onTap: () async {
                   Navigator.pop(context);
                   File? image = await pickImage(ImageSource.gallery);
@@ -39,8 +50,9 @@ class ImagePickerService {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('Take a Photo'),
+                leading: Icon(Icons.camera_alt,
+                    color: isDark ? Colors.white : Colors.black),
+                title: Text(appLocalizations.takePhoto),
                 onTap: () async {
                   Navigator.pop(context);
                   File? image = await pickImage(ImageSource.camera);

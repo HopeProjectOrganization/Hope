@@ -1,5 +1,3 @@
-
-
 class VeganRecipeModel {
   final int? id;
   final String veganId;
@@ -28,16 +26,17 @@ class VeganRecipeModel {
   factory VeganRecipeModel.fromJson(Map<String, dynamic> json) {
     return VeganRecipeModel(
       id: json['id'],
-      veganId: json['veganId'],
-      title: json['title'],
-      difficulty: json['difficulty'],
-      portion: json['portion'],
-      time: json['time'],
-      description: json['description'],
-      image: json['image'],
-      ingredients: List<String>.from(json['ingredients']),
+      veganId: json['veganId'] ?? '',
+      title: json['title'] ?? '',
+      difficulty: json['difficulty'] ?? '',
+      portion: json['portion'] ?? '',
+      time: json['time'] ?? '',
+      description: json['description'] ?? '',
+      image: json['image'] ?? '',
+      ingredients: List<String>.from(json['ingredients'] ?? []),
       steps: List<StepModel>.from(
-          json['method'].map((e) => StepModel.fromJson(e))),
+        (json['method'] ?? []).map((e) => StepModel.fromJson(e)),
+      ),
     );
   }
 
@@ -65,8 +64,8 @@ class StepModel {
 
   factory StepModel.fromJson(Map<String, dynamic> json) {
     return StepModel(
-      stepTitle: json['stepTitle'],
-      stepDescription: json['stepDescription'],
+      stepTitle: json['stepTitle'] ?? '',
+      stepDescription: json['stepDescription'] ?? '',
     );
   }
 

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/add/admin_form.dart';
 import 'package:hope/Api/add/admin_add_service.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/product_ingredient.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
+import 'package:provider/provider.dart';
 
 class IngredientEntry {
-  final int id; // لازم علشان نعرف نعدل المكون ده بالذات
+  final int id;
   final String ingredientName;
   final String percentage;
 
@@ -23,7 +26,7 @@ class IngredientEntry {
 }
 
 class GroupedProduct {
-  final int productId; // ✅ ده ID المنتج مش المكون
+  final int productId;
   final String productName;
   final String barcode;
   final String productType;
@@ -40,7 +43,6 @@ class GroupedProduct {
 
 class AdminProductManagementScreen extends StatefulWidget {
   const AdminProductManagementScreen({super.key});
-
   static const routeName = '/adminAdd';
 
   @override
@@ -51,6 +53,8 @@ class AdminProductManagementScreen extends StatefulWidget {
 class _AdminProductManagementScreenState
     extends State<AdminProductManagementScreen> {
   late Future<List<ProductWithIngredient>> productsFuture;
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -78,7 +82,6 @@ class _AdminProductManagementScreenState
 
       return GroupedProduct(
         productId: first.productId,
-        // ✅ استخدمي ID المنتج الحقيقي
         productName: first.productName,
         barcode: first.barcode,
         productType: first.productType,
@@ -95,8 +98,10 @@ class _AdminProductManagementScreenState
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Manage Products")),
       body: FutureBuilder<List<ProductWithIngredient>>(
         future: productsFuture,
         builder: (context, snapshot) {
@@ -112,70 +117,138 @@ class _AdminProductManagementScreenState
             scrollDirection: Axis.vertical,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: const [
-                  DataColumn(label: Text("Product Name")),
-                  DataColumn(label: Text("Barcode")),
-                  DataColumn(label: Text("Type")),
-                  DataColumn(label: Text("Ingredients")),
-                  DataColumn(label: Text("Actions")),
-                ],
-                rows: groupedProducts.map((product) {
-                  return DataRow(cells: [
-                    DataCell(Text(product.productName)),
-                    DataCell(Text(product.barcode)),
-                    DataCell(Text(product.productType)),
-                    DataCell(Text(product.ingredients
-                        .map((e) =>
-                            "${e.ingredientName} (${e.percentage ?? 'N/A'})")
-                        .join(", "))),
-                    DataCell(Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.teal),
-                          onPressed: () async {
-                            final updated = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => AdminAddEditProductScreen(
-                                  groupedProduct: product,
-                                ),
-                              ),
-                            );
-                            if (updated == true) refresh();
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () async {
-                            final confirm = await showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                title: const Text("Confirm Delete"),
-                                content: const Text("Delete this product?"),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(ctx, false),
-                                      child: const Text("Cancel")),
-                                  TextButton(
-                                      onPressed: () => Navigator.pop(ctx, true),
-                                      child: const Text("Delete")),
-                                ],
-                              ),
-                            );
-                            if (confirm == true) {
-                              await ProductService().deleteProductIngredient(
-                                  product.productId); // ✅ ID المنتج
+              child: Table(
+                border: TableBorder.all(),
+                columnWidths: const {
+                  0: FixedColumnWidth(150),
+                  1: FixedColumnWidth(100),
+                  2: FixedColumnWidth(100),
+                  3: FixedColumnWidth(250),
+                  4: IntrinsicColumnWidth(),
+                },
+                children: [
+                  // Header row
+                  TableRow(
+                    decoration: const BoxDecoration(color: AppColors.yellow),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(appLocalizations.productName,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(appLocalizations.barcode,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(appLocalizations.productType,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(appLocalizations.ingredients,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(appLocalizations.actions,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
 
-                              refresh();
-                            }
-                          },
+                  // Data rows
+                  ...groupedProducts.map((product) {
+                    return TableRow(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(product.productName),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(product.barcode),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(product.productType),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            product.ingredients
+                                .map((e) =>
+                                    "${e.ingredientName} (${e.percentage})")
+                                .join(", "),
+                            softWrap: true,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit,
+                                    color: AppColors.Teal),
+                                onPressed: () async {
+                                  final updated = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => AdminAddEditProductScreen(
+                                        groupedProduct: product,
+                                      ),
+                                    ),
+                                  );
+                                  if (updated == true) refresh();
+                                },
+                              ),
+                              IconButton(
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () async {
+                                  final confirm = await showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title:
+                                          Text(appLocalizations.confirmDelete),
+                                      content: Text(
+                                          appLocalizations.deleteThisProduct),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(ctx, false),
+                                          child: Text(appLocalizations.cancel),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(ctx, true),
+                                          child: Text(appLocalizations.delete),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  if (confirm == true) {
+                                    await ProductService()
+                                        .deleteProductIngredient(
+                                            product.productId);
+                                    refresh();
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
-                    )),
-                  ]);
-                }).toList(),
+                    );
+                  }).toList(),
+                ],
               ),
             ),
           );

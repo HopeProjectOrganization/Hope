@@ -4,6 +4,7 @@ import 'package:hope/Api/saved/saved_post.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/article.dart';
 import 'package:hope/ui/screens/aware/shared_widgets/article/article_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ArticleFavorites extends StatelessWidget {
   final Map<String, String> articleCategories;
@@ -17,6 +18,12 @@ class ArticleFavorites extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+
+    if (articleCategories.isEmpty) {
+      return Center(child: Text(appLocalizations.noFavoritePostsYet));
+    }
+
     return ListView(
       padding: const EdgeInsets.all(12),
       children: articleCategories.entries.map<Widget>((entry) {
@@ -45,12 +52,7 @@ class ArticleFavorites extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
                     categoryTitle,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.Teal,
-                    ),
-                  ),
+                      style: Theme.of(context).textTheme.labelLarge),
                 ),
                 ...articles.map<Widget>((article) {
                   return GestureDetector(
@@ -69,7 +71,7 @@ class ArticleFavorites extends StatelessWidget {
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.cloudi,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: const [
                           BoxShadow(color: Colors.black12, blurRadius: 4),
@@ -99,13 +101,13 @@ class ArticleFavorites extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(article.title,
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
+                                Text(
+                                  "${appLocalizations.articleName}: ${article.title}",
+                                ),
                                 const SizedBox(height: 4),
-                                Text("ID: ${article.articleId}",
-                                    style: const TextStyle(color: Colors.grey)),
+                                Text(
+                                  "${appLocalizations.category} ${article.category}",
+                                ),
                               ],
                             ),
                           ),
@@ -113,7 +115,7 @@ class ArticleFavorites extends StatelessWidget {
                       ),
                     ),
                   );
-                }).toList(),
+                }),
                 const SizedBox(height: 20),
               ],
             );
@@ -124,4 +126,3 @@ class ArticleFavorites extends StatelessWidget {
   }
 }
 
-// meal_favorites.dart و exercise_favorites.dart جاهزين أيضًا — هل تريدني أتابعهم الآن؟

@@ -92,7 +92,10 @@ class _NewsScreenState extends State<AdminNewsScreen>
           ),
         ),
         centerTitle: true,
-        title: Text("News", style: TextStyle(color: AppColors.white)),
+        title: Text(
+          appLocalizations.news,
+          style: TextStyle(color: AppColors.white),
+        ),
         bottom: TabBar(
           controller: _tabController,
           indicatorSize: TabBarIndicatorSize.label,

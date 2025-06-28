@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/add/admin_products_screen.dart';
 import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
+import 'package:hope/Admin/home/tabs/home_tab/home_tab.dart';
+import 'package:hope/Admin/home/tabs/menu_tab/menu_tab.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/ui/screens/home/tabs/home_tab/home_tab.dart';
-import 'package:hope/ui/screens/home/tabs/menu_tab/menu_tab.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
 import 'package:provider/provider.dart';
 
@@ -32,27 +32,31 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     barcodeScanner = BarcodeScannerService(context);
   }
 
+  bool _didSetInitialIndex = false; // ضيفي المتغير ده فوق في الكلاس
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final indexArg = ModalRoute.of(context)?.settings.arguments;
 
-    if (indexArg != null &&
-        indexArg is int &&
-        indexArg >= 0 &&
-        indexArg < tabs.length) {
-      currentIndex = indexArg;
-    } else {
-      currentIndex = currentIndex;
+    if (!_didSetInitialIndex) {
+      final indexArg = ModalRoute.of(context)?.settings.arguments;
+
+      if (indexArg != null &&
+          indexArg is int &&
+          indexArg >= 0 &&
+          indexArg < tabs.length) {
+        currentIndex = indexArg;
+      }
+      _didSetInitialIndex = true;
     }
   }
 
   List<Widget> tabs = [
-    const HomeTab(),
+    const AdminHomeTab(),
     const AdminProductsScreen(),
     const Placeholder(), // عشان نحافظ على الـ index == 2 للزر سكان (مش هيظهر)
     AdminAwareTab(),
-    MenuTab(),
+    AdminMenuTab(),
   ];
 
   String scannedBarcode = "Not Scanned yet";
@@ -109,7 +113,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             color: iconColor,
                           ),
                         ),
-                ),
+                      ),
                     ),
                   ],
                 ),

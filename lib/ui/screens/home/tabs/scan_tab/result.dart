@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
-import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
-import 'package:provider/provider.dart';
 
 class ResultScreen extends StatelessWidget {
   static const String routeName = "/resultScan";
@@ -34,24 +32,22 @@ class ResultScreen extends StatelessWidget {
     final data =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
             {};
-    final String message = data['message'] ?? "Unknown result";
     final product = data['product'] ?? {};
-    final String productName = product['productName'] ?? "Unknown product";
-    final String barcode = product['barcode'] ?? "Unknown barcode";
     final List<dynamic> highRiskIngredients = data['highRiskIngredients'] ?? [];
 
-    ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
-    AppLocalizations appLocalizations = AppLocalizations.of(context)!;
-
+    final String productName = product['productName'] ?? "Unknown product";
+    final String barcode = product['barcode'] ?? "Unknown barcode";
     final String imageToShow = getRiskImage(
       highRiskIngredients.isNotEmpty
           ? highRiskIngredients[0]['riskCategory']
           : null,
     );
 
+    final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Result"),
+        title: Text(appLocalizations.result),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_outlined, color: AppColors.Teal),
           onPressed: () => Navigator.pop(context),
@@ -62,7 +58,7 @@ class ResultScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // صورة تقييم الخطر
+            // 🟡 Risk image section
             Card(
               elevation: 4,
               color: AppColors.cloudi,
@@ -73,7 +69,7 @@ class ResultScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      "Risk Rate",
+                      appLocalizations.riskRate,
                       style: Theme.of(context)
                           .textTheme
                           .labelMedium!
@@ -93,9 +89,7 @@ class ResultScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            const SizedBox(height: 16),
-
-            // معلومات المنتج
+            // 🟡 Product info
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -109,7 +103,7 @@ class ResultScreen extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      "Product Name: $productName\nBarcode: $barcode",
+                      '${appLocalizations.productName}: $productName\n${appLocalizations.barcode}: $barcode',
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge!
@@ -123,7 +117,7 @@ class ResultScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             Text(
-              "High-Risk Ingredients",
+              appLocalizations.highRiskIngredients,
               style: Theme.of(context)
                   .textTheme
                   .labelLarge!
@@ -131,6 +125,7 @@ class ResultScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
+            // 🟡 High risk ingredients
             Expanded(
               child: highRiskIngredients.isNotEmpty
                   ? ListView.separated(
@@ -143,8 +138,7 @@ class ResultScreen extends StatelessWidget {
                           elevation: 4,
                           color: AppColors.cloudi,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                              borderRadius: BorderRadius.circular(20)),
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
@@ -155,9 +149,7 @@ class ResultScreen extends StatelessWidget {
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleMedium!
-                                      .copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      .copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 8),
                                 if (ingredient['englishDescription'] != null)
@@ -174,7 +166,7 @@ class ResultScreen extends StatelessWidget {
                     )
                   : Center(
                       child: Text(
-                        "No high-risk ingredients found.",
+                        appLocalizations.noHighRiskIngredientsFound,
                         style: Theme.of(context).textTheme.titleMedium,
                         textAlign: TextAlign.center,
                       ),
@@ -182,9 +174,11 @@ class ResultScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 20),
+
             CustomButton(
-              onClick: () => Navigator.pushNamed(context, HomeScreen.routeName),
-              title: "Done",
+              onClick: () => Navigator.pushNamedAndRemoveUntil(
+                  context, HomeScreen.routeName, (route) => false),
+              title: appLocalizations.done,
             ),
           ],
         ),

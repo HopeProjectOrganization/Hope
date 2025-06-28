@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/chat/chatApi.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -15,8 +16,25 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _messages = [];
   bool isTyping = false;
+  String? avatarAsset;
+
+  @override
+  void initState() {
+    super.initState();
+    loadAvatar();
+  }
+
+  void loadAvatar() async {
+    final prefs = await SharedPreferences.getInstance();
+    final avatarId = prefs.getString("avatarId") ?? "5";
+    final asset = Avatar.getAvatarById(avatarId);
+    setState(() {
+      avatarAsset = asset;
+    });
+  }
 
   void _sendMessage() async {
+    final appLocalizations = AppLocalizations.of(context)!;
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
@@ -34,37 +52,20 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     } catch (e) {
       setState(() {
-        _messages.add({'role': 'ai', 'text': 'حدث خطأ: ${e.toString()}'});
+        _messages
+            .add({'role': 'ai', 'text': appLocalizations.errorSendingMessage});
         isTyping = false;
       });
     }
   }
 
-  String? avatarAsset;
-
-  @override
-  void initState() {
-    super.initState();
-    loadAvatar();
-  }
-
-  void loadAvatar() async {
-    final prefs = await SharedPreferences.getInstance();
-    final avatarId = prefs.getString("avatarId") ?? "5";
-    print("📥 Loaded avatarId from prefs: $avatarId");
-
-    final asset = Avatar.getAvatarById(avatarId);
-    print("🖼️ Mapped avatarId to asset: $asset");
-
-    setState(() {
-      avatarAsset = asset;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(title: Text('Chat')),
+      appBar: AppBar(title: Text(appLocalizations.chatTitle)),
       body: Column(
         children: [
           Expanded(
@@ -72,12 +73,12 @@ class _ChatScreenState extends State<ChatScreen> {
                 ? Center(
                     child: Lottie.asset(
                       'assets/lottie/chat1.json',
-                      width: 400,
-                      height: 400,
+                      width: 300,
+                      height: 300,
                     ),
                   )
                 : ListView.builder(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     itemCount: _messages.length + (isTyping ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == _messages.length && isTyping) {
@@ -96,7 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       }
 
                       final message = _messages[index];
-                      final isUser = message['role'] == 'user';
+                final isUser = message['role'] == 'user';
 
                       return Align(
                         alignment: isUser
@@ -128,17 +129,15 @@ class _ChatScreenState extends State<ChatScreen> {
                               margin: const EdgeInsets.symmetric(vertical: 4),
                               decoration: BoxDecoration(
                                 color: isUser
-                                    ? const Color(0xffCFCADA)
+                                    ? Theme.of(context).colorScheme.secondary
                                     : AppColors.lavender,
                                 borderRadius: isUser
                                     ? const BorderRadius.only(
                                         bottomLeft: Radius.circular(24),
-                                        bottomRight: Radius.circular(0),
                                         topLeft: Radius.circular(24),
                                         topRight: Radius.circular(24),
                                       )
                                     : const BorderRadius.only(
-                                        bottomLeft: Radius.circular(0),
                                         bottomRight: Radius.circular(16),
                                         topLeft: Radius.circular(16),
                                         topRight: Radius.circular(16),
@@ -146,10 +145,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                               child: Text(
                                 message['text'] ?? '',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppColors.dark,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ),
                           ],
@@ -167,7 +163,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     controller: _controller,
                     onSubmitted: (_) => _sendMessage(),
                     decoration: InputDecoration(
-                      hintText: 'Ask your question...',
+                      hintText: appLocalizations.askYourQuestion,
                       border: InputBorder.none,
                     ),
                   ),
@@ -178,7 +174,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   radius: 30,
                   child: IconButton(
                     icon: Icon(Icons.send_rounded,
-                        color: AppColors.gray, size: 32),
+                        color: isDark ? Colors.black : AppColors.Teal,
+                        size: 32),
                     onPressed: _sendMessage,
                   ),
                 ),

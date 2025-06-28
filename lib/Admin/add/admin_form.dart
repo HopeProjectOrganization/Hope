@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/add/admin_product_screen.dart';
 import 'package:hope/Api/add/admin_add_service.dart';
+import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 
 class AdminAddEditProductScreen extends StatefulWidget {
@@ -75,7 +77,6 @@ class _AdminAddEditProductScreenState extends State<AdminAddEditProductScreen> {
         "percentage": percentage,
       });
 
-      // لو بتعملي update لكل ingredient واحدة واحدة
       if (widget.groupedProduct != null && ingredientIds[i] != null) {
         final updateData = {
           "product": {
@@ -109,8 +110,8 @@ class _AdminAddEditProductScreenState extends State<AdminAddEditProductScreen> {
 
       Navigator.pop(context, true);
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("❌ Error: Failed to update")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("❌ ${AppLocalizations.of(context)!.errorUpdate}")));
     } finally {
       setState(() => isSaving = false);
     }
@@ -118,22 +119,32 @@ class _AdminAddEditProductScreenState extends State<AdminAddEditProductScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appLoc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-          title: Text(
-              widget.groupedProduct == null ? "Add Product" : "Edit Product")),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            color: AppColors.Teal,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text(widget.groupedProduct == null
+              ? appLoc.addProduct
+              : appLoc.editProduct)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              buildField(nameController, "Product Name"),
-              buildField(barcodeController, "Barcode"),
-              buildField(typeController, "Product Type"),
+              buildField(nameController, appLoc.productName),
+              buildField(barcodeController, appLoc.barcode),
+              buildField(typeController, appLoc.productType),
               const SizedBox(height: 16),
-              const Text("Ingredients",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(appLoc.ingredients,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ListView.builder(
                 shrinkWrap: true,
@@ -143,12 +154,12 @@ class _AdminAddEditProductScreenState extends State<AdminAddEditProductScreen> {
                   return Row(
                     children: [
                       Expanded(
-                          child: buildField(
-                              ingredientControllers[index], "Ingredient Name")),
+                          child: buildField(ingredientControllers[index],
+                              appLoc.ingredientName)),
                       const SizedBox(width: 8),
                       Expanded(
                           child: buildField(
-                              percentageControllers[index], "Percentage")),
+                              percentageControllers[index], appLoc.percentage)),
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () => removeIngredientField(index),
@@ -160,11 +171,11 @@ class _AdminAddEditProductScreenState extends State<AdminAddEditProductScreen> {
               TextButton.icon(
                 onPressed: addIngredientField,
                 icon: const Icon(Icons.add),
-                label: const Text("Add Ingredient"),
+                label: Text(appLoc.addIngredient),
               ),
               const SizedBox(height: 20),
               CustomButton(
-                title: 'Save',
+                title: appLoc.save,
                 onClick: isSaving ? () {} : save,
               ),
             ],
@@ -179,8 +190,9 @@ class _AdminAddEditProductScreenState extends State<AdminAddEditProductScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
         controller: controller,
-        validator: (value) =>
-            value == null || value.isEmpty ? 'Required' : null,
+        validator: (value) => value == null || value.isEmpty
+            ? AppLocalizations.of(context)!.required
+            : null,
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),

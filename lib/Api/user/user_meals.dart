@@ -129,9 +129,10 @@ class UserMealService {
     required String mealId,
   }) async {
     final url = Uri.parse(
-        'https://${MyApp.IP}/api/user-meals?userId=$userId&date=$date&category=$category&mealId=$mealId');
+        'https://${MyApp.IP}/api/user-meals?userId=$userId&date=$date&category=${category.toUpperCase()}&mealId=$mealId');
 
     print('🗑️ Deleting user meal: $url');
+    print('🧪 Full DELETE URL: $url');
 
     final response = await http.delete(
       url,

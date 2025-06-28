@@ -6,7 +6,6 @@ import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/meal_dm.dart';
-import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_gradient.dart';
 import 'package:hope/ui/shared_widgets/favorite_button.dart';
 import 'package:provider/provider.dart';
