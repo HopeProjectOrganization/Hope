@@ -23,9 +23,6 @@ class ImagePickerService {
   void showImageSourceActionSheet(BuildContext context,
       Function(File) onImagePicked,) {
     final appLocalizations = AppLocalizations.of(context)!;
-    final isDark = Theme
-        .of(context)
-        .brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
@@ -39,8 +36,7 @@ class ImagePickerService {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Icon(Icons.photo_library,
-                    color: !isDark ? AppColors.white : AppColors.dark),
+                leading: Icon(Icons.photo_library, color: AppColors.Teal),
                 title: Text(appLocalizations.pickFromGallery,
                     style: Theme.of(context).textTheme.bodySmall),
                 onTap: () async {
@@ -52,8 +48,7 @@ class ImagePickerService {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.camera_alt,
-                    color: !isDark ? AppColors.white : AppColors.dark),
+                leading: Icon(Icons.camera_alt, color: AppColors.Teal),
                 title: Text(appLocalizations.takePhoto,
                     style: Theme.of(context).textTheme.bodySmall),
                 onTap: () async {

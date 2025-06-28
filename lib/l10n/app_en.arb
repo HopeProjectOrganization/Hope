@@ -300,7 +300,10 @@
   "invalidEmail": "The email address is badly formatted",
   "or": "or",
   "typeRequired": "Please select the type",
-  "selectType": "Please select the type"
+  "selectType": "Please select the type",
+  "resetPasswordFailed": "Reset password failed. Please try again.",
+  "resetPasswordError": "An error occurred while resetting your password.",
+  "tryAgain": "Try again"
 
 
 }

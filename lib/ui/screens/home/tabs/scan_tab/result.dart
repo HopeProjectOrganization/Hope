@@ -115,15 +115,16 @@ class ResultScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 20),
-
-            Text(
-              appLocalizations.highRiskIngredients,
-              style: Theme.of(context)
-                  .textTheme
-                  .labelLarge!
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
+            if (highRiskIngredients.isNotEmpty) ...[
+              Text(
+                appLocalizations.highRiskIngredients,
+                style: Theme.of(context)
+                    .textTheme
+                    .labelLarge!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+            ],
 
             // 🟡 High risk ingredients
             Expanded(

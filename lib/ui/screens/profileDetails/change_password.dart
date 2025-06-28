@@ -35,7 +35,7 @@ class ChangePasswordScreenState extends State<ChangePasswordScreen> {
         title: FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
-            appLocalizations.resetPassword,
+            appLocalizations.changePassword,
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 25,
