@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/core/providers/theme_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:hope/core/theme/app_colors.dart';
 
 class CustomDropDown extends StatefulWidget {
   final List<String>? items;
-  final String? labelText; // حقل الـ label
+  final String? labelText;
   final String? initialValue;
   final void Function(String?)? onChanged;
 
@@ -22,7 +21,7 @@ class CustomDropDown extends StatefulWidget {
     'Breast',
     'Prostate',
     'Skin',
-    'Lymphoma'
+    'Lymphoma',
   ];
 
   @override
@@ -30,9 +29,7 @@ class CustomDropDown extends StatefulWidget {
 }
 
 class _CustomDropDownState extends State<CustomDropDown> {
-  late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
-
   late List<String> finalItems;
   String? selectedValue;
 
@@ -45,10 +42,12 @@ class _CustomDropDownState extends State<CustomDropDown> {
 
   @override
   Widget build(BuildContext context) {
-    themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     appLocalizations = AppLocalizations.of(context)!;
 
     return DropdownButtonFormField<String>(
+      dropdownColor: !isDark ? AppColors.cloudi : AppColors.Teal,
       value: selectedValue,
       items: finalItems.map((String type) {
         return DropdownMenuItem<String>(
@@ -66,13 +65,15 @@ class _CustomDropDownState extends State<CustomDropDown> {
         widget.onChanged?.call(value);
       },
       decoration: InputDecoration(
+        floatingLabelStyle: TextStyle(
+          color: AppColors.Teal, // أو أي لون يناسبك
+          fontSize: 16,
+        ),
         labelText: widget.labelText ?? appLocalizations.typeOfCancer,
-        labelStyle: Theme.of(context).primaryTextTheme.titleMedium,
-        border: const OutlineInputBorder(),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please select the type';
+          return appLocalizations.selectType;
         }
         return null;
       },

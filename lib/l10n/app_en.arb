@@ -298,5 +298,9 @@
   "loginErrorTryAgain": "Login failed. Please try again later.",
   "emailRequired": "Please enter your email",
   "invalidEmail": "The email address is badly formatted",
-  "or": "or"
+  "or": "or",
+  "typeRequired": "Please select the type",
+  "selectType": "Please select the type"
+
+
 }

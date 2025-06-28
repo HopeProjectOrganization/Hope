@@ -223,7 +223,14 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Brand(Brands.google),
           const SizedBox(width: 8),
-          Text(appLocalizations.googleLogin),
+          Expanded(
+            child: Text(
+              textAlign: TextAlign.center,
+              appLocalizations.googleLogin,
+              softWrap: true,
+              maxLines: null, // أو حط رقم لو عايز تحدد أقصى عدد أسطر
+            ),
+          ),
         ],
       ),
     );

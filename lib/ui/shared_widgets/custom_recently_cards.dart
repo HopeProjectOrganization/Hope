@@ -57,7 +57,7 @@ class _CustomRecentlyCardState extends State<CustomRecentlyCard> {
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
                 widget.product['productName'],
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
             Spacer(),
@@ -85,9 +85,9 @@ class _CustomRecentlyCardState extends State<CustomRecentlyCard> {
                     child: Row(
                       children: [
                         Text("See result",
-                            style: Theme.of(context).textTheme.bodyLarge),
+                            style: Theme.of(context).textTheme.bodyMedium),
                         Icon(Icons.arrow_forward_ios_rounded,
-                            color: AppColors.dark),
+                            color: AppColors.Teal),
                       ],
                     ),
                   ),

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/core/theme/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImagePickerService {
@@ -39,8 +40,9 @@ class ImagePickerService {
             children: <Widget>[
               ListTile(
                 leading: Icon(Icons.photo_library,
-                    color: isDark ? Colors.white : Colors.black),
-                title: Text(appLocalizations.pickFromGallery),
+                    color: !isDark ? AppColors.white : AppColors.dark),
+                title: Text(appLocalizations.pickFromGallery,
+                    style: Theme.of(context).textTheme.bodySmall),
                 onTap: () async {
                   Navigator.pop(context);
                   File? image = await pickImage(ImageSource.gallery);
@@ -51,8 +53,9 @@ class ImagePickerService {
               ),
               ListTile(
                 leading: Icon(Icons.camera_alt,
-                    color: isDark ? Colors.white : Colors.black),
-                title: Text(appLocalizations.takePhoto),
+                    color: !isDark ? AppColors.white : AppColors.dark),
+                title: Text(appLocalizations.takePhoto,
+                    style: Theme.of(context).textTheme.bodySmall),
                 onTap: () async {
                   Navigator.pop(context);
                   File? image = await pickImage(ImageSource.camera);

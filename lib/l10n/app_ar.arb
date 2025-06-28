@@ -277,7 +277,7 @@
   "recentlyAdded": "المضافة مؤخرًا",
   "failedToLoadRecentlyAdded": "فشل في تحميل المنتجات المضافة مؤخرًا.",
   "food": "طعام",
-  "beauty": "منتج تجميلي",
+  "beauty": "منتج",
   "noTextDetected": "لم يتم الكشف عن نص",
   "scanCancelled": "تم إلغاء المسح",
   "scanningError": "حدث خطأ أثناء المسح",
@@ -295,5 +295,9 @@
   "loginErrorTryAgain": "حدث خطأ أثناء تسجيل الدخول. حاول لاحقًا.",
   "emailRequired": "يرجى إدخال البريد الإلكتروني",
   "invalidEmail": "البريد الإلكتروني غير صالح",
-  "or": "أو"
+  "or": "أو",
+  "typeRequired": "يرجى اختيار النوع",
+  "selectType": "يرجى اختيار النوع"
+
+
 }

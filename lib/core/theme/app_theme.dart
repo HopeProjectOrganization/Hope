@@ -54,6 +54,11 @@ class AppTheme {
     bottomAppBarTheme: BottomAppBarTheme(color: AppColors.dark, elevation: 5),
     iconTheme: IconThemeData(color: AppColors.white),
     textTheme: const TextTheme(
+      headlineMedium: TextStyle(
+        color: AppColors.dark,
+        fontSize: 40,
+        fontWeight: FontWeight.bold,
+      ),
       titleLarge: TextStyle(
           fontSize: 40,
           height: 1,
@@ -89,6 +94,35 @@ class AppTheme {
         ),
       ),
     ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      inputDecorationTheme: InputDecorationTheme(
+        floatingLabelStyle: TextStyle(
+          color: AppColors.dark, // أو أي لون يناسبك
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+        filled: true,
+        fillColor: AppColors.cloudi,
+        labelStyle: const TextStyle(
+          color: AppColors.dark,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: AppColors.gray),
+        ),
+      ),
+      menuStyle: MenuStyle(
+        backgroundColor: WidgetStateProperty.all(AppColors.white),
+        surfaceTintColor: WidgetStateProperty.all(AppColors.Teal),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+      ),
+      textStyle: const TextStyle(color: AppColors.dark, fontSize: 16),
+    ),
+
     textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
             foregroundColor: AppColors.Teal,
@@ -170,14 +204,41 @@ class AppTheme {
           return Colors.transparent;
         }),
       ),
-      appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.dark,
+    dropdownMenuTheme: DropdownMenuThemeData(
+      inputDecorationTheme: InputDecorationTheme(
+        labelStyle: const TextStyle(
+          color: AppColors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: AppColors.white),
+        ),
+      ),
+      menuStyle: MenuStyle(
+        backgroundColor: WidgetStateProperty.all(AppColors.dark),
+        surfaceTintColor: WidgetStateProperty.all(AppColors.Teal),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+      ),
+      textStyle: const TextStyle(color: AppColors.white, fontSize: 16),
+    ),
+
+    appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.dark,
         foregroundColor: AppColors.cloudi,
         centerTitle: true,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.dark)),
     primaryColor: AppColors.Teal,
     textTheme: const TextTheme(
+      headlineMedium: TextStyle(
+        color: AppColors.dark,
+        fontSize: 40,
+        fontWeight: FontWeight.bold,
+      ),
       titleLarge: TextStyle(
         color: AppColors.cloudi,
         fontSize: 30,
