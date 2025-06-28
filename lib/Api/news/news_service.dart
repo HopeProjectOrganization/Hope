@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:hope/Api/notification/notification_service.dart';
 import 'package:hope/main.dart';
 import 'package:hope/model/article.dart';
+import 'package:hope/model/notification_dm.dart';
 import 'package:http/http.dart' as http;
 
 class NewsApiService {
@@ -17,6 +19,13 @@ class NewsApiService {
     );
 
     if (response.statusCode == 200) {
+      await NotificationApiService().sendToTopic(NotificationModel(
+        topic: article.category.toLowerCase().replaceAll(" ", "-"),
+        title: "📢 مقال جديد يخص حالتك",
+        body: article.title,
+        clickAction: "FLUTTER_NOTIFICATION_CLICK",
+      ));
+
       return Article.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('فشل في إضافة الخبر');

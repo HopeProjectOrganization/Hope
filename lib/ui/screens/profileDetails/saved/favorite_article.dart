@@ -1,10 +1,11 @@
 // article_favorites.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/saved/saved_post.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/article.dart';
 import 'package:hope/ui/screens/aware/shared_widgets/article/article_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lottie/lottie.dart';
 
 class ArticleFavorites extends StatelessWidget {
   final Map<String, String> articleCategories;
@@ -21,7 +22,18 @@ class ArticleFavorites extends StatelessWidget {
     late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
 
     if (articleCategories.isEmpty) {
-      return Center(child: Text(appLocalizations.noFavoritePostsYet));
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .9,
+              width: MediaQuery.of(context).size.width * .9,
+              child: Lottie.asset('assets/lottie/saved.json'), // animation path
+            ),
+          ],
+        ),
+      );
     }
 
     return ListView(

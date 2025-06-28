@@ -8,9 +8,9 @@ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/avatar.dart';
 import 'package:hope/model/get_profile.dart';
-import 'package:hope/ui/screens/auth/forgetpassword/resetpassword.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab/edit_profile.dart';
+import 'package:hope/ui/screens/profileDetails/change_password.dart';
 import 'package:hope/ui/screens/profileDetails/custom_item.dart';
 import 'package:hope/ui/screens/profileDetails/profile_item.dart';
 import 'package:hope/ui/screens/profileDetails/saved/saved_list.dart';
@@ -151,7 +151,7 @@ class _ProfileBodyState extends State<ProfileBody> {
             title: widget.appLocalizations.changePassword,
             context: context,
             onTap: () {
-              Navigator.pushNamed(context, ResetpasswordScreen.routeName);
+              Navigator.pushNamed(context, ChangePasswordScreen.routeName);
             },
           ),
           CustomItem(

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/healthy_diet/exercises_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/exercises.dart';
 import 'package:hope/model/favorite.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/exercises/exerciseDetailScreen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lottie/lottie.dart';
 
 class ExerciseFavorites extends StatelessWidget {
   final List<FavoriteMeal> favorites;
@@ -24,7 +25,18 @@ class ExerciseFavorites extends StatelessWidget {
         favorites.where((fav) => fav.type == 'exercise').toList();
 
     if (exerciseFavs.isEmpty) {
-      return Center(child: Text(appLocalizations.noExerciseYet));
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .9,
+              width: MediaQuery.of(context).size.width * .9,
+              child: Lottie.asset('assets/lottie/saved.json'), // animation path
+            ),
+          ],
+        ),
+      );
     }
 
     return FutureBuilder<List<Exercise>>(

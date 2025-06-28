@@ -26,7 +26,16 @@ class GetUserProfile {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setInt("userId", profileData.id!);
         await prefs.setString("avatarId", profileData.avatarId ?? "5");
+        await prefs.setString("avatarId", profileData.type!);
 
+        // if (profileData.type != null &&
+        //     profileData.type!.isNotEmpty &&
+        //     profileData.type!.toLowerCase() != "none") {
+        //
+        //   final topic = profileData.type!.toLowerCase().replaceAll(" ", "-");
+        //   await FirebaseMessaging.instance.subscribeToTopic(topic);
+        //   print("📬 Subscribed to topic: $topic");
+        // }
 
         return profileData;
       } else {

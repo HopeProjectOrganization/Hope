@@ -1,5 +1,6 @@
 // meal_favorites.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/healthy_diet/healthy_recipe_service.dart';
 import 'package:hope/Api/healthy_diet/vegan_service.dart';
 import 'package:hope/Api/recipes/recipe_service.dart';
@@ -8,7 +9,7 @@ import 'package:hope/model/favorite.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/recipes/recipe_details.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/vegan/vegan_details.dart';
 import 'package:hope/ui/screens/aware/meal_sence/recipe_details.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lottie/lottie.dart';
 
 class MealFavorites extends StatelessWidget {
   final List<FavoriteMeal> favorites;
@@ -25,7 +26,18 @@ class MealFavorites extends StatelessWidget {
     late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
 
     if (favorites.isEmpty) {
-      return Center(child: Text(appLocalizations.noFavoriteMealsYet));
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .9,
+              width: MediaQuery.of(context).size.width * .9,
+              child: Lottie.asset('assets/lottie/saved.json'), // animation path
+            ),
+          ],
+        ),
+      );
     }
 
     final Map<String, List<FavoriteMeal>> categorizedMeals = {

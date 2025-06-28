@@ -1,356 +1,10 @@
-// import 'dart:convert';
-//
-// import 'package:flutter/material.dart';
-// import 'package:hope/core/theme/app_colors.dart';
-// import 'package:hope/ui/shared_widgets/custome_tab.dart';
-// import 'package:http/http.dart' as http;
-//
-// class SuggestedReplacementsScreen extends StatefulWidget {
-//   static const routeName = '/alternative';
-//
-//   @override
-//   State<SuggestedReplacementsScreen> createState() =>
-//       _SuggestedReplacementsScreenState();
-// }
-//
-// class _SuggestedReplacementsScreenState
-//     extends State<SuggestedReplacementsScreen>
-//     with SingleTickerProviderStateMixin {
-//   late TabController _tabController;
-//
-//   final List<String> categories = [
-//     'dairies',
-//     'snacks',
-//     'breakfast-cereals',
-//     'beverages',
-//     'biscuits',
-//     'sweetened-beverages',
-//     'plant-based-foods',
-//     'sweets',
-//     'ice-creams',
-//     'cheeses',
-//     'meals',
-//   ];
-//
-//   Map<String, List<Map<String, dynamic>>> allReplacements = {};
-//   bool isLoading = true;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _tabController = TabController(length: categories.length, vsync: this);
-//     _tabController.addListener(_handleTabChange);
-//     fetchCategoryData(categories[0]); // حمّل أول تبويب بس
-//   }
-//
-//   Future<void> fetchCategoryData(String category) async {
-//     if (allReplacements.containsKey(category))
-//       return; // لو اتحمّلت قبل كده، متحمّلهاش تاني
-//
-//     setState(() {
-//       isLoading = true;
-//     });
-//
-//     final pairs = await fetchReplacementsForCategory(category);
-//     setState(() {
-//       allReplacements[category] = pairs;
-//       isLoading = false;
-//     });
-//   }
-//
-//   void _handleTabChange() {
-//     if (_tabController.indexIsChanging) return;
-//
-//     final currentCategory = categories[_tabController.index];
-//     fetchCategoryData(currentCategory);
-//   }
-//
-//   Future<void> fetchAllCategories() async {
-//     setState(() {
-//       isLoading = true;
-//     });
-//
-//     for (String category in categories) {
-//       final pairs = await fetchReplacementsForCategory(category);
-//       allReplacements[category] = pairs;
-//     }
-//
-//     setState(() {
-//       isLoading = false;
-//     });
-//   }
-//
-//   Future<List<Map<String, dynamic>>> fetchReplacementsForCategory(
-//       String category) async {
-//     final encodedQuery = Uri.encodeComponent(category);
-//     final url =
-//         'https://world.openfoodfacts.org/cgi/search.pl?search_terms=$encodedQuery&search_simple=1&action=process&json=1&page_size=100';
-//
-//     final response = await http.get(Uri.parse(url));
-//
-//     if (response.statusCode == 200) {
-//       try {
-//         final data = jsonDecode(response.body);
-//         List products = data['products'] ?? [];
-//
-//         products = products
-//             .where((p) =>
-//                 p['product_name'] != null &&
-//                 p['nutriments'] != null &&
-//                 p['categories_tags'] != null &&
-//                 (p['categories_tags'] as List).isNotEmpty)
-//             .toList();
-//
-//         List<Map<String, dynamic>> finalPairs = [];
-//
-//         bool isSimilarName(String a, String b) {
-//           final wordsA = a.toLowerCase().split(' ');
-//           final lowerB = b.toLowerCase();
-//           return wordsA.any((word) => lowerB.contains(word));
-//         }
-//
-//         for (var product in products) {
-//           final nutrients = product['nutriments'];
-//           final fat = nutrients['fat_100g'] ?? 0.0;
-//           final sugar = nutrients['sugars_100g'] ?? 0.0;
-//
-//           if (fat > 10 || sugar > 10) {
-//             final List sameCategory = products.where((p) {
-//               final n = p['nutriments'];
-//               final f = n['fat_100g'] ?? 0.0;
-//               final s = n['sugars_100g'] ?? 0.0;
-//
-//               return p != product &&
-//                   (p['categories_tags'] as List)
-//                       .contains((product['categories_tags'] as List).first) &&
-//                   f < fat &&
-//                   s < sugar;
-//             }).toList();
-//
-//             if (sameCategory.isNotEmpty) {
-//               // حاول تلاقي بديل مشابه في الاسم
-//               final similarNameAlternatives = sameCategory
-//                   .where((alt) => isSimilarName(
-//                       product['product_name'], alt['product_name'] ?? ''))
-//                   .toList();
-//
-//               final selectedAlternative = similarNameAlternatives.isNotEmpty
-//                   ? similarNameAlternatives.first
-//                   : sameCategory.first;
-//
-//               finalPairs
-//                   .add({'unhealthy': product, 'healthy': selectedAlternative});
-//             }
-//           }
-//         }
-//
-//         return finalPairs.take(10).toList();
-//       } catch (e) {
-//         print("❌ JSON parse error: $e");
-//       }
-//     } else {
-//       print("❗ Request failed with status: ${response.statusCode}");
-//     }
-//     return [];
-//   }
-//
-//   Widget buildNutritionComparison(Map<String, dynamic> product) {
-//     final nutrients = product['nutriments'] ?? {};
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         if (nutrients['energy_100g'] != null)
-//           Text("Energy: ${nutrients['energy_100g']} kJ"),
-//         if (nutrients['fat_100g'] != null)
-//           Text("Fat: ${nutrients['fat_100g']} g"),
-//         if (nutrients['sugars_100g'] != null)
-//           Text("Sugars: ${nutrients['sugars_100g']} g"),
-//         if (nutrients['proteins_100g'] != null)
-//           Text("Protein: ${nutrients['proteins_100g']} g"),
-//       ],
-//     );
-//   }
-//
-//   Widget buildReplacementRow(Map<String, dynamic> pair) {
-//     final unhealthy = pair['unhealthy'];
-//     final healthy = pair['healthy'];
-//
-//     return Card(
-//       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-//       elevation: 6,
-//       shadowColor: Colors.grey.withOpacity(0.3),
-//       child: Container(
-//         decoration: BoxDecoration(
-//           borderRadius: BorderRadius.circular(20),
-//           gradient: LinearGradient(
-//             colors: [AppColors.lavender.withOpacity(0.3), Colors.white],
-//             begin: Alignment.topLeft,
-//             end: Alignment.bottomRight,
-//           ),
-//         ),
-//         padding: const EdgeInsets.all(16),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.stretch,
-//           children: [
-//             // Text(
-//             //   "مقارنة المنتج غير الصحي بالبديل الصحي",
-//             //   style: TextStyle(
-//             //     fontSize: 16,
-//             //     fontWeight: FontWeight.bold,
-//             //     color: Colors.black87,
-//             //   ),
-//             //   textAlign: TextAlign.center,
-//             // ),
-//             // const SizedBox(height: 16),
-//             Row(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 // Unhealthy Product
-//                 Expanded(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.center,
-//                     children: [
-//                       Text(
-//                         "❌ ${unhealthy['product_name']}",
-//                         style: TextStyle(
-//                           fontWeight: FontWeight.bold,
-//                           fontSize: 14,
-//                           color: Colors.red[800],
-//                         ),
-//                         textAlign: TextAlign.center,
-//                       ),
-//                       if (unhealthy['image_small_url'] != null)
-//                         Padding(
-//                           padding: const EdgeInsets.symmetric(vertical: 6),
-//                           child: ClipRRect(
-//                             borderRadius: BorderRadius.circular(12),
-//                             child: Image.network(
-//                               unhealthy['image_small_url'],
-//                               height: 80,
-//                               fit: BoxFit.cover,
-//                             ),
-//                           ),
-//                         ),
-//                       buildNutritionComparison(unhealthy),
-//                     ],
-//                   ),
-//                 ),
-//                 // Divider
-//                 Container(
-//                   width: 1.5,
-//                   height: 150,
-//                   margin: const EdgeInsets.symmetric(horizontal: 10),
-//                   color: Colors.grey[300],
-//                 ),
-//                 // Healthy Product
-//                 Expanded(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.center,
-//                     children: [
-//                       Text(
-//                         "✅ ${healthy['product_name']}",
-//                         style: TextStyle(
-//                           fontWeight: FontWeight.bold,
-//                           fontSize: 14,
-//                           color: Colors.green[800],
-//                         ),
-//                         textAlign: TextAlign.center,
-//                       ),
-//                       if (healthy['image_small_url'] != null)
-//                         Padding(
-//                           padding: const EdgeInsets.symmetric(vertical: 6),
-//                           child: ClipRRect(
-//                             borderRadius: BorderRadius.circular(12),
-//                             child: Image.network(
-//                               healthy['image_small_url'],
-//                               height: 80,
-//                               fit: BoxFit.cover,
-//                             ),
-//                           ),
-//                         ),
-//                       buildNutritionComparison(healthy),
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   List<Widget> buildTabs() {
-//     return categories.map((cat) => CustomeTab(text: cat)).toList();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         leading: IconButton(
-//           icon: const Icon(Icons.arrow_back_outlined),
-//           onPressed: () {
-//             Navigator.of(context).pop();
-//           },
-//         ),
-//         toolbarHeight: MediaQuery.of(context).size.height * 0.1,
-//         backgroundColor: AppColors.purple,
-//         shape: const RoundedRectangleBorder(
-//           borderRadius: BorderRadius.only(
-//             bottomLeft: Radius.circular(20),
-//             bottomRight: Radius.circular(20),
-//           ),
-//         ),
-//         centerTitle: true,
-//         title: Text("Healthy Alternatives",
-//             style: TextStyle(color: AppColors.white)),
-//         bottom: TabBar(
-//           controller: _tabController,
-//           indicatorSize: TabBarIndicatorSize.label,
-//           isScrollable: true,
-//           labelPadding: const EdgeInsets.symmetric(horizontal: 7),
-//           padding: const EdgeInsets.symmetric(vertical: 10),
-//           tabs: buildTabs(),
-//         ),
-//       ),
-//       body: isLoading
-//           ? Center(child: CircularProgressIndicator())
-//           : TabBarView(
-//               controller: _tabController,
-//               children: categories.map((cat) {
-//                 final replacements = allReplacements[cat];
-//                 if (replacements == null) {
-//                   return Center(child: CircularProgressIndicator());
-//                 } else if (replacements.isEmpty) {
-//                   return Center(child: Text("No alternatives available"));
-//                 }
-//                 return ListView(
-//                   padding: EdgeInsets.all(8),
-//                   children: replacements.map(buildReplacementRow).toList(),
-//                 );
-//               }).toList(),
-//             ),
-//     );
-//   }
-// }
-//  static const String _apiKey = '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';
-// final barcode = await FlutterBarcodeScanner.scanBarcode(
-//         '#ff6666', 'Cancel', true, ScanMode.BARCODE,500,'BACK' , ScanFormat.ONLY_BARCODE);
-// دمج Flutter UI مع API داخلي لجلب بدائل صحية من GPT
-
-// بعد التعديل الكامل على الكود، قمنا بربطه ب ChatApiService واستخدام JSON في الرد
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hope/Api/chat/chatApi.dart';
 import 'package:hope/Api/scan/scan_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:http/http.dart' as http;
-import 'package:simple_barcode_scanner/enum.dart';
-import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:lottie/lottie.dart';
 
 class SuggestedReplacementsScreen extends StatelessWidget {
   const SuggestedReplacementsScreen({super.key});
@@ -380,7 +34,6 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
 
   String _productName = "";
   List<Map<String, String>> _alternatives = [];
-  String _note = "";
   List<Map<String, dynamic>> _productAlternatives = [];
 
   @override
@@ -395,7 +48,6 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
       _isLoading = true;
       _productName = "";
       _alternatives = [];
-      _note = "";
     });
     try {
       final response = await getAlternative(input);
@@ -426,21 +78,31 @@ Return the result as a JSON array. Each item must include:
 ''';
 
     final prompt = promptTemplate.replaceAll('{productName}', productName);
-    return await ChatApiService.sendPrompt(prompt);
+    final response = await ChatApiService.sendPrompt(prompt);
+
+    if (response is String) return response;
+    if (response is Map || response is List) return jsonEncode(response);
+    throw Exception("Unexpected response type: ${response.runtimeType}");
   }
 
   List<Map<String, String>> parseAlternativesJson(String jsonText) {
     try {
-      final List<dynamic> data = jsonDecode(jsonText);
-      return data
-          .map<Map<String, String>>((item) => {
-                'name': item['name'] ?? '',
-                'reason': item['reason'] ?? '',
-                'nutritionInfo': item['nutritionInfo'] ?? '',
-              })
-          .toList();
+      final dynamic data = jsonDecode(jsonText);
+
+      if (data is List) {
+        return data
+            .whereType<Map<String, dynamic>>()
+            .map<Map<String, String>>((item) => {
+                  'name': item['name']?.toString() ?? '',
+                  'reason': item['reason']?.toString() ?? '',
+                  'nutritionInfo': item['nutritionInfo']?.toString() ?? '',
+                })
+            .toList();
+      } else {
+        throw Exception("Expected a JSON array but got: ${data.runtimeType}");
+      }
     } catch (e) {
-      throw Exception("فشل في تحليل JSON: $e");
+      throw Exception("❌ JSON decode error: $e");
     }
   }
 
@@ -470,25 +132,18 @@ Return the result as a JSON array. Each item must include:
             boxShadow: [
               BoxShadow(
                 color: AppColors.Teal,
-                blurRadius: 6,
-                offset: Offset(0, 2),
+                blurRadius: 2,
+                offset: const Offset(0, 2),
               )
             ],
           ),
           child: TextField(
             controller: _controller,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Search',
-              prefixIcon: const Icon(
-                Icons.search,
-                color: AppColors.yellow,
-              ),
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.qr_code_scanner),
-                onPressed: _isLoading ? null : scanBarcodeAndSearch,
-              ),
+              prefixIcon: Icon(Icons.search, color: AppColors.yellow),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16),
             ),
             onSubmitted: (text) =>
                 _isLoading ? null : handleSearch(text.trim()),
@@ -497,10 +152,7 @@ Return the result as a JSON array. Each item must include:
         const SizedBox(height: 20),
         Center(
           child: ElevatedButton.icon(
-            icon: const Icon(
-              Icons.search,
-              color: AppColors.yellow,
-            ),
+            icon: const Icon(Icons.search, color: AppColors.yellow),
             label: const Text('Search for Alternative'),
             onPressed: _isLoading
                 ? null
@@ -510,7 +162,7 @@ Return the result as a JSON array. Each item must include:
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.Teal,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.white,
               padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14)),
@@ -532,114 +184,105 @@ Return the result as a JSON array. Each item must include:
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Alternative for $_productName",
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 16),
-        ..._alternatives.map((alt) => Card(
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.verified,
-                            color: Colors.green, size: 24),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            alt['name'] ?? '',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.info_outline, color: Colors.orange),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            alt['reason'] ?? '',
-                            style: const TextStyle(fontSize: 15),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if ((alt['nutritionInfo'] ?? '').isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(Icons.local_fire_department,
-                              color: AppColors.red),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              alt['nutritionInfo'] ?? '',
-                              style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.Teal),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
+        Text.rich(
+          TextSpan(
+            text: 'Top alternatives to ',
+            children: [
+              TextSpan(
+                text: _productName,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.yellow,
                 ),
+              ),
+            ],
           ),
-            )),
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppColors.Teal,
+          ),
+        ),
+        const SizedBox(height: 20),
+        ListView.builder(
+          itemCount: _alternatives.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            final alt = _alternatives[index];
+            return buildAltCard(alt);
+          },
+        ),
       ],
     );
   }
 
-  Future<void> scanBarcodeAndSearch() async {
-    final barcode = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel',
-        true, ScanMode.BARCODE, 500, 'BACK', ScanFormat.ONLY_BARCODE);
-
-    if (barcode == '-1') return;
-
-    final name = await fetchProductNameFromBarcode(barcode);
-
-    if (name != null && name.isNotEmpty) {
-      _controller.text = name;
-      await handleSearch(name);
-    } else {
-      showErrorDialog("Product doesnot exist , Try to enter name of product");
-    }
-  }
-
-  Future<String?> fetchProductNameFromBarcode(String barcode) async {
-    for (final url in [
-      "https://world.openfoodfacts.org/api/v2/product/$barcode.json",
-      "https://world.openbeautyfacts.org/api/v2/product/$barcode.json"
-    ]) {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['status'] == 1) {
-          return data['product']['product_name']?.toString();
-        }
-      }
-    }
-    return null;
+  Widget buildAltCard(Map<String, String> alt) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Card(
+        color: AppColors.white,
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppColors.Teal, width: 1.4),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.verified, color: AppColors.yellow),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      alt['name'] ?? '',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text("Why it’s better:",
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+              const SizedBox(height: 4),
+              Text(
+                cleanText(alt['reason'] ?? ''),
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+              ),
+              if ((alt['nutritionInfo'] ?? '').isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const Text("Nutrition Info:",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                const SizedBox(height: 4),
+                Wrap(
+                  spacing: 8,
+                  children: (alt['nutritionInfo']!)
+                      .split(',')
+                      .map((info) => Chip(
+                            label: Text(info.trim()),
+                            backgroundColor: AppColors.cloudi,
+                            labelStyle: const TextStyle(
+                                color: AppColors.dark,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500),
+                          ))
+                      .toList(),
+                ),
+              ]
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> loadRecentAlternatives() async {
-    setState(() {
-      _recentLoaded = false;
-    });
+    setState(() => _recentLoaded = false);
 
     try {
       final products = await ScanService().getScannedProducts();
@@ -658,55 +301,105 @@ Return the result as a JSON array. Each item must include:
         final name = product['productName'] ?? '';
         if (name.isEmpty) continue;
 
-        final alt = await getAlternative(name);
-        final parsed = parseAlternativesJson(alt);
-
-        loadedAlternatives.add({
-          'name': name,
-          'alternatives': parsed,
-        });
+        try {
+          final alt = await getAlternative(name);
+          final parsed = parseAlternativesJson(alt);
+          loadedAlternatives.add({'name': name, 'alternatives': parsed});
+        } catch (_) {}
       }
 
-      setState(() {
-        _productAlternatives = loadedAlternatives;
-      });
+      setState(() => _productAlternatives = loadedAlternatives);
     } catch (e) {
       showErrorDialog("فشل في تحميل المنتجات الأخيرة: $e");
     } finally {
-      setState(() {
-        _recentLoaded = true;
-      });
+      setState(() => _recentLoaded = true);
     }
   }
 
   Widget buildHistoryTab() {
     if (!_recentLoaded) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.yellow),
+      );
     }
+
     if (_productAlternatives.isEmpty) {
-      return const Center(child: Text("There is no Product"));
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .1,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .5,
+              child: Lottie.asset('assets/lottie/empty.json'),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "No scanned products yet!",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: AppColors.Teal,
+              ),
+            ),
+          ],
+        ),
+      );
     }
-    return Column(
-      children: _productAlternatives.map((product) {
+
+    return ListView.builder(
+      itemCount: _productAlternatives.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        final product = _productAlternatives[index];
         final List<dynamic> alternatives = product['alternatives'] ?? [];
-        return ExpansionTile(
-          backgroundColor: Colors.grey[50],
-          collapsedBackgroundColor: Colors.grey[100],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          title: Text(product['name'],
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          children: alternatives
-              .map((alt) => ListTile(
-                  leading: const Icon(Icons.check_circle_outline,
-                      color: Colors.green),
-                  title: Text(alt['name'] ?? ''),
-                  subtitle: Text(alt['reason'] ?? '')))
-              .toList(),
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text.rich(
+              TextSpan(
+                text: 'Top alternatives to ',
+                children: [
+                  TextSpan(
+                    text: product['name'] ?? '',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.yellow,
+                    ),
+                  ),
+                ],
+              ),
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.Teal,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...alternatives
+                .map<Widget>((alt) => buildAltCard(
+                      Map<String, String>.from(alt),
+                    ))
+                .toList(),
+            const SizedBox(height: 24),
+          ],
         );
-      }).toList(),
+      },
     );
+  }
+
+  String cleanText(String text) {
+    return text
+        .replaceAll('This product', 'It')
+        .replaceAll('this product', 'it')
+        .replaceAll('is a good alternative because', 'is healthier because')
+        .replaceAll(RegExp(r'\baccording to\b.*?\.'), '')
+        .replaceAll(RegExp(r'\bOverall,?\s*'), '')
+        .trim();
   }
 
   @override
@@ -725,15 +418,32 @@ Return the result as a JSON array. Each item must include:
         backgroundColor: Colors.white,
         elevation: 0.5,
         centerTitle: true,
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: AppColors.Teal,
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: AppColors.Teal,
-          tabs: const [
-            Tab(text: 'Search'),
-            Tab(text: 'History'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Container(
+            color: Colors.white,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TabBar(
+                    controller: _tabController,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: AppColors.Teal,
+                    indicator: BoxDecoration(
+                      color: AppColors.Teal,
+                      borderRadius: BorderRadius.circular(26),
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    tabs: const [
+                      Tab(text: 'Search'),
+                      Tab(text: 'History'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
       body: TabBarView(
@@ -748,3 +458,4 @@ Return the result as a JSON array. Each item must include:
     );
   }
 }
+

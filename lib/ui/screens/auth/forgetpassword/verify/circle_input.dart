@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hope/core/theme/app_colors.dart';
 
 class CircleInput extends StatefulWidget {
   final TextEditingController controller;
@@ -36,7 +37,7 @@ class CircleInputState extends State<CircleInput> {
       width: 60,
       height: 60,
       decoration: BoxDecoration(
-        color: isFilled ? const Color(0xff8E56FF) : const Color(0xffC9C9C9),
+        color: isFilled ? AppColors.Teal : const Color(0xffC9C9C9),
         // Color changes based on input
         shape: BoxShape.circle,
       ),
