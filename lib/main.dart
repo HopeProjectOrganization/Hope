@@ -55,7 +55,6 @@ import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:hope/ui/screens/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/ui/screens/home/tabs/menu_tab/edit_profile.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
-import 'package:hope/ui/screens/home/tabs/scan_tab/scan_tab.dart';
 import 'package:hope/ui/screens/onBoarding_screens/on_boarding/onboarding_screen.dart';
 import 'package:hope/ui/screens/onBoarding_screens/set_up/setup_screen.dart';
 import 'package:hope/ui/screens/onBoarding_screens/splash/splash_screen.dart';
@@ -123,10 +122,14 @@ void main() async {
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
   // ✅ مهمة لمرة واحدة بعد 10 ثواني فقط (للاختبار)
-  Workmanager().registerOneOffTask(
-    "testTask", // unique name
-    "mealReminderTask", // نفس اسم المهمة
-    initialDelay: const Duration(seconds: 10),
+  Workmanager().registerPeriodicTask(
+    "dailyMealReminder", // اسم فريد
+    "mealReminderTask", // اسم المهمة نفسه
+    frequency: const Duration(hours: 24), // كل 24 ساعة
+    initialDelay: const Duration(minutes: 3), // ممكن تتأخر أول مرة
+    constraints: Constraints(
+      networkType: NetworkType.connected,
+    ),
   );
 
   runApp(
@@ -170,7 +173,7 @@ class MyApp extends StatelessWidget {
         ResetpasswordScreen.routeName: (_) => const ResetpasswordScreen(),
         AwareTab.routeName: (_) => AwareTab(),
         HomeScreen.routeName: (_) => const HomeScreen(),
-        ScanTab.routeName: (_) => const ScanTab(),
+        // ScanTab.routeName: (_) => const ScanTab(),
         SuggestedReplacementsScreen.routeName: (_) =>
             const SuggestedReplacementsScreen(),
         AddTab.routeName: (_) => const AddTab(),
@@ -277,7 +280,7 @@ class MyApp extends StatelessWidget {
         AdminAddHospitalScreen.routeName: (_) => const AdminAddHospitalScreen(),
         ExploreScreen.routeName: (_) => const ExploreScreen()
       },
-      initialRoute: LoginScreen.routeName,
+      initialRoute: HomeScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

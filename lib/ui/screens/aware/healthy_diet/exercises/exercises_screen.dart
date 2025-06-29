@@ -12,16 +12,16 @@ class BodyPartScreen extends StatelessWidget {
   BodyPartScreen({super.key});
 
   final Map<String, String> bodyPartImages = {
-    "back": AppAssets.ex1,
-    "cardio": AppAssets.ex2,
+    "back": AppAssets.ex3,
+    "cardio": AppAssets.ex4,
     "chest": AppAssets.ex3,
     "lower arms": AppAssets.ex4,
-    "lower legs": AppAssets.ex1,
-    "neck": AppAssets.ex1,
-    "shoulders": AppAssets.ex1,
-    "upper arms": AppAssets.ex1,
-    "upper legs": AppAssets.ex1,
-    "waist": AppAssets.ex1,
+    "lower legs": AppAssets.ex3,
+    "neck": AppAssets.ex4,
+    "shoulders": AppAssets.ex3,
+    "upper arms": AppAssets.ex4,
+    "upper legs": AppAssets.ex3,
+    "waist": AppAssets.ex4,
   };
 
   final List<String> bodyParts = [

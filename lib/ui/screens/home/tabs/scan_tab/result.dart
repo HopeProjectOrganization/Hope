@@ -6,7 +6,7 @@ import 'package:hope/ui/screens/home/home.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 
 class ResultScreen extends StatelessWidget {
-  static const String routeName = "/resultScan";
+  static const String routeName = "/result-screen";
 
   const ResultScreen({super.key});
 
@@ -43,7 +43,7 @@ class ResultScreen extends StatelessWidget {
           : null,
     );
 
-    final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+    final appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -58,12 +58,13 @@ class ResultScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 🟡 Risk image section
+            // 🔸 Risk image
             Card(
               elevation: 4,
               color: AppColors.cloudi,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -86,10 +87,9 @@ class ResultScreen extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
 
-            // 🟡 Product info
+            // 🔸 Product info
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -113,8 +113,8 @@ class ResultScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 20),
+
             if (highRiskIngredients.isNotEmpty) ...[
               Text(
                 appLocalizations.highRiskIngredients,
@@ -126,7 +126,7 @@ class ResultScreen extends StatelessWidget {
               const SizedBox(height: 10),
             ],
 
-            // 🟡 High risk ingredients
+            // 🔸 Ingredient list or message if empty
             Expanded(
               child: highRiskIngredients.isNotEmpty
                   ? ListView.separated(
@@ -139,7 +139,8 @@ class ResultScreen extends StatelessWidget {
                           elevation: 4,
                           color: AppColors.cloudi,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
@@ -166,19 +167,29 @@ class ResultScreen extends StatelessWidget {
                       },
                     )
                   : Center(
-                      child: Text(
-                        appLocalizations.noHighRiskIngredientsFound,
-                        style: Theme.of(context).textTheme.titleMedium,
-                        textAlign: TextAlign.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.verified_outlined,
+                              size: 60, color: AppColors.Teal),
+                          const SizedBox(height: 12),
+                          Text(
+                            appLocalizations.noHighRiskIngredientsFound,
+                            style: Theme.of(context).textTheme.labelLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
                     ),
             ),
 
             const SizedBox(height: 20),
-
             CustomButton(
               onClick: () => Navigator.pushNamedAndRemoveUntil(
-                  context, HomeScreen.routeName, (route) => false),
+                context,
+                HomeScreen.routeName,
+                (route) => false,
+              ),
               title: appLocalizations.done,
             ),
           ],

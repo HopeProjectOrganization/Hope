@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/scan/scan_service.dart';
-import 'package:hope/ui/screens/home/home.dart';
+import 'package:hope/main.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class BarcodeScannerService {
   final BuildContext context;
@@ -14,27 +16,59 @@ class BarcodeScannerService {
 
   BarcodeScannerService(this.context);
 
+  // ✅ استخدمنا IP من main.dart
+  static Future<Map<String, dynamic>?> fetchScanResult(String barcode) async {
+    try {
+      var url = Uri.parse("https://${MyApp.IP}/api/scan/$barcode");
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        return {'message': 'Failed to fetch scan result'};
+      }
+    } catch (e) {
+      return {'message': 'Error occurred during fetching scan result: $e'};
+    }
+  }
+
   Future<void> scanBarcode(Function(String) onResult) async {
     final appLocalizations = AppLocalizations.of(context)!;
 
-    showLoading(context);
-
-    final result = await _scanService.scanBarcode(context);
+    // ✅ افتح الكاميرا وامسح الباركود
+    final barcode = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SimpleBarcodeScannerPage(),
+      ),
+    );
 
     if (!context.mounted) return;
 
+    if (barcode == null || barcode == "-1") {
+      onResult(appLocalizations.scanCancelledOrFailed);
+      return;
+    }
+
+    showLoading(context);
+
+    final result = await fetchScanResult(barcode);
+
     hideLoading(context);
 
-    if (result != null && result.containsKey('product')) {
+    if (result != null &&
+        result.containsKey('product') &&
+        result['product'] != null) {
+      final product = result['product'];
       final productName =
-          result['product']?['productName'] ?? appLocalizations.unknownProduct;
-      final barcode =
-          result['product']?['barcode'] ?? appLocalizations.unknownBarcode;
+          product['productName'] ?? appLocalizations.unknownProduct;
+      final barcodeValue =
+          product['barcode'] ?? appLocalizations.unknownBarcode;
       final highRiskIngredients = result['highRiskIngredients'] ?? [];
 
       await saveRecentlyScannedProduct({
         'productName': productName,
-        'barcode': barcode,
+        'barcode': barcodeValue,
         'highRiskIngredients': highRiskIngredients,
       });
 
@@ -43,25 +77,21 @@ class BarcodeScannerService {
         ResultScreen.routeName,
         arguments: {
           'message': appLocalizations.productAddedSuccessfully,
-          'product': {
-            'productName': productName,
-            'barcode': barcode,
-          },
+          'product': product,
           'highRiskIngredients': highRiskIngredients,
         },
       );
     } else {
-      final message =
-          result?['message'] ?? appLocalizations.scanCancelledOrFailed;
+      // ✅ تحقق من أن المنتج غير موجود بالفعل
+      final message = result?['message'] ?? 'productNotFound';
 
       showMessage(
         context,
         message,
+        type: MessageType.warning, // أو error لو حابة
       );
 
-      onResult(appLocalizations.scanCancelledOrFailed);
-
-      Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+      onResult(message);
     }
   }
 
