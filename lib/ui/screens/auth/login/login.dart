@@ -149,10 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
             email: emailController.text.trim(),
             password: passwordController.text.trim(),
           );
-          if (!success) {
-            showMessage(context, appLocalizations.loginFailed,
-                type: MessageType.error);
-          }
+          if (!success) {}
         }
       },
     );
