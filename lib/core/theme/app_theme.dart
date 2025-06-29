@@ -175,7 +175,7 @@ class AppTheme {
   static ThemeData darkTheme = ThemeData(
       tabBarTheme: TabBarTheme(
         indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
+        borderRadius: BorderRadius.circular(50),
           border: Border.all(color: AppColors.dark),
           color: AppColors.dark,
         ),

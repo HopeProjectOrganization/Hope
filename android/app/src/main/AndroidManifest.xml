@@ -10,7 +10,7 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="hope"
+        android:label="Cura Scan"
         android:requestLegacyExternalStorage="true">
 
         <activity

@@ -83,8 +83,6 @@ class AddTabState extends State<AddTab> {
     if (productName.text.isEmpty ||
         barCode.text.isEmpty ||
         ingredients.text.isEmpty) {
-      showMessage(context, appLocalizations.pleaseFillAllFields,
-          type: MessageType.warning);
       return;
     }
 

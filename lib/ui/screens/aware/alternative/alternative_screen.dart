@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/chat/chatApi.dart';
 import 'package:hope/Api/scan/scan_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -44,6 +45,7 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
   }
 
   Future<void> handleSearch(String input) async {
+    final appLocalizations = AppLocalizations.of(context)!;
     setState(() {
       _isLoading = true;
       _productName = "";
@@ -56,28 +58,19 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
         _alternatives = parseAlternativesJson(response);
       });
     } catch (e) {
-      showErrorDialog("فشل في جلب البدائل: $e");
+      showErrorDialog(appLocalizations.failedToFetchAlternatives);
     } finally {
       setState(() => _isLoading = false);
     }
   }
 
-  Future<String> getAlternative(String productName) async {
-    const promptTemplate = '''
-I have a product: "{productName}".
-Suggest 3 to 5 healthier alternative products that are widely available, especially in Egypt.
-The alternatives must:
-- Be similar in purpose (e.g., snack for snack, cereal for cereal).
-- Contain less sugar, saturated fat, or harmful additives.
-- Be local Egyptian options if possible.
-- Be affordable and easy to find in stores or online.
-Return the result as a JSON array. Each item must include:
-- name
-- reason
-- nutritionInfo (optional)
-''';
+  String generatePrompt(String productName, AppLocalizations locale) {
+    return "${locale.suggestAlternativesFor} $productName";
+  }
 
-    final prompt = promptTemplate.replaceAll('{productName}', productName);
+  Future<String> getAlternative(String productName) async {
+    final appLocalizations = AppLocalizations.of(context)!;
+    final prompt = generatePrompt(productName, appLocalizations);
     final response = await ChatApiService.sendPrompt(prompt);
 
     if (response is String) return response;
@@ -102,7 +95,7 @@ Return the result as a JSON array. Each item must include:
         throw Exception("Expected a JSON array but got: ${data.runtimeType}");
       }
     } catch (e) {
-      throw Exception("❌ JSON decode error: $e");
+      throw Exception("JSON decode error: $e");
     }
   }
 
@@ -110,40 +103,40 @@ Return the result as a JSON array. Each item must include:
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Note"),
+        title: Text(AppLocalizations.of(context)!.note),
         content: Text(message),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Okay")),
+              child: Text(AppLocalizations.of(context)!.ok)),
         ],
       ),
     );
   }
 
-  Widget buildManualSearchTab() {
+  Widget buildManualSearchTab(AppLocalizations locale) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: AppColors.Teal,
-                blurRadius: 2,
+                color: AppColors.Teal.withOpacity(0.3),
+                blurRadius: 4,
                 offset: const Offset(0, 2),
               )
             ],
           ),
           child: TextField(
             controller: _controller,
-            decoration: const InputDecoration(
-              hintText: 'Search',
-              prefixIcon: Icon(Icons.search, color: AppColors.yellow),
+            decoration: InputDecoration(
+              hintText: locale.search,
+              prefixIcon: const Icon(Icons.search, color: AppColors.yellow),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 16),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             ),
             onSubmitted: (text) =>
                 _isLoading ? null : handleSearch(text.trim()),
@@ -153,7 +146,7 @@ Return the result as a JSON array. Each item must include:
         Center(
           child: ElevatedButton.icon(
             icon: const Icon(Icons.search, color: AppColors.yellow),
-            label: const Text('Search for Alternative'),
+            label: Text(locale.searchForAlternative),
             onPressed: _isLoading
                 ? null
                 : () {
@@ -175,18 +168,18 @@ Return the result as a JSON array. Each item must include:
         if (_isLoading)
           const Center(child: CircularProgressIndicator())
         else if (_productName.isNotEmpty && _alternatives.isNotEmpty)
-          buildAlternativesView(),
+          buildAlternativesView(locale),
       ],
     );
   }
 
-  Widget buildAlternativesView() {
+  Widget buildAlternativesView(AppLocalizations locale) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text.rich(
           TextSpan(
-            text: 'Top alternatives to ',
+            text: '${locale.topAlternativesTo} ',
             children: [
               TextSpan(
                 text: _productName,
@@ -210,18 +203,18 @@ Return the result as a JSON array. Each item must include:
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             final alt = _alternatives[index];
-            return buildAltCard(alt);
+            return buildAltCard(alt, locale);
           },
         ),
       ],
     );
   }
 
-  Widget buildAltCard(Map<String, String> alt) {
+  Widget buildAltCard(Map<String, String> alt, AppLocalizations locale) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
-        color: AppColors.white,
+        color: Theme.of(context).cardColor,
         elevation: 3,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -246,18 +239,17 @@ Return the result as a JSON array. Each item must include:
                 ],
               ),
               const SizedBox(height: 16),
-              const Text("Why it’s better:",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+              Text(locale.whyBetter,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 15)),
               const SizedBox(height: 4),
-              Text(
-                cleanText(alt['reason'] ?? ''),
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
-              ),
+              Text(cleanText(alt['reason'] ?? ''),
+                  style: const TextStyle(fontSize: 14)),
               if ((alt['nutritionInfo'] ?? '').isNotEmpty) ...[
                 const SizedBox(height: 16),
-                const Text("Nutrition Info:",
-                    style:
-                        TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                Text(locale.nutritionInfo,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 15)),
                 const SizedBox(height: 4),
                 Wrap(
                   spacing: 8,
@@ -282,73 +274,56 @@ Return the result as a JSON array. Each item must include:
   }
 
   Future<void> loadRecentAlternatives() async {
+    final appLocalizations = AppLocalizations.of(context)!;
     setState(() => _recentLoaded = false);
-
     try {
       final products = await ScanService().getScannedProducts();
       final Map<String, dynamic> uniqueProducts = {};
-
       for (var product in products ?? []) {
         if (product is Map<String, dynamic> && product['barcode'] != null) {
           uniqueProducts[product['barcode']] = product;
         }
       }
-
       final recent = uniqueProducts.values.toList().reversed.take(5).toList();
       final List<Map<String, dynamic>> loadedAlternatives = [];
-
       for (var product in recent) {
         final name = product['productName'] ?? '';
         if (name.isEmpty) continue;
-
         try {
           final alt = await getAlternative(name);
           final parsed = parseAlternativesJson(alt);
           loadedAlternatives.add({'name': name, 'alternatives': parsed});
         } catch (_) {}
       }
-
       setState(() => _productAlternatives = loadedAlternatives);
     } catch (e) {
-      showErrorDialog("فشل في تحميل المنتجات الأخيرة: $e");
+      showErrorDialog(appLocalizations.failedToLoadHistory);
     } finally {
       setState(() => _recentLoaded = true);
     }
   }
 
-  Widget buildHistoryTab() {
+  Widget buildHistoryTab(AppLocalizations locale) {
     if (!_recentLoaded) {
       return const Center(
-        child: CircularProgressIndicator(color: AppColors.yellow),
-      );
+          child: CircularProgressIndicator(color: AppColors.yellow));
     }
-
     if (_productAlternatives.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * .1,
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * .5,
-              child: Lottie.asset('assets/lottie/empty.json'),
-            ),
+            Lottie.asset('assets/lottie/empty.json', height: 200),
             const SizedBox(height: 20),
-            const Text(
-              "No scanned products yet!",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                color: AppColors.Teal,
-              ),
-            ),
+            Text(locale.noScannedProducts,
+                style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.Teal)),
           ],
         ),
       );
     }
-
     return ListView.builder(
       itemCount: _productAlternatives.length,
       shrinkWrap: true,
@@ -356,34 +331,29 @@ Return the result as a JSON array. Each item must include:
       itemBuilder: (context, index) {
         final product = _productAlternatives[index];
         final List<dynamic> alternatives = product['alternatives'] ?? [];
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text.rich(
               TextSpan(
-                text: 'Top alternatives to ',
+                text: '${locale.topAlternativesTo} ',
                 children: [
                   TextSpan(
-                    text: product['name'] ?? '',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.yellow,
-                    ),
-                  ),
+                      text: product['name'] ?? '',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.yellow)),
                 ],
               ),
               style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.Teal,
-              ),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.Teal),
             ),
             const SizedBox(height: 16),
             ...alternatives
-                .map<Widget>((alt) => buildAltCard(
-                      Map<String, String>.from(alt),
-                    ))
+                .map<Widget>((alt) =>
+                    buildAltCard(Map<String, String>.from(alt), locale))
                 .toList(),
             const SizedBox(height: 24),
           ],
@@ -397,8 +367,8 @@ Return the result as a JSON array. Each item must include:
         .replaceAll('This product', 'It')
         .replaceAll('this product', 'it')
         .replaceAll('is a good alternative because', 'is healthier because')
-        .replaceAll(RegExp(r'\baccording to\b.*?\.'), '')
-        .replaceAll(RegExp(r'\bOverall,?\s*'), '')
+        .replaceAll(RegExp(r'\\baccording to\\b.*?\\.'), '')
+        .replaceAll(RegExp(r'\\bOverall,?\\s*'), '')
         .trim();
   }
 
@@ -411,37 +381,41 @@ Return the result as a JSON array. Each item must include:
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
-      backgroundColor: const Color(0xfff7f7f7),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Alternative'),
-        backgroundColor: Colors.white,
+        title: Text(appLocalizations.alternative),
         elevation: 0.5,
         centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: Container(
-            color: Colors.white,
-            child: Row(
-              children: [
-                Expanded(
-                  child: TabBar(
-                    controller: _tabController,
-                    labelColor: Colors.white,
-                    unselectedLabelColor: AppColors.Teal,
-                    indicator: BoxDecoration(
-                      color: AppColors.Teal,
-                      borderRadius: BorderRadius.circular(26),
-                    ),
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                    tabs: const [
-                      Tab(text: 'Search'),
-                      Tab(text: 'History'),
-                    ],
-                  ),
+            color: Theme.of(context).scaffoldBackgroundColor,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(26),
+                border: Border.all(color: AppColors.Teal, width: 1),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                labelColor: Colors.white,
+                unselectedLabelColor: AppColors.Teal,
+                indicator: BoxDecoration(
+                  color: AppColors.Teal,
+                  borderRadius: BorderRadius.circular(26),
                 ),
-              ],
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                tabs: [
+                  Tab(text: appLocalizations.search),
+                  Tab(text: appLocalizations.history),
+                ],
+              ),
             ),
           ),
         ),
@@ -450,12 +424,15 @@ Return the result as a JSON array. Each item must include:
         controller: _tabController,
         children: [
           SingleChildScrollView(
-              padding: const EdgeInsets.all(20), child: buildManualSearchTab()),
+            padding: const EdgeInsets.all(20),
+            child: buildManualSearchTab(appLocalizations),
+          ),
           SingleChildScrollView(
-              padding: const EdgeInsets.all(20), child: buildHistoryTab()),
+            padding: const EdgeInsets.all(20),
+            child: buildHistoryTab(appLocalizations),
+          ),
         ],
       ),
     );
   }
 }
-

@@ -72,11 +72,11 @@ dependencies:
   workmanager: ^0.5.1
   firebase_app_check: ^0.3.2+6
   flutter_local_notifications: ^17.0.0
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.4
 
 #  youtube_player_flutter: ^8.1.1
 #  flutter_inappwebview: ^
-flutter_icons:
+flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/images/hopeLogoIcon.png"

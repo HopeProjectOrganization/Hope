@@ -303,7 +303,20 @@
   "selectType": "Please select the type",
   "resetPasswordFailed": "Reset password failed. Please try again.",
   "resetPasswordError": "An error occurred while resetting your password.",
-  "tryAgain": "Try again"
+  "tryAgain": "Try again",
+  "history": "History",
+  "searchForAlternative": "Search for Alternative",
+  "topAlternativesTo": "Top alternatives to {productName}",
+  "whyBetter": "Why it’s better:",
+  "nutritionInfo": "Nutrition Info:",
+  "noScannedProducts": "No scanned products yet!",
+  "note": "Note",
+  "okay": "Okay",
+  "failedToFetchAlternatives": "Failed to fetch alternatives. Please try again.",
+  "failedToLoadHistory": "Failed to load history.",
+  "suggestAlternativesFor": "Suggest healthy alternatives for",
+  "seeResult": "See result"
+
 
 
 }

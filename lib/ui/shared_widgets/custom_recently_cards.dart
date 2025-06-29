@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/add/add_service.dart';
+import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/result.dart';
+import 'package:provider/provider.dart';
 
 class CustomRecentlyCard extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -20,6 +23,8 @@ class CustomRecentlyCard extends StatefulWidget {
 
 class _CustomRecentlyCardState extends State<CustomRecentlyCard> {
   Map<String, dynamic>? scanResult;
+  late ThemeProvider themeProvider;
+  late AppLocalizations appLocalizations;
 
   @override
   void initState() {
@@ -40,6 +45,9 @@ class _CustomRecentlyCardState extends State<CustomRecentlyCard> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    appLocalizations = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
       child: Container(
@@ -84,7 +92,7 @@ class _CustomRecentlyCardState extends State<CustomRecentlyCard> {
                     },
                     child: Row(
                       children: [
-                        Text("See result",
+                        Text(appLocalizations.seeResult,
                             style: Theme.of(context).textTheme.bodyMedium),
                         Icon(Icons.arrow_forward_ios_rounded,
                             color: AppColors.Teal),
