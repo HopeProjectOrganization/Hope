@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class HighRiskIngredientService {
   static final String _baseUrl =
-      'https://${MyApp.IP}/api/high-risk-ingredients';
+      '${MyApp.IP}/api/high-risk-ingredients';
 
   static Future<List<HighRiskIngredient>> getAll() async {
     final response = await http.get(Uri.parse(_baseUrl));

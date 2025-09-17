@@ -20,7 +20,7 @@ class ScanService {
     final token = await getToken();
     if (token == null) return null;
 
-    final url = Uri.parse("https://${MyApp.IP}/api/scan/$barcode");
+    final url = Uri.parse("${MyApp.IP}/api/scan/$barcode");
     final headers = {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token",
@@ -84,7 +84,7 @@ class ScanService {
       final token = await getToken();
       if (token == null) return null;
 
-      final url = Uri.parse("https://${MyApp.IP}/history/scanned");
+      final url = Uri.parse("${MyApp.IP}/history/scanned");
       final headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",

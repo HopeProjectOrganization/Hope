@@ -6,7 +6,7 @@ import 'package:hope/model/favorite.dart';
 import 'package:http/http.dart' as http;
 
 class FavoriteApiService {
-  static String baseUrl = 'https://${MyApp.IP}/api/favorite-meals';
+  static String baseUrl = '${MyApp.IP}/api/favorite-meals';
 
   static Future<Map<String, String>> getHeaders() async {
     final authService = AuthApiService();

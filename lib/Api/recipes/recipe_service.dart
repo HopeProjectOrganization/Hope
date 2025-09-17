@@ -6,7 +6,7 @@ import 'package:hope/model/meal_dm.dart';
 import 'package:http/http.dart' as http;
 
 class MealApiService {
-  final String _baseUrl = 'https://${MyApp.IP}/api/meals';
+  final String _baseUrl = '${MyApp.IP}/api/meals';
 
   // GET: fetch all meals
   Future<List<Meal>> fetchMeals() async {

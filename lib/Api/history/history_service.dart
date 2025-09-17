@@ -12,7 +12,7 @@ class HistoryApiService {
 
   // 1️⃣ إضافة منتج إلى الهيستوري
   static Future<void> addToHistory(String barcode, String actionType) async {
-    final url = Uri.parse("https://${MyApp.IP}/history/add");
+    final url = Uri.parse("${MyApp.IP}/history/add");
 
     String? token = await getToken();
     if (token == null) {

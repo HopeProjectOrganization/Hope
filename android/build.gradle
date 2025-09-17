@@ -3,6 +3,7 @@ buildscript {
         google()
         mavenCentral()
     }
+    ext.kotlin_version = "1.8.22"
     dependencies {
         classpath 'com.android.tools.build:gradle:7.4.1'  // أو الإصدار المناسب لك
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"

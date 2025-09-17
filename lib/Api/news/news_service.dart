@@ -7,7 +7,7 @@ import 'package:hope/model/notification_dm.dart';
 import 'package:http/http.dart' as http;
 
 class NewsApiService {
-  final String baseUrl = 'https://${MyApp.IP}/api/news';
+  final String baseUrl = '${MyApp.IP}/api/news';
 
   // إضافة خبر جديد
   static Future<Article> addNews(Article article) async {

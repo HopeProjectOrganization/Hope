@@ -145,7 +145,7 @@ void main() async {
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  static String IP = "graduation-project-production-4619.up.railway.app";
+  static String IP = "http://192.168.1.118:9090";
   MyApp({super.key});
 
   late ThemeProvider themeProvider;
@@ -280,7 +280,7 @@ class MyApp extends StatelessWidget {
         AdminAddHospitalScreen.routeName: (_) => const AdminAddHospitalScreen(),
         ExploreScreen.routeName: (_) => const ExploreScreen()
       },
-      initialRoute: LoginScreen.routeName,
+      initialRoute: HomeScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

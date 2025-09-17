@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class GetUserProfile {
   Future<Data?> fetchUserProfile(String token) async {
-    final url = Uri.parse('https://${MyApp.IP}/api/profile');
+    final url = Uri.parse('${MyApp.IP}/api/profile');
 
     try {
       final response = await http.get(

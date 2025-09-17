@@ -5,7 +5,7 @@ import 'package:hope/model/product_ingredient.dart';
 import 'package:http/http.dart' as http;
 
 class ProductService {
-  final String baseUrl = 'https://${MyApp.IP}/products'; // replace
+  final String baseUrl = '${MyApp.IP}/products'; // replace
 
   Future<List<ProductWithIngredient>> fetchAllProductIngredients() async {
     final response = await http.get(Uri.parse('$baseUrl/all'));

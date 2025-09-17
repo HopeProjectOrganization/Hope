@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthApiService {
-  final String baseUrl = 'https://${MyApp.IP}/api/v1/auth';
+  final String baseUrl = '${MyApp.IP}/api/v1/auth';
 
   /// ==================== Register ====================
   Future<http.Response> register({

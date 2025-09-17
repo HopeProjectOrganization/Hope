@@ -5,7 +5,7 @@ import 'package:hope/model/exercises.dart';
 import 'package:http/http.dart' as http;
 
 class ExerciseApiService {
-  static String baseUrl = 'https://${MyApp.IP}/api/exercises';
+  static String baseUrl = '${MyApp.IP}/api/exercises';
 
   Future<List<Exercise>> fetchExercisesByBodyPart(String bodyPart) async {
     final response = await http.get(Uri.parse(baseUrl));

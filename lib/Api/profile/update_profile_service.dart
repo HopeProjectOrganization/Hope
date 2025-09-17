@@ -17,7 +17,7 @@ class AvatarService {
     required String avatarId,
     required String phone,
   }) async {
-    final String url = "https://${MyApp.IP}/api/profile";
+    final String url = "${MyApp.IP}/api/profile";
     final Map<String, String> headers = {
       "Authorization": "Bearer $token",
       "Content-Type": "application/json"

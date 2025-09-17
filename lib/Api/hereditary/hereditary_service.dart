@@ -5,7 +5,7 @@ import 'package:hope/model/article.dart';
 import 'package:http/http.dart' as http;
 
 class HereditaryService {
-  static final String baseUrl = "https://${MyApp.IP}/api/hereditary";
+  static final String baseUrl = "${MyApp.IP}/api/hereditary";
 
   static Future<List<Article>> getAllNews() async {
     final response = await http.get(Uri.parse(baseUrl));

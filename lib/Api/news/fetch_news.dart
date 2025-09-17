@@ -50,7 +50,7 @@ class NewsService {
 
   static Future<List<ArticleDM>> fetchLocalNews(String cancerType) async {
     final url =
-        Uri.parse("http://${MyApp.IP}/api/news/all?category=$cancerType");
+        Uri.parse("${MyApp.IP}/api/news/all?category=$cancerType");
 
     final response = await http.get(url);
 

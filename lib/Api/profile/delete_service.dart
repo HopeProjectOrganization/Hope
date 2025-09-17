@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DeleteService {
-  static String baseUrl = "https://${MyApp.IP}/api/profile";
+  static String baseUrl = "${MyApp.IP}/api/profile";
 
   Future<void> deleteProfile(BuildContext context) async {
     try {

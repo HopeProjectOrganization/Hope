@@ -5,7 +5,7 @@ import 'package:hope/model/article.dart';
 import 'package:http/http.dart' as http;
 
 class HighRiskService {
-  static final String baseUrl = "https://${MyApp.IP}/api/highrisk";
+  static final String baseUrl = "${MyApp.IP}/api/highrisk";
 
   Future<List<Article>> getAll() async {
     final response = await http.get(Uri.parse(baseUrl));
