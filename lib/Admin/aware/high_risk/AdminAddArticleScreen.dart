@@ -73,8 +73,8 @@ class _AdminAddArticleScreenState extends State<AdminAddArticleScreen> {
 
     final url = Uri.parse(
       _articleId != null
-          ? 'https://${MyApp.IP}/api/highrisk/$_articleId'
-          : 'https://${MyApp.IP}/api/highrisk',
+          ? 'http://${MyApp.IP}/api/highrisk/$_articleId'
+          : 'http://${MyApp.IP}/api/highrisk',
     );
 
     final response = await (_articleId != null

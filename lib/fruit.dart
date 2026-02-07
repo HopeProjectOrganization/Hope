@@ -211,15 +211,15 @@ class _ExploreScreenState extends State<ExploreScreen>
 
   final posts = {
     'News': [
-      {'title': 'News 1', 'image': 'https://via.placeholder.com/150'},
-      {'title': 'News 2', 'image': 'https://via.placeholder.com/150'},
+      {'title': 'News 1', 'image': 'http://via.placeholder.com/150'},
+      {'title': 'News 2', 'image': 'http://via.placeholder.com/150'},
     ],
   };
 
   final exercises = {
     'Cardio': [
-      {'title': 'Running', 'image': 'https://via.placeholder.com/150'},
-      {'title': 'Jumping', 'image': 'https://via.placeholder.com/150'},
+      {'title': 'Running', 'image': 'http://via.placeholder.com/150'},
+      {'title': 'Jumping', 'image': 'http://via.placeholder.com/150'},
     ],
   };
 

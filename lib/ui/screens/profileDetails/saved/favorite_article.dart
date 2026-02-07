@@ -1,8 +1,8 @@
 // article_favorites.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/saved/saved_post.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/model/article.dart';
 import 'package:hope/ui/screens/aware/shared_widgets/article/article_screen.dart';
 import 'package:lottie/lottie.dart';

@@ -19,8 +19,7 @@ class SavedPostService {
   }
 
   static Future<bool> isFavorite(String mealId) async {
-    final uri = Uri.parse(
-        '${MyApp.IP}/api/favorites/$mealId'); // <-- هذا الصحيح
+    final uri = Uri.parse('http://${MyApp.IP}/api/favorites/$mealId'); // <-- هذا الصحيح
     final response = await http.get(uri, headers: await getHeaders());
     print("Favorite check status: ${response.statusCode}");
 
@@ -38,7 +37,7 @@ class SavedPostService {
     required String postStringId,
     required String postType,
   }) async {
-    final url = Uri.parse('${MyApp.IP}/api/favorites/add');
+    final url = Uri.parse('http://${MyApp.IP}/api/favorites/add');
 
     final response = await http.post(
       url,
@@ -56,8 +55,7 @@ class SavedPostService {
   }
 
   static Future<List<Article>> fetchSavedArticles(String category) async {
-    final url =
-        Uri.parse('${MyApp.IP}/api/favorites/by-type/$category');
+    final url = Uri.parse('http://${MyApp.IP}/api/favorites/by-type/$category');
 
     final response = await http.get(url, headers: await getHeaders());
 
@@ -74,7 +72,7 @@ class SavedPostService {
     required int postId,
     required String postType,
   }) async {
-    final url = Uri.parse('${MyApp.IP}/api/favorites/delete');
+    final url = Uri.parse('http://${MyApp.IP}/api/favorites/delete');
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');

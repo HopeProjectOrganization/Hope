@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/add/admin_products_screen.dart';
 import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/Admin/home/tabs/home_tab/home_tab.dart';
@@ -7,6 +6,7 @@ import 'package:hope/Admin/home/tabs/menu_tab/menu_tab.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/ui/screens/home/tabs/scan_tab/scanner.dart';
 import 'package:provider/provider.dart';
 

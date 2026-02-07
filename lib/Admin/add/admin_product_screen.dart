@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/add/admin_form.dart';
 import 'package:hope/Api/add/admin_add_service.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/model/product_ingredient.dart';
 import 'package:hope/ui/screens/home/tabs/add_tab/add_tab.dart';
 import 'package:provider/provider.dart';

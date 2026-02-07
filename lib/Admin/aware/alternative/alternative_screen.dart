@@ -84,7 +84,7 @@ class _SuggestedReplacementsScreenState
       String category) async {
     final encodedQuery = Uri.encodeComponent(category);
     final url =
-        'https://world.openfoodfacts.org/cgi/search.pl?search_terms=$encodedQuery&search_simple=1&action=process&json=1&page_size=100';
+        'http://world.openfoodfacts.org/cgi/search.pl?search_terms=$encodedQuery&search_simple=1&action=process&json=1&page_size=100';
 
     final response = await http.get(Uri.parse(url));
 

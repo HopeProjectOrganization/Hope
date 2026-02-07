@@ -5,7 +5,7 @@ import 'package:hope/model/places_dm.dart';
 import 'package:http/http.dart' as http;
 
 class PlacesApiService {
-  final String baseUrl = '${MyApp.IP}/Places';
+  final String baseUrl = 'http://${MyApp.IP}/Places';
 
   // جلب مكان معين بالـ ID
   Future<PlaceModel> fetchPlaceById(int id) async {

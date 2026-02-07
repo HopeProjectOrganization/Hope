@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/main.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:http/http.dart' as http;
@@ -103,9 +103,8 @@ class _AdminAddHospitalScreenState extends State<AdminAddHospitalScreen> {
       };
 
       final url = isEdit
-          ? Uri.parse(
-              'https://${MyApp.IP}/Places/${widget.hospitalData!['id']}')
-          : Uri.parse('https://${MyApp.IP}/Places/addPlace');
+          ? Uri.parse('http://${MyApp.IP}/Places/${widget.hospitalData!['id']}')
+          : Uri.parse('http://${MyApp.IP}/Places/addPlace');
 
       final response = await (isEdit
           ? http.put(

@@ -27,7 +27,7 @@ class UserMeal {
 }
 
 class UserMealService {
-  static String baseUrl = '${MyApp.IP}/api/user-meals';
+  static String baseUrl = 'http://${MyApp.IP}/api/user-meals';
 
   // POST: حفظ الوجبات
   static Future<void> submitUserMeals({
@@ -73,7 +73,7 @@ class UserMealService {
     required String date,
   }) async {
     final url = Uri.parse(
-        '${MyApp.IP}/api/user-meals?userId=$userId&category=$category&date=$date');
+        'http://${MyApp.IP}/api/user-meals?userId=$userId&category=$category&date=$date');
 
     print('🔍 Fetching user meals from: $url');
     print("📅 FETCHING MEALS FOR DATE: $date");
@@ -129,7 +129,7 @@ class UserMealService {
     required String mealId,
   }) async {
     final url = Uri.parse(
-        '${MyApp.IP}/api/user-meals?userId=$userId&date=$date&category=${category.toUpperCase()}&mealId=$mealId');
+        'http://${MyApp.IP}/api/user-meals?userId=$userId&date=$date&category=${category.toUpperCase()}&mealId=$mealId');
 
     print('🗑️ Deleting user meal: $url');
     print('🧪 Full DELETE URL: $url');

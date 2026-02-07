@@ -4,7 +4,7 @@ import 'package:hope/model/article.dart';
 import 'package:http/http.dart' as http;
 
 class CancerNewsApi {
-  static const String _baseUrl = 'https://newsdata.io/api/1/latest';
+  static const String _baseUrl = 'http://newsdata.io/api/1/latest';
   static const String _apiKey = 'pub_42fd66850d184b9c9713caa53c843764';
 
   static Future<List<Article>> fetchNews(String cancerType) async {

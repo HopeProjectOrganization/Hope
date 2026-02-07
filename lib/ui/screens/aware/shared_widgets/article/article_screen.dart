@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/Api/saved/saved_post.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
@@ -63,7 +63,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen> {
     final String image =
         (article.imageUrl != null && article.imageUrl!.trim().isNotEmpty)
             ? article.imageUrl!
-            : 'https://via.placeholder.com/300x200.png?text=No+Image';
+            : 'http://via.placeholder.com/300x200.png?text=No+Image';
 
     final String title = (article.title != null && article.title.length > 80)
         ? "${article.title.substring(0, 50)}..."

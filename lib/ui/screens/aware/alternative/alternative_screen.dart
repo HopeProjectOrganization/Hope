@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/chat/chatApi.dart';
 import 'package:hope/Api/scan/scan_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -45,7 +44,6 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
   }
 
   Future<void> handleSearch(String input) async {
-    final appLocalizations = AppLocalizations.of(context)!;
     setState(() {
       _isLoading = true;
       _productName = "";
@@ -58,19 +56,28 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
         _alternatives = parseAlternativesJson(response);
       });
     } catch (e) {
-      showErrorDialog(appLocalizations.failedToFetchAlternatives);
+      showErrorDialog("فشل في جلب البدائل: $e");
     } finally {
       setState(() => _isLoading = false);
     }
   }
 
-  String generatePrompt(String productName, AppLocalizations locale) {
-    return "${locale.suggestAlternativesFor} $productName";
-  }
-
   Future<String> getAlternative(String productName) async {
-    final appLocalizations = AppLocalizations.of(context)!;
-    final prompt = generatePrompt(productName, appLocalizations);
+    const promptTemplate = '''
+I have a product: "{productName}".
+Suggest 3 to 5 healthier alternative products that are widely available, especially in Egypt.
+The alternatives must:
+- Be similar in purpose (e.g., snack for snack, cereal for cereal).
+- Contain less sugar, saturated fat, or harmful additives.
+- Be local Egyptian options if possible.
+- Be affordable and easy to find in stores or online.
+Return the result as a JSON array. Each item must include:
+- name
+- reason
+- nutritionInfo (optional)
+''';
+
+    final prompt = promptTemplate.replaceAll('{productName}', productName);
     final response = await ChatApiService.sendPrompt(prompt);
 
     if (response is String) return response;
@@ -95,7 +102,7 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
         throw Exception("Expected a JSON array but got: ${data.runtimeType}");
       }
     } catch (e) {
-      throw Exception("JSON decode error: $e");
+      throw Exception("❌ JSON decode error: $e");
     }
   }
 
@@ -103,40 +110,40 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.note),
+        title: const Text("Note"),
         content: Text(message),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context)!.ok)),
+              child: const Text("Okay")),
         ],
       ),
     );
   }
 
-  Widget buildManualSearchTab(AppLocalizations locale) {
+  Widget buildManualSearchTab() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: AppColors.Teal.withOpacity(0.3),
-                blurRadius: 4,
+                color: AppColors.Teal,
+                blurRadius: 2,
                 offset: const Offset(0, 2),
               )
             ],
           ),
           child: TextField(
             controller: _controller,
-            decoration: InputDecoration(
-              hintText: locale.search,
-              prefixIcon: const Icon(Icons.search, color: AppColors.yellow),
+            decoration: const InputDecoration(
+              hintText: 'Search',
+              prefixIcon: Icon(Icons.search, color: AppColors.yellow),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16),
             ),
             onSubmitted: (text) =>
                 _isLoading ? null : handleSearch(text.trim()),
@@ -146,7 +153,7 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
         Center(
           child: ElevatedButton.icon(
             icon: const Icon(Icons.search, color: AppColors.yellow),
-            label: Text(locale.searchForAlternative),
+            label: const Text('Search for Alternative'),
             onPressed: _isLoading
                 ? null
                 : () {
@@ -168,18 +175,18 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
         if (_isLoading)
           const Center(child: CircularProgressIndicator())
         else if (_productName.isNotEmpty && _alternatives.isNotEmpty)
-          buildAlternativesView(locale),
+          buildAlternativesView(),
       ],
     );
   }
 
-  Widget buildAlternativesView(AppLocalizations locale) {
+  Widget buildAlternativesView() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text.rich(
           TextSpan(
-            text: '${locale.topAlternativesTo} ',
+            text: 'Top alternatives to ',
             children: [
               TextSpan(
                 text: _productName,
@@ -203,18 +210,18 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             final alt = _alternatives[index];
-            return buildAltCard(alt, locale);
+            return buildAltCard(alt);
           },
         ),
       ],
     );
   }
 
-  Widget buildAltCard(Map<String, String> alt, AppLocalizations locale) {
+  Widget buildAltCard(Map<String, String> alt) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
-        color: Theme.of(context).cardColor,
+        color: AppColors.white,
         elevation: 3,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -239,17 +246,18 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
                 ],
               ),
               const SizedBox(height: 16),
-              Text(locale.whyBetter,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 15)),
+              const Text("Why it’s better:",
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               const SizedBox(height: 4),
-              Text(cleanText(alt['reason'] ?? ''),
-                  style: const TextStyle(fontSize: 14)),
+              Text(
+                cleanText(alt['reason'] ?? ''),
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+              ),
               if ((alt['nutritionInfo'] ?? '').isNotEmpty) ...[
                 const SizedBox(height: 16),
-                Text(locale.nutritionInfo,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 15)),
+                const Text("Nutrition Info:",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                 const SizedBox(height: 4),
                 Wrap(
                   spacing: 8,
@@ -274,56 +282,73 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
   }
 
   Future<void> loadRecentAlternatives() async {
-    final appLocalizations = AppLocalizations.of(context)!;
     setState(() => _recentLoaded = false);
+
     try {
       final products = await ScanService().getScannedProducts();
       final Map<String, dynamic> uniqueProducts = {};
+
       for (var product in products ?? []) {
         if (product is Map<String, dynamic> && product['barcode'] != null) {
           uniqueProducts[product['barcode']] = product;
         }
       }
+
       final recent = uniqueProducts.values.toList().reversed.take(5).toList();
       final List<Map<String, dynamic>> loadedAlternatives = [];
+
       for (var product in recent) {
         final name = product['productName'] ?? '';
         if (name.isEmpty) continue;
+
         try {
           final alt = await getAlternative(name);
           final parsed = parseAlternativesJson(alt);
           loadedAlternatives.add({'name': name, 'alternatives': parsed});
         } catch (_) {}
       }
+
       setState(() => _productAlternatives = loadedAlternatives);
     } catch (e) {
-      showErrorDialog(appLocalizations.failedToLoadHistory);
+      showErrorDialog("فشل في تحميل المنتجات الأخيرة: $e");
     } finally {
       setState(() => _recentLoaded = true);
     }
   }
 
-  Widget buildHistoryTab(AppLocalizations locale) {
+  Widget buildHistoryTab() {
     if (!_recentLoaded) {
       return const Center(
-          child: CircularProgressIndicator(color: AppColors.yellow));
+        child: CircularProgressIndicator(color: AppColors.yellow),
+      );
     }
+
     if (_productAlternatives.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Lottie.asset('assets/lottie/empty.json', height: 200),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .1,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .5,
+              child: Lottie.asset('assets/lottie/empty.json'),
+            ),
             const SizedBox(height: 20),
-            Text(locale.noScannedProducts,
-                style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.Teal)),
+            const Text(
+              "No scanned products yet!",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: AppColors.Teal,
+              ),
+            ),
           ],
         ),
       );
     }
+
     return ListView.builder(
       itemCount: _productAlternatives.length,
       shrinkWrap: true,
@@ -331,29 +356,34 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
       itemBuilder: (context, index) {
         final product = _productAlternatives[index];
         final List<dynamic> alternatives = product['alternatives'] ?? [];
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text.rich(
               TextSpan(
-                text: '${locale.topAlternativesTo} ',
+                text: 'Top alternatives to ',
                 children: [
                   TextSpan(
-                      text: product['name'] ?? '',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.yellow)),
+                    text: product['name'] ?? '',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.yellow,
+                    ),
+                  ),
                 ],
               ),
               style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.Teal),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.Teal,
+              ),
             ),
             const SizedBox(height: 16),
             ...alternatives
-                .map<Widget>((alt) =>
-                    buildAltCard(Map<String, String>.from(alt), locale))
+                .map<Widget>((alt) => buildAltCard(
+                      Map<String, String>.from(alt),
+                    ))
                 .toList(),
             const SizedBox(height: 24),
           ],
@@ -367,8 +397,8 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
         .replaceAll('This product', 'It')
         .replaceAll('this product', 'it')
         .replaceAll('is a good alternative because', 'is healthier because')
-        .replaceAll(RegExp(r'\\baccording to\\b.*?\\.'), '')
-        .replaceAll(RegExp(r'\\bOverall,?\\s*'), '')
+        .replaceAll(RegExp(r'\baccording to\b.*?\.'), '')
+        .replaceAll(RegExp(r'\bOverall,?\s*'), '')
         .trim();
   }
 
@@ -381,41 +411,36 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(appLocalizations.alternative),
+        title: const Text('Alternative'),
         elevation: 0.5,
         centerTitle: true,
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: Container(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(26),
-                border: Border.all(color: AppColors.Teal, width: 1),
-              ),
-              child: TabBar(
-                controller: _tabController,
-                labelColor: Colors.white,
-                unselectedLabelColor: AppColors.Teal,
-                indicator: BoxDecoration(
-                  color: AppColors.Teal,
-                  borderRadius: BorderRadius.circular(26),
+            color: Colors.white,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TabBar(
+                    controller: _tabController,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: AppColors.Teal,
+                    indicator: BoxDecoration(
+                      color: AppColors.Teal,
+                      borderRadius: BorderRadius.circular(26),
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    tabs: const [
+                      Tab(text: 'Search'),
+                      Tab(text: 'History'),
+                    ],
+                  ),
                 ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                tabs: [
-                  Tab(text: appLocalizations.search),
-                  Tab(text: appLocalizations.history),
-                ],
-              ),
+              ],
             ),
           ),
         ),
@@ -424,13 +449,9 @@ class _ProductAlternativeScreenState extends State<ProductAlternativeScreen>
         controller: _tabController,
         children: [
           SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: buildManualSearchTab(appLocalizations),
-          ),
+              padding: const EdgeInsets.all(20), child: buildManualSearchTab()),
           SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: buildHistoryTab(appLocalizations),
-          ),
+              padding: const EdgeInsets.all(20), child: buildHistoryTab()),
         ],
       ),
     );

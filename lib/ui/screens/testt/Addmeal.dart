@@ -47,7 +47,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
 
   Future<Map<String, double>?> fetchNutrition(String name) async {
     final url =
-        'https://world.openfoodfacts.org/cgi/search.pl?search_terms=$name&search_simple=1&action=process&json=1';
+        'http://world.openfoodfacts.org/cgi/search.pl?search_terms=$name&search_simple=1&action=process&json=1';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

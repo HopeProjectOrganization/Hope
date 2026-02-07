@@ -3,7 +3,7 @@ import 'package:hope/core/theme/app_colors.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
-    tabBarTheme: TabBarTheme(
+    tabBarTheme: TabBarThemeData(
       indicator: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         color: AppColors.Teal,
@@ -51,7 +51,8 @@ class AppTheme {
       titleMedium: TextStyle(
           color: AppColors.gray, fontSize: 16, fontWeight: FontWeight.w500),
     ),
-    bottomAppBarTheme: BottomAppBarTheme(color: AppColors.dark, elevation: 5),
+    bottomAppBarTheme:
+        BottomAppBarThemeData(color: AppColors.dark, elevation: 5),
     iconTheme: IconThemeData(color: AppColors.white),
     textTheme: const TextTheme(
       headlineMedium: TextStyle(
@@ -173,8 +174,8 @@ class AppTheme {
   );
 
   static ThemeData darkTheme = ThemeData(
-      tabBarTheme: TabBarTheme(
-        indicator: BoxDecoration(
+    tabBarTheme: TabBarThemeData(
+      indicator: BoxDecoration(
         borderRadius: BorderRadius.circular(50),
           border: Border.all(color: AppColors.dark),
           color: AppColors.dark,
@@ -188,7 +189,8 @@ class AppTheme {
     dividerTheme: const DividerThemeData(
       color: AppColors.Teal,
     ),
-      bottomAppBarTheme: BottomAppBarTheme(color: AppColors.Teal, elevation: 5),
+    bottomAppBarTheme:
+        BottomAppBarThemeData(color: AppColors.Teal, elevation: 5),
     iconTheme: IconThemeData(color: AppColors.dark),
       radioTheme: RadioThemeData(
         fillColor: WidgetStateProperty.resolveWith<Color>((states) {

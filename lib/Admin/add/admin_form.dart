@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/add/admin_product_screen.dart';
 import 'package:hope/Api/add/admin_add_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 
 class AdminAddEditProductScreen extends StatefulWidget {

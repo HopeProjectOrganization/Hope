@@ -5,11 +5,11 @@ import 'package:hope/model/article.dart';
 import 'package:http/http.dart' as http;
 
 class HealthyDietService {
-  static final String baseUrl = 'https://${MyApp.IP}/api/diet';
+  static final String baseUrl = 'http://${MyApp.IP}/api/diet';
 
   // جلب كل الدايتس
   static Future<List<Article>> getAllDiets() async {
-    final response = await http.get(Uri.parse('${MyApp.IP}/api/diet'));
+    final response = await http.get(Uri.parse('http://${MyApp.IP}/api/diet'));
     if (response.statusCode == 200) {
       final List data = jsonDecode(response.body);
       return data.map((item) => Article.fromJson(item)).toList();

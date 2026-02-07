@@ -1,10 +1,10 @@
 // meal_favorites.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/healthy_diet/healthy_recipe_service.dart';
 import 'package:hope/Api/healthy_diet/vegan_service.dart';
 import 'package:hope/Api/recipes/recipe_service.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/model/favorite.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/recipes/recipe_details.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/vegan/vegan_details.dart';

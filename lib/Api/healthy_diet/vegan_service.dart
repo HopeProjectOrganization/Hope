@@ -5,7 +5,7 @@ import 'package:hope/model/vegan_details.dart';
 import 'package:http/http.dart' as http;
 
 class VeganRecipeService {
-  static String baseUrl = '${MyApp.IP}/api/vegan-recipes';
+  static String baseUrl = 'http://${MyApp.IP}/api/vegan-recipes';
 
   static Future<List<VeganRecipeModel>> getAllRecipes() async {
     final response = await http.get(Uri.parse(baseUrl));

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hope/Admin/add/add_high.dart';
 import 'package:hope/Api/add/high_ingredients.dart';
-import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/model/high_risk_ingredents.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/l10n/app_localizations.dart';
+import 'package:hope/model/high_risk_ingredents.dart';
 
 class AdminHighRiskScreen extends StatefulWidget {
   const AdminHighRiskScreen({super.key});

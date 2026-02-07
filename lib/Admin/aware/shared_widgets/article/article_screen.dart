@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/model/article.dart';
 import 'package:hope/ui/screens/aware/shared_widgets/article/article_card.dart';
 import 'package:hope/ui/screens/aware/shared_widgets/article/content.dart';
@@ -53,7 +53,7 @@ class _NewsArticleScreenState extends State<AdminNewsArticleScreen> {
     final String image =
         (article.imageUrl != null && article.imageUrl!.trim().isNotEmpty)
             ? article.imageUrl!
-            : 'https://via.placeholder.com/300x200.png?text=No+Image';
+            : 'http://via.placeholder.com/300x200.png?text=No+Image';
 
     final String title = (article.title != null && article.title.length > 80)
         ? "${article.title.substring(0, 50)}..."

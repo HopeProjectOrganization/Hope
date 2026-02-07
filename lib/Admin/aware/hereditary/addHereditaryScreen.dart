@@ -78,8 +78,8 @@ class _AdminHereditaryEditorScreenState
 
     final url = Uri.parse(
       _articleId != null
-          ? 'https://${MyApp.IP}/api/hereditary/$_articleId'
-          : 'https://${MyApp.IP}/api/hereditary',
+          ? 'http://${MyApp.IP}/api/hereditary/$_articleId'
+          : 'http://${MyApp.IP}/api/hereditary',
     );
 
     final response = await (_articleId != null

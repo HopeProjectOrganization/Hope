@@ -9,7 +9,7 @@
 // // };
 // //
 // // Future<List<Meal>> fetchMeals() async {
-// //   final url = Uri.parse('https://keto-diet.p.rapidapi.com/');
+// //   final url = Uri.parse('http://keto-diet.p.rapidapi.com/');
 // //   final response = await http.get(url, headers: _headers);
 // //
 // //   if (response.statusCode == 200) {
@@ -21,7 +21,7 @@
 // // }
 // //
 // // Future<Meal> fetchMealById(int id) async {
-// //   final url = Uri.parse('https://keto-diet.p.rapidapi.com/?id=$id');
+// //   final url = Uri.parse('http://keto-diet.p.rapidapi.com/?id=$id');
 // //   final response = await http.get(url, headers: _headers);
 // //
 // //   if (response.statusCode == 200) {
@@ -37,7 +37,7 @@
 // // }
 // //
 // // Future<List<Meal>> fetchMealsBySearch(String query) async {
-// //   final url = Uri.parse('https://keto-diet.p.rapidapi.com/?search=$query');
+// //   final url = Uri.parse('http://keto-diet.p.rapidapi.com/?search=$query');
 // //   final response = await http.get(url, headers: _headers);
 // //
 // //   if (response.statusCode == 200) {
@@ -66,7 +66,7 @@
 // //
 // // Future<List<Category>> getCategories() async {
 // //   final response = await http.get(
-// //     Uri.parse('https://keto-diet.p.rapidapi.com/categories/'),
+// //     Uri.parse('http://keto-diet.p.rapidapi.com/categories/'),
 // //     headers: _headers,
 // //   );
 // //
@@ -80,7 +80,7 @@
 // //
 // // Future<List<Meal>> getMealsByCategory(String categoryId) async {
 // //   final response = await http.get(
-// //     Uri.parse('https://keto-diet.p.rapidapi.com/?category=$categoryId'),
+// //     Uri.parse('http://keto-diet.p.rapidapi.com/?category=$categoryId'),
 // //     headers: _headers,
 // //   );
 // //
@@ -104,7 +104,7 @@
 //
 // Future<List<Meal>> fetchRecipes() async {
 //   final url =
-//       Uri.parse('https://low-carb-recipes.p.rapidapi.com/search?limit=20');
+//       Uri.parse('http://low-carb-recipes.p.rapidapi.com/search?limit=20');
 //   final response = await http.get(url, headers: _headers);
 //
 //   if (response.statusCode == 200) {
@@ -129,7 +129,7 @@
 //
 // Future<Meal> fetchMealById(String id) async {
 //   final response = await http.get(
-//     Uri.parse('https://low-carb-recipes.p.rapidapi.com/recipes/$id'),
+//     Uri.parse('http://low-carb-recipes.p.rapidapi.com/recipes/$id'),
 //     headers: _headers,
 //   );
 //

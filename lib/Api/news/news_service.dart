@@ -7,11 +7,11 @@ import 'package:hope/model/notification_dm.dart';
 import 'package:http/http.dart' as http;
 
 class NewsApiService {
-  final String baseUrl = '${MyApp.IP}/api/news';
+  final String baseUrl = 'http://${MyApp.IP}/api/news';
 
   // إضافة خبر جديد
   static Future<Article> addNews(Article article) async {
-    final String baseUrl = 'https://${MyApp.IP}/api/news';
+    final String baseUrl = 'http://${MyApp.IP}/api/news';
     final response = await http.post(
       Uri.parse('$baseUrl/add'),
       headers: {"Content-Type": "application/json"},
@@ -34,7 +34,7 @@ class NewsApiService {
 
   // جلب الأخبار حسب الكاتيجوري
   static Future<List<Article>> getNewsByCategory(String category) async {
-    final String baseUrl = 'https://${MyApp.IP}/api/news';
+    final String baseUrl = 'http://${MyApp.IP}/api/news';
 
     final response = await http.get(Uri.parse('$baseUrl/$category'));
 
@@ -49,7 +49,7 @@ class NewsApiService {
 
   // حذف خبر
   static Future<void> deleteNews(int id) async {
-    final String baseUrl = 'https://${MyApp.IP}/api/news';
+    final String baseUrl = 'http://${MyApp.IP}/api/news';
     final response = await http.delete(Uri.parse('$baseUrl/delete/$id'));
 
     if (response.statusCode != 200) {

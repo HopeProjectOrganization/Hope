@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/auth/auth.dart';
 import 'package:hope/Api/profile/profile_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/locale_provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/model/avatar.dart';
 import 'package:hope/model/get_profile.dart';
 import 'package:hope/ui/screens/auth/login/login.dart';

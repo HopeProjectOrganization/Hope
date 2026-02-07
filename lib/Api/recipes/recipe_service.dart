@@ -6,7 +6,7 @@ import 'package:hope/model/meal_dm.dart';
 import 'package:http/http.dart' as http;
 
 class MealApiService {
-  final String _baseUrl = '${MyApp.IP}/api/meals';
+  final String _baseUrl = 'http://${MyApp.IP}/api/meals';
 
   // GET: fetch all meals
   Future<List<Meal>> fetchMeals() async {
@@ -22,7 +22,7 @@ class MealApiService {
 
   Future<Meal> fetchMealById(String id) async {
     final url = Uri.parse(
-        'https://${MyApp.IP}/api/meals/$id'); // ✅ رابط backend مش RapidAPI
+        'http://${MyApp.IP}/api/meals/$id'); // ✅ رابط backend مش RapidAPI
     final response = await http.get(url, headers: {
       'Content-Type': 'application/json',
     });

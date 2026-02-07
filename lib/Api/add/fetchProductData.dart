@@ -6,7 +6,7 @@
 // class ProductImporter {
 //   static Future<void> fetchAndAddProducts(BuildContext context) async {
 //     final url =
-//         'https://world.openfoodfacts.org/cgi/search.pl?search_simple=1&action=process&json=1&page_size=50'; // يمكنك تغيير page_size للحصول على عدد أكبر
+//         'http://world.openfoodfacts.org/cgi/search.pl?search_simple=1&action=process&json=1&page_size=50'; // يمكنك تغيير page_size للحصول على عدد أكبر
 //
 //     try {
 //       final response = await http.get(Uri.parse(url));

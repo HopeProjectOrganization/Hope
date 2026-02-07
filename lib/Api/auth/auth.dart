@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/home/home.dart';
 import 'package:hope/Api/profile/profile_service.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/main.dart';
 import 'package:hope/model/register_dm.dart';
 import 'package:hope/ui/screens/home/home.dart';
@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthApiService {
-  final String baseUrl = '${MyApp.IP}/api/v1/auth';
+  final String baseUrl = 'http://${MyApp.IP}/api/v1/auth';
 
   /// ==================== Register ====================
   Future<http.Response> register({

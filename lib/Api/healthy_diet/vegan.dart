@@ -11,7 +11,7 @@
 //   static const String _host = 'the-vegan-recipes-db.p.rapidapi.com';
 //
 //   static Future<List<VeganRecipeModel>> fetchRecipes() async {
-//     final url = Uri.parse('https://$_host/');
+//     final url = Uri.parse('http://$_host/');
 //     final res = await http.get(url, headers: {
 //       'x-rapidapi-key': _apiKey,
 //       'x-rapidapi-host': _host,
@@ -26,7 +26,7 @@
 //   }
 //
 //   static Future<VeganRecipeModel> fetchRecipeDetail(String id) async {
-//     final url = Uri.parse('https://$_host/$id');
+//     final url = Uri.parse('http://$_host/$id');
 //     final res = await http.get(url, headers: {
 //       'x-rapidapi-key': _apiKey,
 //       'x-rapidapi-host': _host,

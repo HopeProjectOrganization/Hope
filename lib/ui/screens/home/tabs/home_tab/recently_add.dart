@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/add/add_service.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/ui/shared_widgets/custom_recently_cards.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';
 

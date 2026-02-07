@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Admin/aware/awareness/addNewsScreen.dart';
 import 'package:hope/Admin/aware/awareness/news_list.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/ui/shared_widgets/custome_tab.dart';
 import 'package:provider/provider.dart';
 

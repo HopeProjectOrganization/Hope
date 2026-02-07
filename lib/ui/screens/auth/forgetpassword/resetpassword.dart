@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/auth/auth.dart';
 import 'package:hope/core/assets/app_assets.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
 import 'package:hope/ui/shared_widgets/password.dart';
 import 'package:hope/ui/shared_widgets/utils/dialog_utils.dart';

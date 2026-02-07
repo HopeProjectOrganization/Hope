@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hope/Admin/add/add_high_ingredient.dart';
 import 'package:hope/Admin/add/admin_product_screen.dart';
@@ -32,6 +31,7 @@ import 'package:hope/core/providers/locale_provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_theme.dart';
 import 'package:hope/fruit.dart';
+import 'package:hope/l10n/app_localizations.dart' show AppLocalizations;
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/model/vegan_details.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
@@ -145,7 +145,8 @@ void main() async {
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  static String IP = "http://192.168.1.118:9090";
+  //static String IP = "graduation-project-production-4619.up.railway.app";
+  static String IP = "192.168.1.5:8080";
   MyApp({super.key});
 
   late ThemeProvider themeProvider;
@@ -280,7 +281,7 @@ class MyApp extends StatelessWidget {
         AdminAddHospitalScreen.routeName: (_) => const AdminAddHospitalScreen(),
         ExploreScreen.routeName: (_) => const ExploreScreen()
       },
-      initialRoute: HomeScreen.routeName,
+      initialRoute: SplashScreen.routeName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,

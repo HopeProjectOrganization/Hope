@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/Api/recipes/recipe_service.dart';
 import 'package:hope/Api/saved/favorite_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/ui/shared_widgets/custom_gradient.dart';
 import 'package:hope/ui/shared_widgets/favorite_button.dart';

@@ -5,7 +5,7 @@ import 'package:hope/model/notification_dm.dart';
 import 'package:http/http.dart' as http;
 
 class NotificationApiService {
-  final String baseUrl = '${MyApp.IP}/api/notify';
+  final String baseUrl = 'http://${MyApp.IP}/api/notify';
 
   // إرسال إشعار لمستخدم بناءً على التوكن
   Future<void> sendToToken(NotificationModel notification) async {

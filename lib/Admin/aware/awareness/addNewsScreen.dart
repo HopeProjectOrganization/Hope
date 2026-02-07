@@ -78,8 +78,8 @@ class _AdminNewsEditorState extends State<AdminNewsEditor> {
 
     final url = Uri.parse(
       _articleId != null
-          ? 'https://${MyApp.IP}/api/news/edit/$_articleId'
-          : 'https://${MyApp.IP}/api/news/add',
+          ? 'http://${MyApp.IP}/api/news/edit/$_articleId'
+          : 'http://${MyApp.IP}/api/news/add',
     );
 
     final response = await (_articleId != null

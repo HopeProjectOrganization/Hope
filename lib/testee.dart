@@ -46,7 +46,7 @@
 //     });
 //
 //     try {
-//       final url = Uri.parse('https://openrouter.ai/api/v1/chat/completions');
+//       final url = Uri.parse('http://openrouter.ai/api/v1/chat/completions');
 //
 //       final response = await http.post(
 //         url,
@@ -315,7 +315,7 @@
 //   }
 //
 //   Future<String> getAlternative(String productName) async {
-//     final url = Uri.parse('https://openrouter.ai/api/v1/chat/completions');
+//     final url = Uri.parse('http://openrouter.ai/api/v1/chat/completions');
 //     final response = await http.post(url,
 //         headers: {
 //           'Content-Type': 'application/json',

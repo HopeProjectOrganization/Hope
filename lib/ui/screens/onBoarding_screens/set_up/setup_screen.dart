@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-// ignore: must_be_immutable
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/providers/theme_provider.dart';
+// ignore: must_be_immutable
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/ui/screens/onBoarding_screens/on_boarding/onboarding_screen.dart';
 import 'package:hope/ui/shared_widgets/language_switch.dart';
 import 'package:hope/ui/shared_widgets/theme_switch.dart';
