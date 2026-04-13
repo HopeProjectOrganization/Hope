@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/recipes/recipe_service.dart';
-import 'package:hope/core/assets/app_icons.dart';
+import 'package:hope/Api/recipes/fetch_recipe.dart';
+import 'package:hope/l10n/app_localizations.dart';
+ import 'package:hope/core/assets/app_icons.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/meal_dm.dart'; // يحتوي Recipe
@@ -42,18 +42,15 @@ class _MealsState extends State<Meals> {
 
   Timer? _debounce;
 
-  final MealApiService api = MealApiService();
 
-  @override
+   @override
   void initState() {
     super.initState();
     _isLoading = true;
 
-    api.fetchMeals().then((meals) {
+    fetchRecipes().then((meals) {
       print("Loaded meals count: ${meals.length}");
-    });
 
-    api.fetchMeals().then((meals) {
       setState(() {
         allMeals = meals;
         displayedMeals = meals;
@@ -66,7 +63,6 @@ class _MealsState extends State<Meals> {
       });
     });
   }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -102,6 +98,7 @@ class _MealsState extends State<Meals> {
 
   @override
   Widget build(BuildContext context) {
+
     themeProvider = Provider.of<ThemeProvider>(context);
     appLocalizations = AppLocalizations.of(context)!;
 
@@ -197,7 +194,9 @@ class _MealsState extends State<Meals> {
                               itemBuilder: (context, index) {
                                 final meal = displayedMeals[index];
                                 final sel = selectedMeals[meal.id] ?? false;
-
+                                String fixedImage = meal.image.isNotEmpty
+                                    ? 'https://images.weserv.nl/?url=${meal.image.replaceFirst('https://', '')}'
+                                    : '';
                                 return InkWell(
                                   onTap: () async {
                                     final result = await Navigator.pushNamed(
@@ -279,7 +278,7 @@ class _MealsState extends State<Meals> {
                                     borderRadius: BorderRadius.circular(15),
                                                 child: meal.image.isNotEmpty
                                                     ? Image.network(
-                                                        meal.image,
+                                                        fixedImage,
                                                         height: 180,
                                                         width: double.infinity,
                                                         fit: BoxFit.cover,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/healthy_diet/healthy_recipe_service.dart';
-import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/Api/healthy_diet/healthy_recipe.dart';
+import 'package:hope/l10n/app_localizations.dart';
+ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/model/healthy_recipes.dart';
+ import 'package:hope/model/res_model.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/recipes/recipe_details.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +17,7 @@ class MealsByCategoryScreen extends StatefulWidget {
 }
 
 class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
-  List<RecipeModel> meals = [];
+  List<RecModel> meals = [];
   bool isLoading = true;
   String searchText = '';
   TextEditingController searchController = TextEditingController();
@@ -33,14 +33,10 @@ class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
 
   Future<void> fetchMealsByCategory() async {
     try {
-      final allRecipes = await RecipeService.getAllRecipes();
-      final filtered = allRecipes
-          .where((recipe) =>
-              recipe.category.toLowerCase() == widget.category.toLowerCase())
-          .toList();
+      final data = await MealService.getMealsByCategory(widget.category);
 
       setState(() {
-        meals = filtered;
+        meals = data;
         isLoading = false;
       });
     } catch (e) {
@@ -110,7 +106,7 @@ class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
                       context,
                       MaterialPageRoute(
                                     builder: (_) => RecipeDetailScreen(
-                                        mealId: meal.recipeId),
+                                        mealId: meal.id),
                                   ),
                     );
                   },
@@ -133,7 +129,7 @@ class _MealsByCategoryScreenState extends State<MealsByCategoryScreen> {
                                       borderRadius: const BorderRadius.vertical(
                                           top: Radius.circular(20)),
                                       child: Image.network(
-                                        meal.imageUrl,
+                                        meal.thumbnail,
                                         height: 150,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => Container(

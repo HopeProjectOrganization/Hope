@@ -1,5 +1,5 @@
 class VeganRecipeModel {
-  final int? id;
+  final String? id;
   final String veganId;
   final String title;
   final String difficulty;
@@ -24,22 +24,23 @@ class VeganRecipeModel {
   });
 
   factory VeganRecipeModel.fromJson(Map<String, dynamic> json) {
+    final imageUrl = json['image']?.toString() ?? '';
+
     return VeganRecipeModel(
-      id: json['id'],
+      id: json['id']?.toString(),
       veganId: json['veganId'] ?? '',
       title: json['title'] ?? '',
       difficulty: json['difficulty'] ?? '',
       portion: json['portion'] ?? '',
       time: json['time'] ?? '',
       description: json['description'] ?? '',
-      image: json['image'] ?? '',
+      image: imageUrl.startsWith('http') ? imageUrl : '',
       ingredients: List<String>.from(json['ingredients'] ?? []),
-      steps: List<StepModel>.from(
-        (json['method'] ?? []).map((e) => StepModel.fromJson(e)),
-      ),
+      steps: (json['method'] as List? ?? [])
+          .map((e) => StepModel.fromJson(e))
+          .toList(),
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       'id': id,

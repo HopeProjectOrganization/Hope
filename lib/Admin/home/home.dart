@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/Admin/add/admin_products_screen.dart';
 import 'package:hope/Admin/home/tabs/aware_tab/aware_tab.dart';
 import 'package:hope/Admin/home/tabs/home_tab/home_tab.dart';

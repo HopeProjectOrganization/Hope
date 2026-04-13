@@ -166,7 +166,7 @@ class _BuildArticleItemState extends State<BuildArticleItemN> {
                                         TextButton(
                                           onPressed: () {
                                             Navigator.pop(context);
-                                            deleteArticle(article.id!);
+                                            deleteArticle(article.id);
                                           },
                                           child: const Text("Delete",
                                               style:

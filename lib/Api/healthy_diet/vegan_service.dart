@@ -26,7 +26,7 @@ class VeganRecipeService {
     }
   }
 
-  static Future<VeganRecipeModel> getById(int id) async {
+  static Future<VeganRecipeModel> getById(String id) async {
     final response = await http.get(Uri.parse('$baseUrl/by-id/$id'));
     if (response.statusCode == 200) {
       return VeganRecipeModel.fromJson(jsonDecode(response.body));

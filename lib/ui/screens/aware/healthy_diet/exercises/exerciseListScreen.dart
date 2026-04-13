@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/healthy_diet/exercises_service.dart';
-import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/Api/healthy_diet/exercises.dart';
+import 'package:hope/l10n/app_localizations.dart';
+ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/exercises.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/exercises/exerciseDetailScreen.dart';
@@ -25,8 +25,7 @@ class _ExerciseListScreenState extends State<ExerciseListScreen> {
   @override
   void initState() {
     super.initState();
-    ExerciseApiService apiService = ExerciseApiService();
-    futureExercises = apiService.fetchExercisesByBodyPart(widget.bodyPart);
+     futureExercises = ExerciseService.fetchByBodyPart(widget.bodyPart);
   }
 
 

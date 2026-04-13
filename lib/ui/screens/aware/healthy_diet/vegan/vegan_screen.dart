@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/healthy_diet/vegan_service.dart';
-import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/Api/healthy_diet/vegan.dart';
+import 'package:hope/l10n/app_localizations.dart';
+ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/model/vegan_details.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/vegan/vegan_details.dart';
 import 'package:hope/ui/shared_widgets/vegan_card.dart';
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<VeganScreen> {
   @override
   void initState() {
     super.initState();
-    futureRecipes = VeganRecipeService.getAllRecipes();
+    futureRecipes = VeganService.fetchRecipes();
   }
 
   @override

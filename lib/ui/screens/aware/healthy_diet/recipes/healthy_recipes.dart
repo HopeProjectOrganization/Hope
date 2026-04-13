@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/healthy_diet/healthy_recipe_service.dart';
-import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/Api/healthy_diet/healthy_recipe.dart';
+import 'package:hope/l10n/app_localizations.dart';
+ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/healthy_recipes.dart';
+import 'package:hope/model/res_model.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/recipes/recipe_by_category.dart';
 import 'package:hope/ui/screens/aware/healthy_diet/recipes/recipe_details.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,7 @@ class _RecipesState extends State<Recipes> {
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
 
-  List<RecipeModel> allMeals = [];
+  List<RecModel> allMeals = [];
   bool isLoadingAll = true;
   String searchText = '';
   int selectedTabIndex = 0;
@@ -91,7 +92,7 @@ class _RecipesState extends State<Recipes> {
 
   Future<void> fetchAllMeals() async {
     try {
-      final data = await RecipeService.getAllRecipes();
+      final data = await MealService.getAllMeals(context);
       setState(() {
         allMeals = data;
         isLoadingAll = false;
@@ -144,7 +145,7 @@ class _RecipesState extends State<Recipes> {
     );
   }
 
-  Widget buildAllMeals(List<RecipeModel> meals) {
+  Widget buildAllMeals(List<RecModel> meals) {
     return Expanded(
       child: Column(
         children: [
@@ -180,13 +181,13 @@ class _RecipesState extends State<Recipes> {
                 return buildMealCard(
                   item.name ?? '',
                   item.area ?? '',
-                  item.imageUrl ?? '',
+                  item.thumbnail ?? '',
                   () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) =>
-                            RecipeDetailScreen(mealId: item.recipeId!),
+                            RecipeDetailScreen(mealId: item.id!),
                       ),
                     );
                   },

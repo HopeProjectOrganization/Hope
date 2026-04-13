@@ -35,10 +35,10 @@ class _AdminMealFormScreenState extends State<AdminMealFormScreen> {
   void initState() {
     super.initState();
     if (widget.meal != null) {
-      nameController.text = widget.meal!.name ?? '';
-      areaController.text = widget.meal!.area ?? '';
-      imageUrlController.text = widget.meal!.imageUrl ?? '';
-      instructionsController.text = widget.meal!.instructions ?? '';
+      nameController.text = widget.meal!.name;
+      areaController.text = widget.meal!.area;
+      imageUrlController.text = widget.meal!.imageUrl;
+      //instructionsConr.text = widget.meal!.instructions ?? '';
       ingredientsController.text = widget.meal!.ingredients.entries
           .map((e) => "${e.key}:${e.value}")
           .join("\n");

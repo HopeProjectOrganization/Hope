@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hope/Api/add/high_ingredients.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/model/high_risk_ingredents.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 

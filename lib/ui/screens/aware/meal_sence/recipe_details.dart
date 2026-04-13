@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/Api/recipes/fetch_recipe.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/Api/recipes/recipe_service.dart';
 import 'package:hope/Api/saved/favorite_service.dart';
 import 'package:hope/core/assets/app_icons.dart';
@@ -48,7 +49,7 @@ class _RecipeDetailsState extends State<RecipeDetails>
       if (args != null && args is String) {
         mealId = args;
       }
-      mealFuture = MealApiService().fetchMealById(mealId);
+      mealFuture = fetchMealById(mealId);
       checkIfFavorite(mealId);
       _initialized = true;
     }
@@ -106,6 +107,9 @@ class _RecipeDetailsState extends State<RecipeDetails>
               return Center(child: Text("Error: ${snapshot.error}"));
             } else {
               final meal = snapshot.data!;
+              String fixedImage = meal.image.isNotEmpty
+                  ? 'https://images.weserv.nl/?url=${meal.image.replaceFirst('https://', '')}'
+                  : '';
               print("Meal ID: ${meal.id}");
 
               return SingleChildScrollView(
@@ -121,8 +125,7 @@ class _RecipeDetailsState extends State<RecipeDetails>
                             fit: StackFit.expand,
                             children: [
                               Image.network(
-                                meal.image,
-                                fit: BoxFit.cover,
+                                fixedImage,                                fit: BoxFit.cover,
                               ),
                               CustomGradient(),
                             ],

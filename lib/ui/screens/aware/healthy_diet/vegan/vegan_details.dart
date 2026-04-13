@@ -1,20 +1,21 @@
 // recipe_details_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/healthy_diet/vegan_service.dart';
-import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/Api/healthy_diet/vegan.dart';
+import 'package:hope/l10n/app_localizations.dart';
+ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
 import 'package:hope/model/vegan_details.dart';
 import 'package:hope/ui/shared_widgets/favorite_button.dart';
 import 'package:provider/provider.dart';
 
 class RecipeDetailsScreen extends StatelessWidget {
-  final int id;
+  final String id;
 
   const RecipeDetailsScreen({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
+
     final themeProvider = Provider.of<ThemeProvider>(context);
     final appLocalizations = AppLocalizations.of(context)!;
 
@@ -22,7 +23,7 @@ class RecipeDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         actions: [
           InkWell(
-            onTap: () {}, // ممكن تسيبيه فاضي أو تشيليه لو مش محتاجاه
+            onTap: () {},
             child: FavoriteButton(
               id: id.toString(),
               category: 'VEGAN',
@@ -37,7 +38,7 @@ class RecipeDetailsScreen extends StatelessWidget {
         shadowColor: AppColors.lavender.withOpacity(0.5),
       ),
       body: FutureBuilder<VeganRecipeModel>(
-        future: VeganRecipeService.getById(id),
+        future: VeganService.fetchRecipeDetail(id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -48,6 +49,9 @@ class RecipeDetailsScreen extends StatelessWidget {
           }
 
           final recipe = snapshot.data!;
+          String fixedImage = recipe.image.isNotEmpty
+              ? 'https://images.weserv.nl/?url=${recipe.image.replaceFirst('https://', '')}'
+              : '';
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +62,7 @@ class RecipeDetailsScreen extends StatelessWidget {
                     bottomRight: Radius.circular(40),
                   ),
                   child: Image.network(
-                    recipe.image,
+                    fixedImage,
                     width: double.infinity,
                     height: 260,
                     fit: BoxFit.cover,

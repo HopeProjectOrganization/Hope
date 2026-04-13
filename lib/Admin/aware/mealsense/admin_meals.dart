@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/Admin/aware/mealsense/add_meal.dart';
 import 'package:hope/Admin/aware/mealsense/admin_meal_details.dart';
 import 'package:hope/Api/recipes/recipe_service.dart';

@@ -7,19 +7,19 @@ import 'package:http/http.dart' as http;
 
 class NewsService {
   static Future<List<ArticleDM>> fetchNews(
-      String cancerType, String apiKey, bool news) async {
+      String cancerType) async {
     List<ArticleDM> externalArticles =
-        await fetchExternalNews(cancerType, apiKey, news);
+        await fetchExternalNews(cancerType);
     List<ArticleDM> localArticles = await fetchLocalNews(cancerType);
     return [...localArticles, ...externalArticles];
     // return externalArticles;
   }
 
   static Future<List<ArticleDM>> fetchExternalNews(
-      String cancerType, String apiKey, bool news) async {
+      String cancerType) async {
     String query = "${Uri.encodeComponent(cancerType)} cancer";
     final url = Uri.parse(
-        "https://newsapi.org/v2/everything?q=$query&language=en&apiKey=$apiKey");
+        "https://real-time-news-data.p.rapidapi.com/search?query=$query&limit=10&time_published=anytime&country=EG");
 
     final response = await http.get(url);
     print("Response: ${response.body}");
@@ -42,7 +42,7 @@ class NewsService {
         return pattern.hasMatch(title);
       }).toList();
 
-      return news == true ? filteredArticles : articles;
+      return  articles;
     } else {
       throw Exception("Failed to load news from external API");
     }

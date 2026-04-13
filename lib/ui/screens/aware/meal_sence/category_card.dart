@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/Api/recipes/recipe_service.dart';
 import 'package:hope/Api/user/user_meals.dart';
 import 'package:hope/core/providers/theme_provider.dart';

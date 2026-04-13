@@ -1,8 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hope/Admin/add/add_high_ingredient.dart';
 import 'package:hope/Admin/add/admin_product_screen.dart';
 import 'package:hope/Admin/add/admin_products_screen.dart';
@@ -32,6 +31,7 @@ import 'package:hope/core/providers/locale_provider.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_theme.dart';
 import 'package:hope/fruit.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/model/meal_dm.dart';
 import 'package:hope/model/vegan_details.dart';
 import 'package:hope/ui/screens/auth/forgetpassword/forgetpassword.dart';
@@ -64,45 +64,46 @@ import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'ui/screens/aware/meal_sence/meals.dart';
+//
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   await Firebase.initializeApp();
+//   _showNotification(message);
+// }
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  _showNotification(message);
-}
-
-Future<void> _showNotification(RemoteMessage message) async {
-  final notification = message.notification;
-  final android = message.notification?.android;
-
-  if (notification != null) {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'your_channel_id',
-      'your_channel_name',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      notification.title,
-      notification.body,
-      platformChannelSpecifics,
-    );
-  }
-}
+// Future<void> _showNotification(RemoteMessage message) async {
+//   final notification = message.notification;
+//   final android = message.notification?.android;
+//
+//   if (notification != null) {
+//     const AndroidNotificationDetails androidPlatformChannelSpecifics =
+//     AndroidNotificationDetails(
+//       'your_channel_id',
+//       'your_channel_name',
+//       importance: Importance.max,
+//       priority: Priority.high,
+//     );
+//
+//     //const NotificationDetails platformChannelSpecifics =
+//    // NotificationDetails(android: androidPlatformChannelSpecifics);
+//
+// //     await flutterLocalNotificationsPlugin.show(
+// //       0,
+// //       notification.title,
+// //       notification.body,
+// //       platformChannelSpecifics,
+// //     );
+// //   }
+//   }
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+//  await Firebase.initializeApp();
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+//  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -110,16 +111,16 @@ void main() async {
   const InitializationSettings initializationSettings =
       InitializationSettings(android: initializationSettingsAndroid);
 
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+//  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    _showNotification(message); // إشعار في foreground
-  });
+  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //   _showNotification(message); // إشعار في foreground
+  // });
 
-  FirebaseMessaging.instance.subscribeToTopic("users");
+  //FirebaseMessaging.instance.subscribeToTopic("users");
 
   // 🛠 تفعيل Workmanager
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  // Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
   // ✅ مهمة لمرة واحدة بعد 10 ثواني فقط (للاختبار)
   Workmanager().registerPeriodicTask(

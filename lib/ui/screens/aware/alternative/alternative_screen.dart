@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/Api/chat/chatApi.dart';
 import 'package:hope/Api/scan/scan_service.dart';
 import 'package:hope/core/theme/app_colors.dart';

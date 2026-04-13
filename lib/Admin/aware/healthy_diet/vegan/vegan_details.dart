@@ -1,6 +1,6 @@
 // recipe_details_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/Api/healthy_diet/vegan_service.dart';
 import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
@@ -8,7 +8,7 @@ import 'package:hope/model/vegan_details.dart';
 import 'package:provider/provider.dart';
 
 class AdminRecipeDetailsScreen extends StatelessWidget {
-  final int id;
+  final String id;
 
   const AdminRecipeDetailsScreen({super.key, required this.id});
 

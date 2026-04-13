@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hope/Api/healthy_diet/healthy_recipe_service.dart';
-import 'package:hope/core/providers/theme_provider.dart';
+import 'package:hope/Api/healthy_diet/healthy_recipe.dart';
+import 'package:hope/l10n/app_localizations.dart';
+ import 'package:hope/core/providers/theme_provider.dart';
 import 'package:hope/core/theme/app_colors.dart';
-import 'package:hope/model/healthy_recipes.dart';
+ import 'package:hope/model/res_model.dart';
 import 'package:hope/ui/shared_widgets/custom_button.dart';
 import 'package:hope/ui/shared_widgets/custom_scaffold.dart';
 import 'package:hope/ui/shared_widgets/favorite_button.dart';
@@ -20,7 +20,7 @@ class RecipeDetailScreen extends StatefulWidget {
 }
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
-  RecipeModel? recipe;
+  RecModel? recipe;
   bool isLoading = true;
   late ThemeProvider themeProvider;
   late AppLocalizations appLocalizations;
@@ -34,7 +34,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   Future<void> fetchMealDetails() async {
     try {
-      final data = await RecipeService.getRecipeById(widget.mealId);
+      final data = await MealService.getMealDetailsById(widget.mealId);
       setState(() {
         recipe = data;
         isLoading = false;
@@ -141,7 +141,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         centerTitle: true,
         actions: [
           FavoriteButton(
-            id: recipe!.recipeId,
+            id: recipe!.id,
             category: 'HEALTHY_DIET',
             type: 'meal',
           ),
@@ -160,7 +160,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       bottomRight: Radius.circular(50),
                     ),
                     child: Image.network(
-                      recipe!.imageUrl ?? '',
+                      recipe!.thumbnail ?? '',
                       height: MediaQuery.of(context).size.height * 0.4,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -198,7 +198,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         MaterialPageRoute(
                           builder: (_) => RecipeStepsScreen(
                             instructions: recipe!.instructions,
-                            youtubeUrl: recipe!.youtubeUrl,
+                            youtubeUrl: recipe!.youtube,
                           ),
                         ),
                       ),

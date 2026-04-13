@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/Admin/aware/healthy_diet/exercises/exerciseListScreen.dart';
 import 'package:hope/core/assets/app_assets.dart';
 import 'package:hope/core/providers/theme_provider.dart';
@@ -39,7 +39,7 @@ class AdminBodyPartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    late ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
+    Provider.of<ThemeProvider>(context);
 
     late AppLocalizations appLocalizations = AppLocalizations.of(context)!;
 

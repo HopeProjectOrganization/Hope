@@ -1,6 +1,6 @@
 // meal_favorites.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/Api/healthy_diet/healthy_recipe_service.dart';
 import 'package:hope/Api/healthy_diet/vegan_service.dart';
 import 'package:hope/Api/recipes/recipe_service.dart';
@@ -80,7 +80,7 @@ class MealFavorites extends StatelessWidget {
                 future = RecipeService.getRecipeById(fav.mealId);
                 break;
               case 'VEGAN':
-                future = VeganRecipeService.getById(int.parse(fav.mealId));
+                future = VeganRecipeService.getById(fav.mealId);
                 break;
               default:
                 return const SizedBox.shrink();
@@ -136,7 +136,7 @@ class MealFavorites extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => RecipeDetailsScreen(
-                                  id: int.parse(fav.mealId))),
+                                  id: fav.mealId)),
                         ).then((_) => onRefresh());
                         break;
                       default:

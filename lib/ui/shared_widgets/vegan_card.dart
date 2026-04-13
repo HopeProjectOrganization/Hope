@@ -11,6 +11,9 @@ class VeganCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     String fixedImage = recipe.image.isNotEmpty
+        ? 'https://images.weserv.nl/?url=${recipe.image.replaceFirst('https://', '')}'
+        : '';
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -68,11 +71,19 @@ class VeganCard extends StatelessWidget {
             ),
             ClipPath(
               clipper: HalfCircleClipper(),
-              child: Image.network(
-                recipe.image,
-                width: 170,
-                height: 200,
-                fit: BoxFit.cover,
+              child: SizedBox(
+                width: 100,
+                height: 100,
+                child: Image.network(
+                  fixedImage,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.broken_image),
+                    );
+                  },
+                ),
               ),
             ),
           ],

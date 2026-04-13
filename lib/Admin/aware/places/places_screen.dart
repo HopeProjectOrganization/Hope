@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hope/l10n/app_localizations.dart';
 import 'package:hope/Admin/aware/places/admin_places_edit.dart';
 import 'package:hope/Api/places/places_service.dart';
 import 'package:hope/core/assets/app_assets.dart';
